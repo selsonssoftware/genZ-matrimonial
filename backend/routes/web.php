@@ -13,6 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
+});
+Route::get('/management', function () {
+    return view('management');
+});
+Route::get('/profile', function () {
+    return view('profile');
+});
+Route::get('/vendors', function () {
+    return view('vendors');
+});
+Route::get('/matches-interests', function () {
+    return view('matches-interests');
 });
