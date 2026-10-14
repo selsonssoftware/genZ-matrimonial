@@ -1092,96 +1092,22 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a data-bs-toggle="collapse" href="#invoice" aria-expanded="false" aria-controls="invoice"
-                                class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-invoice"></i></span>
-                                <span class="menu-text" data-lang="invoice">Membership and Payments</span>
-                                <span class="menu-arrow"></span>
+                            <a href="{{ url('/membership') }}" class="side-nav-link">
+                                <span class="menu-icon"><i class="ti ti-currency-rupee"></i></span>
+                                <span class="menu-text">Membership & Payments</span>
                             </a>
-                            <div class="collapse" id="invoice">
-                                <ul class="sub-menu">
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-list.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-list">Invoices</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-details.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-details">Single
-                                                Invoice</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-create.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-create">New Invoice</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                         </li>
+
                         <li class="side-nav-item">
-                            <a data-bs-toggle="collapse" href="#crm" aria-expanded="false" aria-controls="crm"
-                                class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-heart-handshake"></i></span>
-                                <span class="menu-text" data-lang="crm">Matrimony Master Data</span>
-                                <span class="menu-arrow"></span>
+                            <a href="{{ url('/matrimonymasterdata') }}" class="side-nav-link">
+                                <span class="menu-icon">
+                                    <i class="ti ti-heart-handshake"></i>
+                                </span>
+
+                                <span class="menu-text">Matrimony Master Data</span>
                             </a>
-                            <div class="collapse" id="crm">
-                                <ul class="sub-menu">
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-contacts.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-contacts">Contacts</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-opportunities.html" class="side-nav-link">
-                                            <span class="menu-text"
-                                                data-lang="apps-crm-opportunities">Opportunities</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-deals.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-deals">Deals</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-leads.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-leads">Leads</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-pipeline.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-pipeline">Pipeline</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-campaign.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-campaign">Campaign</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-proposals.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-proposals">Proposals</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-estimations.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-estimations">Estimations</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-customers.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-customers">Customers</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-crm-activities.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-crm-activities">Activities</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                         </li>
+
                         <li class="side-nav-item">
                             <a data-bs-toggle="collapse" href="#users" aria-expanded="false" aria-controls="users"
                                 class="side-nav-link">
