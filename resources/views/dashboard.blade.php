@@ -1,1026 +1,356 @@
 @extends('layout')
+
 @section('content')
-<!-- ============================================================== -->
-            <!-- Start Main Content -->
-            <!-- ============================================================== -->
-
-            <div class="content-page">
-                <div class="container-fluid">
-                    <div class="page-title-head d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h4 class="page-main-title m-0">User Management</h4>
-                        </div>
-
-                        <div class="text-end">
-                            <ol class="breadcrumb m-0 py-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Paces</a></li>
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                <li class="breadcrumb-item active">User Management</li>
-                            </ol>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-xxl-5">
-                            <div class="row h-100">
-                                <div class="col-lg-3 col-md-6 col-xxl-6">
-                                    <div class="card card-h-100 overflow-hidden">
-                                        <div class="card-body pb-0">
-                                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                                <div class="overflow-hidden flex-shrink-0">
-                                                    <h3 class="fw-normal text-reset fs-20 lh-base">
-                                                        <span class="text-muted fs-base text-uppercase h5">Good Day,</span> <br />
-                                                        <b>David Dev!</b>
-                                                    </h3>
-                                                </div>
-                                                <div class="flex-grow-1 text-end">
-                                                    <img class="d-none d-xxl-inline-block" src="assets/images/svg/email-campaign.svg" width="110" alt="Generic placeholder image" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-body d-flex align-items-center p-2 bg-light bg-opacity-50">
-                                            <p class="d-flex align-items-center justify-content-between w-100 mb-0">
-                                                <span class="me-2"
-                                                    ><i class="ti ti-calendar fs-15 align-middle"></i>
-                                                    <span class="align-middle ms-1 fw-semibold">
-                                                        <script>
-                                                            document.write(new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }))
-                                                        </script>
-                                                    </span></span
-                                                >
-                                                <span class="text-nowrap"><i class="ti ti-clock fs-15 align-middle"></i><span class="align-middle ms-1 fw-semibold" id="clock-widget"></span></span>
-                                            </p>
-                                        </div>
-                                        <!-- end card-body -->
-                                    </div>
-                                </div>
-                                <!-- end col-->
-
-                                <div class="col-lg-3 col-md-6 col-xxl-6">
-                                    <div class="card card-h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h5 class="text-muted fs-base text-uppercase" title="Number of Orders">Orders</h5>
-                                                    <h3 class="my-3 py-1 fw-semibold"><span data-target="9,754">0</span></h3>
-                                                    <p class="mb-0 text-muted">
-                                                        <span class="text-danger me-2"><i class="ti ti-arrow-down"></i> 1.89%</span>
-                                                        <span class="text-nowrap">Since last month</span>
-                                                    </p>
-                                                </div>
-                                                <div class="avatar-md flex-shrink-0">
-                                                    <span class="avatar-title bg-primary-subtle rounded-circle fs-22">
-                                                        <i class="ti ti-shopping-cart text-primary"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col-->
-
-                                <div class="col-lg-3 col-md-6 col-xxl-6">
-                                    <div class="card card-h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h5 class="text-muted fs-base text-uppercase" title="Average Revenue">Revenue</h5>
-                                                    <h3 class="my-3 py-1 fw-semibold">$<span data-target="75.21">0</span>k</h3>
-                                                    <p class="mb-0 text-muted">
-                                                        <span class="text-danger me-2"><i class="ti ti-arrow-down"></i> 5.23%</span>
-                                                        <span class="text-nowrap">Since last month</span>
-                                                    </p>
-                                                </div>
-                                                <div class="avatar-md flex-shrink-0">
-                                                    <span class="avatar-title bg-primary-subtle rounded-circle fs-22">
-                                                        <i class="ti ti-pig-money text-primary"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col-->
-
-                                <div class="col-lg-3 col-md-6 col-xxl-6">
-                                    <div class="card card-h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <h5 class="text-muted fs-base text-uppercase" title="Growth">Growth</h5>
-                                                    <h3 class="my-3 py-1 fw-semibold">+ <span data-target="25.08">0</span>%</h3>
-                                                    <p class="mb-0 text-muted">
-                                                        <span class="text-success me-2"><i class="ti ti-arrow-up"></i> 4.87%</span>
-                                                        <span class="text-nowrap">Since last month</span>
-                                                    </p>
-                                                </div>
-                                                <div class="avatar-md flex-shrink-0">
-                                                    <span class="avatar-title bg-primary-subtle rounded-circle fs-22">
-                                                        <i class="ti ti-trending-up text-primary"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col-->
-                            </div>
-                            <!-- end row -->
-                        </div>
-                        <!-- end col -->
-
-                        <div class="col-xxl-7">
-                            <div class="row h-100">
-                                <div class="col-lg-6">
-                                    <div class="card card-h-100">
-                                        <div class="card-header justify-content-between">
-                                            <h4 class="card-title">Store Performance Analytics</h4>
-                                            <div>
-                                                <a href="#" class="btn btn-sm btn-default" data-action="card-refresh"><i class="ti ti-refresh me-1"></i> Refresh</a>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div dir="ltr">
-                                                <div id="total-sales-chart" class="apex-charts"></div>
-                                            </div>
-                                            <div class="text-center mb-1">
-                                                <span class="badge badge-outline-light text-dark p-1 px-2 rounded-pill fs-12"><i class="ti ti-star-filled text-danger me-1"></i> POOR SALES</span>
-                                            </div>
-                                        </div>
-                                        <!-- end card-body-->
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col-->
-                                <div class="col-lg-6">
-                                    <div class="card card-h-100">
-                                        <div class="card-header justify-content-between">
-                                            <h4 class="card-title">Weekly Performance Insights</h4>
-                                            <div class="dropdown ms-auto">
-                                                <a href="#" class="btn btn-sm btn-default btn-icon" data-bs-toggle="dropdown">
-                                                    <i class="ti ti-dots-vertical fs-lg"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-refresh me-2"></i> Refresh Data </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-download me-2"></i> Download Report </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-share me-2"></i> Share Insights </a>
-                                                    </li>
-                                                    <li>
-                                                        <hr class="dropdown-divider" />
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger" href="#"> <i class="ti ti-archive me-2"></i> Archive Widget </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <div class="card-body">
-                                            <div dir="ltr">
-                                                <div id="weekly-performance-chart" class="apex-charts"></div>
-                                            </div>
-                                        </div>
-                                        <!-- end card-body-->
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                            </div>
-                            <!-- end row-->
-                        </div>
-                        <!-- end col -->
-                    </div>
-                    <!-- end row -->
-
-                    <div class="row">
-                        <div class="col-xxl-6">
-                            <div class="card card-h-100">
-                                <div class="card-header border-dashed card-tabs">
-                                    <div class="flex-grow-1">
-                                        <h4 class="card-title">Sales Report <span class="text-muted fs-base fw-normal">(25822 Orders)</span></h4>
-                                    </div>
-                                    <ul class="nav nav-tabs nav-justified card-header-tabs nav-bordered">
-                                        <li class="nav-item">
-                                            <a href="#!" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
-                                                <span class="d-md-none d-block">1D</span>
-                                                <span class="d-none d-md-block">Today</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="#!" data-bs-toggle="tab" aria-expanded="true" class="nav-link active">
-                                                <span class="d-md-none d-block">1M</span>
-                                                <span class="d-none d-md-block">Monthly</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="#!" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
-                                                <span class="d-md-none d-block">1Y</span>
-                                                <span class="d-none d-md-block">Annual</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="bg-light bg-opacity-25 border-bottom border-dashed">
-                                        <div class="row text-center">
-                                            <div class="col-sm-4">
-                                                <p class="text-muted mt-3 mb-1">Revenue</p>
-                                                <h4 class="mb-3">
-                                                    <i class="ti ti-wallet text-success me-1"></i>
-                                                    <span>$<span data-target="78,224.68"></span></span>
-                                                </h4>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <p class="text-muted mt-3 mb-1">Orders</p>
-                                                <h4 class="mb-3">
-                                                    <i class="ti ti-basket text-success me-1"></i>
-                                                    <span><span data-target="8541"></span></span>
-                                                </h4>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <p class="text-muted mt-3 mb-1">Growth Rate</p>
-                                                <h4 class="mb-3">
-                                                    <i class="ti ti-trending-up text-success me-1"></i>
-                                                    <span><span data-target="25.3"></span>%</span>
-                                                </h4>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-3 pt-1">
-                                        <div class="dash-item-overlay d-none d-md-block" dir="ltr">
-                                            <h5>Today's Earning: $8,975.30</h5>
-                                            <p class="text-muted mb-0 mt-2">Property PS007 is not receiving hits. Either your site is not receiving any sessions.</p>
-                                        </div>
-                                        <div dir="ltr">
-                                            <div id="sales-report-chart" class="apex-charts"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body-->
-                            </div>
-                            <!-- end card-->
-                        </div>
-                        <!-- end col-->
-
-                        <div class="col-xxl-6">
-                            <div data-table data-table-rows-per-page="6" class="card card-h-100">
-                                <div class="card-header justify-content-between">
-                                    <h4 class="card-title">Top Selling Products</h4>
-                                    <div>
-                                        <a href="#" class="btn btn-sm btn-default"><i class="ti ti-cloud-upload me-1"></i> Export</a>
-                                        <a href="#" class="btn btn-sm btn-light"><i class="ti ti-download me-1"></i> Import</a>
-                                    </div>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-custom table-centered table-hover w-100 mb-0">
-                                            <tbody class="text-nowrap">
-                                                <!-- Record 1 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/1.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Modern Fabric Sofa Set</h5>
-                                                        <span class="text-muted fs-xs">By: Homeluxe</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$499.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">34</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$16,966.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill fs-12"> Low Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 2 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/2.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">L-Shaped Sectional Sofa</h5>
-                                                        <span class="text-muted fs-xs">By: ComfortHub</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$899.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">21</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$18,879.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fs-12"> In Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 3 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/3.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Velvet Recliner Chair</h5>
-                                                        <span class="text-muted fs-xs">By: SoftEase</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$379.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">47</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$17,813.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fs-12"> In Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 4 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/4.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Classic Wooden Coffee Table</h5>
-                                                        <span class="text-muted fs-xs">By: OakCraft</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$259.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">58</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$15,022.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill fs-12"> Out of Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 5 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/5.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Minimalist TV Stand</h5>
-                                                        <span class="text-muted fs-xs">By: FurniPro</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$315.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">64</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$20,160.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fs-12"> In Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 6 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/6.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Leather Lounge Chair</h5>
-                                                        <span class="text-muted fs-xs">By: UrbanStyle</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$425.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">39</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$16,575.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill fs-12"> Low Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 7 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/7.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Glass Center Table</h5>
-                                                        <span class="text-muted fs-xs">By: CrystalCasa</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$289.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">52</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$15,028.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fs-12"> In Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 8 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/8.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Wooden Bookshelf Unit</h5>
-                                                        <span class="text-muted fs-xs">By: TimberWorks</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$349.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">28</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$9,772.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill fs-12"> Low Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 9 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/9.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Luxury King Bed Frame</h5>
-                                                        <span class="text-muted fs-xs">By: DreamRest</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$1,099.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">15</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$16,485.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill fs-12"> Out of Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 10 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/10.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Round Dining Table Set</h5>
-                                                        <span class="text-muted fs-xs">By: CasaDine</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$725.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">25</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$18,125.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fs-12"> In Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 11 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/2.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Ergonomic Office Chair</h5>
-                                                        <span class="text-muted fs-xs">By: WorkEase</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$269.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">44</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$11,836.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fs-12"> In Stock </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Record 12 -->
-                                                <tr>
-                                                    <td style="width: 60px">
-                                                        <img src="assets/images/products/5.png" alt="product-pic" height="36" />
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Nightstand with Drawers</h5>
-                                                        <span class="text-muted fs-xs">By: CozyHome</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$189.00</h5>
-                                                        <span class="text-muted fs-xs">Price</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">53</h5>
-                                                        <span class="text-muted fs-xs">Quantity</span>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">$10,017.00</h5>
-                                                        <span class="text-muted fs-xs">Amount</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill fs-12"> Low Stock </span>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- end table-respo.-->
-                                </div>
-                                <!-- end card-body-->
-
-                                <div class="card-footer border-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div data-table-pagination-info="products"></div>
-                                        <div data-table-pagination></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end row -->
-
-                    <div class="row">
-                        <div class="col-xxl-5">
-                            <div data-table data-table-rows-per-page="5" class="card card-h-100">
-                                <div class="card-header justify-content-between">
-                                    <h4 class="card-title">Recent Orders <span class="text-muted fs-base fw-normal">(186.25k Transactions)</span></h4>
-                                    <div>
-                                        <a href="#" class="btn btn-sm btn-default"> <i class="ti ti-cloud-upload me-1"></i> Export </a>
-                                        <a href="#" class="btn btn-sm btn-light"> <i class="ti ti-download me-1"></i> Import </a>
-                                    </div>
-                                </div>
-
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-custom table-centered table-hover w-100 mb-0">
-                                            <thead class="bg-light align-middle bg-opacity-25 thead-sm">
-                                                <tr class="text-uppercase table-nowrap fs-xxs">
-                                                    <th data-table-sort>#ID</th>
-                                                    <th data-table-sort>Customer</th>
-                                                    <th data-table-sort>Date</th>
-                                                    <th data-table-sort>Amount</th>
-                                                    <th data-table-sort>Payment</th>
-                                                    <th data-table-sort>Status</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody class="text-nowrap">
-                                                <!-- Order 1 -->
-                                                <tr>
-                                                    <td>#ORD-1023</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">John Carter</h5>
-                                                        <span class="text-muted fs-xs">john&#64;example.com</span>
-                                                    </td>
-                                                    <td>12 Nov 2025</td>
-                                                    <td>$249.00</td>
-                                                    <td>Credit Card</td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success"> Completed </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 2 -->
-                                                <tr>
-                                                    <td>#ORD-1022</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Emma Wilson</h5>
-                                                        <span class="text-muted fs-xs">emma&#64;example.com</span>
-                                                    </td>
-                                                    <td>12 Nov 2025</td>
-                                                    <td>$179.00</td>
-                                                    <td>UPI</td>
-                                                    <td>
-                                                        <span class="badge bg-warning-subtle text-warning"> Pending </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 3 -->
-                                                <tr>
-                                                    <td>#ORD-1021</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Michael Harris</h5>
-                                                        <span class="text-muted fs-xs">michael&#64;example.com</span>
-                                                    </td>
-                                                    <td>11 Nov 2025</td>
-                                                    <td>$329.00</td>
-                                                    <td>PayPal</td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success"> Completed </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 4 -->
-                                                <tr>
-                                                    <td>#ORD-1020</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Sophia Turner</h5>
-                                                        <span class="text-muted fs-xs">sophia&#64;example.com</span>
-                                                    </td>
-                                                    <td>11 Nov 2025</td>
-                                                    <td>$125.00</td>
-                                                    <td>Debit Card</td>
-                                                    <td>
-                                                        <span class="badge bg-danger-subtle text-danger"> Cancelled </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 5 -->
-                                                <tr>
-                                                    <td>#ORD-1019</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Chris Evans</h5>
-                                                        <span class="text-muted fs-xs">chris&#64;example.com</span>
-                                                    </td>
-                                                    <td>10 Nov 2025</td>
-                                                    <td>$560.00</td>
-                                                    <td>Credit Card</td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success"> Completed </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 6 -->
-                                                <tr>
-                                                    <td>#ORD-1018</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Ava Mitchell</h5>
-                                                        <span class="text-muted fs-xs">ava&#64;example.com</span>
-                                                    </td>
-                                                    <td>10 Nov 2025</td>
-                                                    <td>$98.00</td>
-                                                    <td>Cash</td>
-                                                    <td>
-                                                        <span class="badge bg-warning-subtle text-warning"> Pending </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 7 -->
-                                                <tr>
-                                                    <td>#ORD-1017</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Liam Parker</h5>
-                                                        <span class="text-muted fs-xs">liam&#64;example.com</span>
-                                                    </td>
-                                                    <td>09 Nov 2025</td>
-                                                    <td>$412.00</td>
-                                                    <td>Net Banking</td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success"> Completed </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 8 -->
-                                                <tr>
-                                                    <td>#ORD-1016</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Isabella Rose</h5>
-                                                        <span class="text-muted fs-xs">isabella&#64;example.com</span>
-                                                    </td>
-                                                    <td>09 Nov 2025</td>
-                                                    <td>$255.00</td>
-                                                    <td>Credit Card</td>
-                                                    <td>
-                                                        <span class="badge bg-danger-subtle text-danger"> Failed </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 9 -->
-                                                <tr>
-                                                    <td>#ORD-1015</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Oliver Brown</h5>
-                                                        <span class="text-muted fs-xs">oliver&#64;example.com</span>
-                                                    </td>
-                                                    <td>08 Nov 2025</td>
-                                                    <td>$720.00</td>
-                                                    <td>UPI</td>
-                                                    <td>
-                                                        <span class="badge bg-success-subtle text-success"> Completed </span>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Order 10 -->
-                                                <tr>
-                                                    <td>#ORD-1014</td>
-                                                    <td>
-                                                        <h5 class="m-0 fs-base">Charlotte Green</h5>
-                                                        <span class="text-muted fs-xs">charlotte&#64;example.com</span>
-                                                    </td>
-                                                    <td>08 Nov 2025</td>
-                                                    <td>$138.00</td>
-                                                    <td>PayPal</td>
-                                                    <td>
-                                                        <span class="badge bg-warning-subtle text-warning"> Pending </span>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <div class="card-footer border-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div data-table-pagination-info="orders"></div>
-                                        <div data-table-pagination></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end col-->
-
-                        <div class="col-xxl-7">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="card card-h-100">
-                                        <div class="card-header justify-content-between">
-                                            <h4 class="card-title">Revenue By Locations</h4>
-                                            <div class="dropdown ms-auto">
-                                                <a href="#" class="btn btn-sm btn-default btn-icon" data-bs-toggle="dropdown">
-                                                    <i class="ti ti-dots-vertical fs-lg"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-map me-2"></i> View Full Map </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-download me-2"></i> Export Revenue Data </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-filter-2 me-2"></i> Filter By Region </a>
-                                                    </li>
-                                                    <li>
-                                                        <hr class="dropdown-divider" />
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger" href="#"> <i class="ti ti-trash me-2"></i> Remove Widget </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <div class="card-body pt-1">
-                                            <div id="revenue-by-location" style="height: 206px"></div>
-
-                                            <div class="mt-3">
-                                                <div class="p-2 mb-3 border-dashed border rounded">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar-lg flex-shrink-0 me-2">
-                                                            <span class="avatar-title bg-warning-subtle rounded-circle fs-1">
-                                                                <i class="ti ti-medal text-warning"></i>
-                                                            </span>
-                                                        </div>
-                                                        <div class="flex-gow-1">
-                                                            <h5 class="mb-0 fw-semibold">Congratulations !...</h5>
-                                                            <p class="mb-0 text-muted">You've just hit a new record..</p>
-                                                        </div>
-                                                        <div class="ms-auto">
-                                                            <h4 class="fs-16 mt-1 mb-0">25.9k</h4>
-                                                            <span class="text-muted fw-semibold fs-12">ORDERS</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="d-flex align-items-center mb-2 gap-2">
-                                                    <i class="ti ti-circle text-info fs-md"></i>
-                                                    <div>United States</div>
-                                                    <p class="mb-0 ms-auto"><span class="fw-semibold">$48.6k</span> <span class="text-muted">Revenue</span></p>
-                                                </div>
-
-                                                <div class="d-flex align-items-center mb-2 gap-2">
-                                                    <i class="ti ti-circle text-primary fs-md"></i>
-                                                    <div>United Kingdom</div>
-                                                    <p class="mb-0 ms-auto"><span class="fw-semibold">$26.4k</span> <span class="text-muted">Revenue</span></p>
-                                                </div>
-
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <i class="ti ti-circle text-secondary fs-md"></i>
-                                                    <div>Australia</div>
-                                                    <p class="mb-0 ms-auto"><span class="fw-semibold">$18.9k</span> <span class="text-muted">Revenue</span></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- end card-body-->
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col-->
-
-                                <div class="col-lg-6">
-                                    <div class="card card-h-100">
-                                        <div class="card-header justify-content-between">
-                                            <h4 class="card-title">Recent Activity</h4>
-                                            <div class="dropdown ms-auto">
-                                                <a href="#" class="btn btn-sm btn-default btn-icon" data-bs-toggle="dropdown">
-                                                    <i class="ti ti-dots-vertical fs-lg"></i>
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-activity me-2"></i> View Activity Log </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-filter-2 me-2"></i> Filter Activities </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"> <i class="ti ti-download me-2"></i> Export Logs </a>
-                                                    </li>
-                                                    <li><hr class="dropdown-divider" /></li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger" href="#"> <i class="ti ti-trash me-2"></i> Clear Activity </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <div class="card-body" data-simplebar style="max-height: 426px">
-                                            <div class="timeline timeline-users">
-                                                <!-- Event 1 -->
-                                                <div class="timeline-item d-flex align-items-stretch">
-                                                    <div class="timeline-dot text-bg-primary">
-                                                        <i class="ti ti-shopping-cart fs-md"></i>
-                                                    </div>
-                                                    <div class="timeline-content ps-3 pb-4">
-                                                        <h5 class="mb-1">New Orders Synced from Storefront</h5>
-                                                        <p class="mb-1 text-muted">1,250 new customer orders were successfully imported from the online store.</p>
-                                                        <span class="text-primary fw-semibold">By Olivia Green</span>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Event 2 -->
-                                                <div class="timeline-item d-flex align-items-stretch">
-                                                    <div class="timeline-dot text-bg-success">
-                                                        <i class="ti ti-credit-card fs-md"></i>
-                                                    </div>
-                                                    <div class="timeline-content ps-3 pb-4">
-                                                        <h5 class="mb-1">Payment Gateway Integration Updated</h5>
-                                                        <p class="mb-1 text-muted">Stripe API upgraded to support faster settlements and improved security tokens.</p>
-                                                        <span class="text-primary fw-semibold">By James Parker</span>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Event 3 -->
-                                                <div class="timeline-item d-flex align-items-stretch">
-                                                    <div class="timeline-dot text-bg-warning">
-                                                        <i class="ti ti-package fs-md"></i>
-                                                    </div>
-                                                    <div class="timeline-content ps-3 pb-4">
-                                                        <h5 class="mb-1">Inventory Levels Auto-Synced</h5>
-                                                        <p class="mb-1 text-muted">All product quantities were updated based on the latest warehouse data.</p>
-                                                        <span class="text-primary fw-semibold">By Sophia Lee</span>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Event 4 -->
-                                                <div class="timeline-item d-flex align-items-stretch">
-                                                    <div class="timeline-dot text-bg-info">
-                                                        <i class="ti ti-user fs-md"></i>
-                                                    </div>
-                                                    <div class="timeline-content ps-3 pb-4">
-                                                        <h5 class="mb-1">New Vendor Accounts Approved</h5>
-                                                        <p class="mb-1 text-muted">Five new seller accounts were verified and added to the marketplace.</p>
-                                                        <span class="text-primary fw-semibold">By Liam Johnson</span>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Event 5 -->
-                                                <div class="timeline-item d-flex align-items-stretch">
-                                                    <div class="timeline-dot text-bg-danger">
-                                                        <i class="ti ti-alert-circle fs-md"></i>
-                                                    </div>
-                                                    <div class="timeline-content ps-3 pb-4">
-                                                        <h5 class="mb-1">Refund Requests Reviewed</h5>
-                                                        <p class="mb-1 text-muted">27 refund claims were processed successfully with zero pending disputes.</p>
-                                                        <span class="text-primary fw-semibold">By Ethan Miller</span>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Event 6 -->
-                                                <div class="timeline-item d-flex align-items-stretch">
-                                                    <div class="timeline-dot text-bg-secondary">
-                                                        <i class="ti ti-speakerphone fs-md"></i>
-                                                    </div>
-                                                    <div class="timeline-content ps-3">
-                                                        <h5 class="mb-1">Summer Campaign Launched</h5>
-                                                        <p class="mb-1 text-muted">The “Summer Deals 2025” campaign is now live across all marketing channels.</p>
-                                                        <span class="text-primary fw-semibold">By Ava Mitchell</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- end timeline -->
-                                        </div>
-                                        <!-- end slimscroll -->
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col -->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end row -->
+    <div class="content-page">
+        <div class="container-fluid">
+            <!-- Page Title Head -->
+            <div class="page-title-head d-flex align-items-center mb-3">
+                <div class="flex-grow-1">
+                    <h4 class="page-main-title m-0" style="color: #6A1B29;">Dashboard</h4>
+                    <p class="text-muted mb-0 fs-13">Here's a quick overview of your matrimony platform.</p>
                 </div>
-                <!-- container -->
 
-                <!-- Footer Start -->
-                <footer class="footer">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6 text-center text-md-start">
-                                <script>
-                                    document.write(new Date().getFullYear())
-                                </script>
-                                © Paces - By <span class="fw-bold text-decoration-underline text-uppercase text-reset fs-12">Coderthemes</span>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-none d-md-flex justify-content-end gap-3">
-                                    <a href="javascript: void(0);" class="link-reset">About</a>
-                                    <a href="javascript: void(0);" class="link-reset">Support</a>
-                                    <a href="javascript: void(0);" class="link-reset">Contact Us</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-                <!-- end Footer -->
-
+                <div class="text-end d-flex align-items-center gap-2">
+                    <ol class="breadcrumb m-0 py-0 d-none d-md-flex">
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Thirumana</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                    <span class="badge rounded-pill px-3 py-2 text-dark border bg-white shadow-sm ms-2">
+                        <span class="avatar-xs d-inline-block text-center rounded-circle text-white me-1"
+                            style="background-color: #6A1B29; width: 22px; height: 22px; line-height: 22px; font-size: 10px;">AJ</span>
+                        Admin <span class="text-muted fs-11">(Super Admin)</span>
+                    </span>
+                </div>
             </div>
 
-            <!-- ============================================================== -->
-            <!-- End of Main Content -->
-            <!-- ============================================================== -->
+            <!-- Date Indicator -->
+            <div class="mb-3">
+                <span class="text-muted fs-12 fw-medium">
+                    <i class="ti ti-calendar me-1"></i>
+                    <script>
+                        document.write(new Date().toLocaleDateString("en-US", { weekday: 'long', day: "numeric", month: "long", year: "numeric" }))
+                    </script>
+                </span>
+            </div>
+
+            <!-- ROW 1: 4 Metric KPI Cards -->
+            <div class="row g-3 mb-4">
+                <!-- Total Members -->
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card card-h-100 border-0 shadow-sm rounded-3 position-relative overflow-hidden"
+                        style="border: 1px solid #F3E5E8 !important;">
+                        <div class="position-absolute top-0 start-0 bottom-0"
+                            style="width: 4px; background-color: #6A1B29;"></div>
+                        <div class="card-body ps-4 py-3">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="text-muted fs-12 fw-medium">
+                                    <span class="badge rounded-circle me-1"
+                                        style="background-color: #FAF5F5; color: #6A1B29;">+</span> Total Members
+                                </span>
+                            </div>
+                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">12,840</h3>
+                            <span class="text-success fs-11 fw-semibold"><i class="ti ti-trending-up"></i> +12.8% vs last
+                                month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Reviews -->
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card card-h-100 border-0 shadow-sm rounded-3 position-relative overflow-hidden"
+                        style="border: 1px solid #F3E5E8 !important;">
+                        <div class="position-absolute top-0 start-0 bottom-0 bg-warning" style="width: 4px;"></div>
+                        <div class="card-body ps-4 py-3">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="text-muted fs-12 fw-medium">
+                                    <span class="badge rounded-circle me-1 bg-warning-subtle text-warning">+</span> Pending
+                                    Reviews
+                                </span>
+                            </div>
+                            <h3 class="fw-bold mb-1 text-dark">186</h3>
+                            <span class="text-muted fs-11">Needs admin attention</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Vendors -->
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card card-h-100 border-0 shadow-sm rounded-3 position-relative overflow-hidden"
+                        style="border: 1px solid #F3E5E8 !important;">
+                        <div class="position-absolute top-0 start-0 bottom-0 bg-success" style="width: 4px;"></div>
+                        <div class="card-body ps-4 py-3">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="text-muted fs-12 fw-medium">
+                                    <span class="badge rounded-circle me-1 bg-success-subtle text-success">+</span> Active
+                                    Vendors
+                                </span>
+                            </div>
+                            <h3 class="fw-bold mb-1 text-dark">248</h3>
+                            <span class="text-success fs-11 fw-semibold"><i class="ti ti-trending-up"></i> +8.4% vs last
+                                month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Membership Revenue -->
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card card-h-100 border-0 shadow-sm rounded-3 position-relative overflow-hidden"
+                        style="border: 1px solid #F3E5E8 !important;">
+                        <div class="position-absolute top-0 start-0 bottom-0"
+                            style="width: 4px; background-color: #AF384E;"></div>
+                        <div class="card-body ps-4 py-3">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="text-muted fs-12 fw-medium">
+                                    <span class="badge rounded-circle me-1"
+                                        style="background-color: #FFF0F2; color: #AF384E;">+</span> Membership Revenue
+                                </span>
+                            </div>
+                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">₹4.82L</h3>
+                            <span class="text-success fs-11 fw-semibold"><i class="ti ti-trending-up"></i> +15.2% vs last
+                                month</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+
+            <!-- ROW 2: Registration Overview & Verification Queue -->
+            <div class="row g-3 mb-4">
+                <!-- Registration Overview Chart -->
+                <div class="col-lg-8">
+                    <div class="card card-h-100 border-0 shadow-sm rounded-3" style="border: 1px solid #F3E5E8 !important;">
+                        <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title mb-1" style="color: #6A1B29;">Registration Overview</h5>
+                                <p class="text-muted fs-12 mb-0">New profiles created over the last 7 months</p>
+                            </div>
+                            <div class="dropdown">
+                                <a href="#" class="btn btn-sm btn-light btn-icon" data-bs-toggle="dropdown">
+                                    <i class="ti ti-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#">Download Report</a></li>
+                                    <li><a class="dropdown-item" href="#">Refresh</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div dir="ltr">
+                                <div id="registration-overview-chart" class="apex-charts" style="min-height: 250px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Queue -->
+                <div class="col-lg-4">
+                    <div class="card card-h-100 border-0 shadow-sm rounded-3" style="border: 1px solid #F3E5E8 !important;">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-1" style="color: #6A1B29;">Verification Queue</h5>
+                            <p class="text-muted fs-12 mb-0">Profiles waiting for review</p>
+                        </div>
+                        <div class="card-body pt-0 d-flex flex-column justify-content-around">
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-2 mb-2"
+                                style="background-color: #FCF7F8; border: 1px solid #F7ECEE;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar-xs rounded-circle d-flex align-items-center justify-content-center"
+                                        style="background-color: #F8EBEF; color: #6A1B29;">
+                                        <i class="ti ti-photo"></i>
+                                    </span>
+                                    <span class="fs-13 fw-medium text-dark">Photo verification</span>
+                                </div>
+                                <span class="badge px-3 py-2 rounded-pill fs-12 fw-bold"
+                                    style="background-color: #F8EBEF; color: #6A1B29;">82</span>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-2 mb-2"
+                                style="background-color: #FCF7F8; border: 1px solid #F7ECEE;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span
+                                        class="avatar-xs rounded-circle d-flex align-items-center justify-content-center bg-info-subtle text-info">
+                                        <i class="ti ti-id"></i>
+                                    </span>
+                                    <span class="fs-13 fw-medium text-dark">Identity documents</span>
+                                </div>
+                                <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill fs-12 fw-bold">64</span>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-2"
+                                style="background-color: #FCF7F8; border: 1px solid #F7ECEE;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span
+                                        class="avatar-xs rounded-circle d-flex align-items-center justify-content-center bg-warning-subtle text-warning">
+                                        <i class="ti ti-briefcase"></i>
+                                    </span>
+                                    <span class="fs-13 fw-medium text-dark">Vendor applications</span>
+                                </div>
+                                <span
+                                    class="badge bg-warning-subtle text-warning px-3 py-2 rounded-pill fs-12 fw-bold">40</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+
+            <!-- ROW 3: Recent Registrations Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-3 mb-4" style="border: 1px solid #F3E5E8 !important;">
+                        <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title mb-1" style="color: #6A1B29;">Recent Registrations</h5>
+                                <p class="text-muted fs-12 mb-0">Latest profiles and their review status</p>
+                            </div>
+                            <div>
+                                <a href="{{ url('/management') }}"
+                                    class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #6A1B29;">
+                                    View All <i class="ti ti-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead
+                                        style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; color: #6A1B29;">
+                                        <tr>
+                                            <th class="ps-4">User ID</th>
+                                            <th>Name</th>
+                                            <th>Profile</th>
+                                            <th>Status</th>
+                                            <th class="pe-4">Joined</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="fs-13">
+                                        <tr>
+                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10482</td>
+                                            <td class="fw-medium text-dark">Priya S.</td>
+                                            <td class="text-muted">Female · Chennai</td>
+                                            <td><span
+                                                    class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 fs-11">Pending</span>
+                                            </td>
+                                            <td class="pe-4 text-muted">13 Oct 2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10481</td>
+                                            <td class="fw-medium text-dark">Arun K.</td>
+                                            <td class="text-muted">Male · Coimbatore</td>
+                                            <td><span
+                                                    class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-11">Approved</span>
+                                            </td>
+                                            <td class="pe-4 text-muted">13 Oct 2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10480</td>
+                                            <td class="fw-medium text-dark">Nivetha R.</td>
+                                            <td class="text-muted">Female · Madurai</td>
+                                            <td><span
+                                                    class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 fs-11">Pending</span>
+                                            </td>
+                                            <td class="pe-4 text-muted">12 Oct 2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10479</td>
+                                            <td class="fw-medium text-dark">Karthik M.</td>
+                                            <td class="text-muted">Male · Salem</td>
+                                            <td><span
+                                                    class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-2 py-1 fs-11">Review</span>
+                                            </td>
+                                            <td class="pe-4 text-muted">12 Oct 2026</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+
         </div>
-        <!-- END wrapper -->
+        <!-- container -->
+
+        <!-- Footer Start -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start">
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script>
+                        © GenZ Matrimonial - Developed for <span
+                            class="fw-bold text-decoration-underline text-reset fs-12">Thirumana Admin</span>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-none d-md-flex justify-content-end gap-3">
+                            <a href="javascript: void(0);" class="link-reset">About</a>
+                            <a href="javascript: void(0);" class="link-reset">Support</a>
+                            <a href="javascript: void(0);" class="link-reset">Privacy Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end Footer -->
+    </div>
+
+    <!-- ApexChart Script for Registration Overview -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartOptions = {
+                series: [{
+                    name: 'Registrations',
+                    type: 'column',
+                    data: [420, 560, 510, 680, 620, 890, 950]
+                }, {
+                    name: 'Trend Line',
+                    type: 'line',
+                    data: [420, 560, 510, 680, 620, 890, 950]
+                }],
+                chart: {
+                    height: 250,
+                    type: 'line',
+                    toolbar: { show: false }
+                },
+                stroke: {
+                    width: [0, 3],
+                    curve: 'smooth'
+                },
+                colors: ['#F3D3D9', '#6A1B29'],
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        columnWidth: '32%'
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                xaxis: {
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: {
+                        style: { colors: '#9e9e9e', fontSize: '11px' }
+                    }
+                },
+                yaxis: {
+                    show: false
+                },
+                grid: {
+                    borderColor: '#F3E5E8',
+                    strokeDashArray: 3
+                },
+                legend: {
+                    show: false
+                }
+            };
+
+            if (document.querySelector("#registration-overview-chart")) {
+                const chart = new ApexCharts(document.querySelector("#registration-overview-chart"), chartOptions);
+                chart.render();
+            }
+        });
+    </script>
 @endsection

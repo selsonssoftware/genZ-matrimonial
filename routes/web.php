@@ -29,3 +29,12 @@ Route::get('/vendors', function () {
 Route::get('/matches-interests', function () {
     return view('matches-interests');
 });
+Route::get('/membership', function () {
+    return view('membership');
+<<<<<<< HEAD
+});
+Route::get('/matrimonymasterdata', function () {
+    return view('matrimonymasterdata');
+=======
+>>>>>>> bf25f21486d143a4e38e1a38cc483cc61ff43bb0
+});
