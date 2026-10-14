@@ -1092,13 +1092,13 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a data-bs-toggle="collapse" href="#invoice" aria-expanded="false" aria-controls="invoice"
+                            <a data-bs-toggle="collapse" href="/membership" aria-expanded="false" aria-controls="invoice"
                                 class="side-nav-link">
                                 <span class="menu-icon"><i class="ti ti-invoice"></i></span>
                                 <span class="menu-text" data-lang="invoice">Membership and Payments</span>
-                                <span class="menu-arrow"></span>
+                                <!-- <span class="menu-arrow"></span> -->
                             </a>
-                            <div class="collapse" id="invoice">
+                            <!-- <div class="collapse" id="invoice">
                                 <ul class="sub-menu">
                                     <li class="side-nav-item">
                                         <a href="apps-invoice-list.html" class="side-nav-link">
@@ -1117,7 +1117,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> -->
                         </li>
                         <li class="side-nav-item">
                             <a data-bs-toggle="collapse" href="#crm" aria-expanded="false" aria-controls="crm"
