@@ -36,7 +36,7 @@
                     <!-- Topbar Brand Logo -->
                     <div class="logo-topbar">
                         <!-- Logo light -->
-                        <a href="/" class="logo-light">
+                        <a href="/dashboard" class="logo-light">
                             <span class="logo-lg">
                                 <img src="{{ asset('dashboardassets/images/main-logo.png') }}" alt="logo" />
                             </span>
@@ -960,7 +960,7 @@
         <!-- Topbar End -->
         <div class="sidenav-menu">
             <!-- Brand Logo -->
-            <a href="/" class="logo">
+            <a href="/dashboard" class="logo">
                 <span class="logo logo-light">
                     <span class="logo-lg"><img src="{{ asset('dashboardassets/images/main-logo.png') }}"
                             alt="logo" /></span>
@@ -1046,7 +1046,7 @@
                         <li class="side-nav-title mt-2">Main</li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/') }}" class="side-nav-link">
+                            <a href="{{ url('/dashboard') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-dashboard"></i>
                                 </span>
@@ -1081,6 +1081,18 @@
                                 <span class="menu-text">Vendor Management</span>
                             </a>
                         </li>
+
+
+
+                        <li class="side-nav-item">
+                            <a href="{{ url('/admins') }}" class="side-nav-link">
+                                <span class="menu-icon">
+                                    <i class="ti ti-user-shield"></i>
+                                </span>
+                                <span class="menu-text">Admin</span>
+                            </a>
+                        </li>
+
 
 
                         <li class="side-nav-item">
@@ -1160,96 +1172,30 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a data-bs-toggle="collapse" href="#hrm" aria-expanded="false" aria-controls="hrm"
-                                class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-accessible"></i></span>
-                                <span class="menu-text" data-lang="hrm">settings</span>
-                                <span class="menu-arrow"></span>
+                            <a href="{{ url('/settings') }}" class="side-nav-link">
+                                <span class="menu-icon">
+                                    <i class="ti ti-settings"></i>
+                                </span>
+                                <span class="menu-text" data-lang="settings">Settings</span>
                             </a>
-                            <div class="collapse" id="hrm">
-                                <ul class="sub-menu">
-                                    <li class="side-nav-item">
-                                        <a data-bs-toggle="collapse" href="#staffs" aria-expanded="false"
-                                            aria-controls="staffs" class="side-nav-link">
-                                            <span class="menu-text" data-lang="staffs">Staffs</span>
-                                            <span class="menu-arrow"></span>
-                                        </a>
-                                        <div class="collapse" id="staffs">
-                                            <ul class="sub-menu">
-                                                <li class="side-nav-item">
-                                                    <a href="apps-hrm-staffs.html" class="side-nav-link">
-                                                        <span class="menu-text" data-lang="apps-hrm-staffs">Staffs
-                                                            List</span>
-                                                    </a>
-                                                </li>
-                                                <li class="side-nav-item">
-                                                    <a href="apps-hrm-staff-profile.html" class="side-nav-link">
-                                                        <span class="menu-text" data-lang="apps-hrm-staff-profile">Staff
-                                                            Profile</span>
-                                                    </a>
-                                                </li>
-                                                <li class="side-nav-item">
-                                                    <a href="apps-hrm-staff-add.html" class="side-nav-link">
-                                                        <span class="menu-text" data-lang="apps-hrm-staff-add">Add
-                                                            Staffs</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-hrm-departments.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-hrm-departments">Departments</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-hrm-attendance.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-hrm-attendance">Attendance</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a data-bs-toggle="collapse" href="#leaves" aria-expanded="false"
-                                            aria-controls="leaves" class="side-nav-link">
-                                            <span class="menu-text" data-lang="leaves">Leaves</span>
-                                            <span class="menu-arrow"></span>
-                                        </a>
-                                        <div class="collapse" id="leaves">
-                                            <ul class="sub-menu">
-                                                <li class="side-nav-item">
-                                                    <a href="apps-hrm-leaves.html" class="side-nav-link">
-                                                        <span class="menu-text"
-                                                            data-lang="apps-hrm-leaves">Leaves</span>
-                                                    </a>
-                                                </li>
-                                                <li class="side-nav-item">
-                                                    <a href="apps-hrm-leave-add.html" class="side-nav-link">
-                                                        <span class="menu-text" data-lang="apps-hrm-leave-add">Add
-                                                            Leave</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-hrm-holidays.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-hrm-holidays">Holidays</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-hrm-payroll.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-hrm-payroll">Payroll</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-hrm-create-salary-slip.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-hrm-create-salary-slip">Create
-                                                Salary Slip</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                         </li>
 
+
+                        <li class="side-nav-item">
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                @csrf
+
+                                <button type="submit" class="side-nav-link"
+                                    style="width:100%; border:0; background:transparent; text-align:left; cursor:pointer;">
+
+                                    <span class="menu-icon">
+                                        <i class="ti ti-logout"></i>
+                                    </span>
+
+                                    <span class="menu-text">Logout</span>
+                                </button>
+                            </form>
+                        </li>
 
 
 

@@ -24,35 +24,76 @@ class UserController extends Controller
         'Review' => 3,
     ];
 
+    /**
+     * Common query:
+     * Admin users ni exclude cheyyadaniki.
+     * NULL role unna users ni include chestundi.
+     */
+    private function nonAdminUsers()
+    {
+        return User::where(function ($query) {
+            $query->whereNull('role')
+                ->orWhere('role', '!=', 'admin');
+        });
+    }
+
+    /**
+     * 1. Display users
+     */
     public function userindex(Request $request)
     {
-        $usersData = User::latest()->get()->map(function ($u) {
-            $statusLabel = is_numeric($u->status)
-                ? ($this->statusToString[(int) $u->status] ?? 'Active')
-                : ($u->status ?? 'Active');
+        $usersData = $this->nonAdminUsers()
+            ->latest()
+            ->get()
+            ->map(function ($user) {
+                $statusLabel = is_numeric($user->status)
+                    ? ($this->statusToString[(int) $user->status] ?? 'Active')
+                    : ($user->status ?? 'Active');
 
-            return [
-                'db_id' => $u->id,
-                'id' => $u->member_id ?? ('TM-' . $u->id),
-                'name' => $u->name,
-                'gender' => $u->gender ?? '',
-                'age' => $u->age ?? '',
-                'city' => $u->city ?? '',
-                'status' => $statusLabel,
-                'plan' => $u->plan ?? 'Free',
-            ];
-        });
+                return [
+                    'db_id' => $user->id,
+                    'id' => $user->member_id ?? ('TM-' . $user->id),
+                    'name' => $user->name,
+                    'gender' => $user->gender ?? '',
+                    'age' => $user->age ?? '',
+                    'city' => $user->city ?? '',
+                    'status' => $statusLabel,
+                    'plan' => $user->plan ?? 'Free',
+                ];
+            });
 
+        // Counts lo admin users include avvaru
         $counts = [
-            'all' => User::count(),
-            'active' => User::where('status', 1)->orWhere('status', 'Active')->count(),
-            'pending' => User::where('status', 0)->orWhere('status', 'Pending')->count(),
-            'suspended' => User::where('status', 2)->orWhere('status', 'Suspended')->count(),
+            'all' => $this->nonAdminUsers()->count(),
+
+            'active' => $this->nonAdminUsers()
+                ->where(function ($query) {
+                    $query->where('status', 1)
+                        ->orWhere('status', 'Active');
+                })
+                ->count(),
+
+            'pending' => $this->nonAdminUsers()
+                ->where(function ($query) {
+                    $query->where('status', 0)
+                        ->orWhere('status', 'Pending');
+                })
+                ->count(),
+
+            'suspended' => $this->nonAdminUsers()
+                ->where(function ($query) {
+                    $query->where('status', 2)
+                        ->orWhere('status', 'Suspended');
+                })
+                ->count(),
         ];
 
         return view('management', compact('usersData', 'counts'));
     }
 
+    /**
+     * 2. Create user
+     */
     public function userstore(Request $request)
     {
         $validated = $request->validate([
@@ -70,6 +111,12 @@ class UserController extends Controller
 
         $statusInt = $this->stringToStatus[$validated['status']] ?? 1;
 
+        $emailBase = Str::slug($validated['name']) ?: 'user';
+
+        do {
+            $email = $emailBase . rand(100, 999) . '@example.com';
+        } while (User::where('email', $email)->exists());
+
         $user = User::create([
             'member_id' => $memberId,
             'name' => $validated['name'],
@@ -79,7 +126,7 @@ class UserController extends Controller
             'status' => $statusInt,
             'plan' => $validated['plan'],
             'role' => 'user',
-            'email' => Str::slug($validated['name']) . rand(100, 999) . '@example.com',
+            'email' => $email,
             'password' => Hash::make('12345678'),
         ]);
 
@@ -99,6 +146,9 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * 3. Update user
+     */
     public function userupdate(Request $request, $id)
     {
         $validated = $request->validate([
@@ -110,7 +160,9 @@ class UserController extends Controller
             'plan' => 'required|in:Free,Premium',
         ]);
 
-        $user = User::findOrFail($id);
+        // Admin user ni update cheyyakudadhu
+        $user = $this->nonAdminUsers()->findOrFail($id);
+
         $statusInt = $this->stringToStatus[$validated['status']] ?? 1;
 
         $user->update([
@@ -138,9 +190,14 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * 4. Delete user
+     */
     public function userdestroy($id)
     {
-        $user = User::findOrFail($id);
+        // Admin user ni delete cheyyakudadhu
+        $user = $this->nonAdminUsers()->findOrFail($id);
+
         $user->delete();
 
         return response()->json([
@@ -149,17 +206,25 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * 5. Export users to CSV
+     */
     public function userexport(Request $request)
     {
-        $query = User::query();
+        // CSV lo kuda admin users exclude avutharu
+        $query = $this->nonAdminUsers();
 
         if ($request->filled('gender')) {
             $query->where('gender', $request->gender);
         }
+
         if ($request->filled('status')) {
-            $statusVal = $this->stringToStatus[$request->status] ?? $request->status;
+            $statusVal = $this->stringToStatus[$request->status]
+                ?? $request->status;
+
             $query->where('status', $statusVal);
         }
+
         if ($request->filled('plan')) {
             $query->where('plan', $request->plan);
         }
@@ -169,7 +234,16 @@ class UserController extends Controller
         return new StreamedResponse(function () use ($query) {
             $handle = fopen('php://output', 'w');
 
-            fputcsv($handle, ['Member ID', 'Name', 'Gender', 'Age', 'City', 'Status', 'Plan', 'Created At']);
+            fputcsv($handle, [
+                'Member ID',
+                'Name',
+                'Gender',
+                'Age',
+                'City',
+                'Status',
+                'Plan',
+                'Created At',
+            ]);
 
             $query->chunk(500, function ($users) use ($handle) {
                 foreach ($users as $user) {
@@ -184,16 +258,18 @@ class UserController extends Controller
                         $user->age ?? 'N/A',
                         $user->city ?? 'N/A',
                         $statusLabel,
-                        $user->plan,
-                        $user->created_at ? $user->created_at->format('Y-m-d H:i') : '',
+                        $user->plan ?? 'Free',
+                        $user->created_at
+                        ? $user->created_at->format('Y-m-d H:i')
+                        : '',
                     ]);
                 }
             });
 
             fclose($handle);
         }, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ]);
     }
 }
