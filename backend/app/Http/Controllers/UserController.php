@@ -88,7 +88,7 @@ class UserController extends Controller
                 ->count(),
         ];
 
-        return view('management', compact('usersData', 'counts'));
+        return view('admin.management', compact('usersData', 'counts'));
     }
 
     /**
