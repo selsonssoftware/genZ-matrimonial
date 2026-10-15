@@ -1092,12 +1092,8 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/membership') }}" class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-currency-rupee"></i></span>
-                                <span class="menu-text">Membership & Payments</span>
-                            </a>
-                            <a data-bs-toggle="collapse" href="/membership" aria-expanded="false"
-                                aria-controls="invoice" class="side-nav-link">
+                            <a data-bs-toggle="collapse" href="{{ url('/membership') }}" aria-expanded="false" aria-controls="invoice"
+                                class="side-nav-link">
                                 <span class="menu-icon"><i class="ti ti-invoice"></i></span>
                                 <span class="menu-text" data-lang="invoice">Membership and Payments</span>
                                 <!-- <span class="menu-arrow"></span> -->
@@ -1187,34 +1183,184 @@
                                 <span class="menu-text">Reports</span>
                             </a>
                         </li>
-
+                            
                         <li class="side-nav-item">
-                            <a href="{{ url('/settings') }}" class="side-nav-link">
-                                <span class="menu-icon">
-                                    <i class="ti ti-briefcase"></i>
-                                </span>
-                                <span class="menu-text">Settings</span>
+                            <a data-bs-toggle="collapse" href="#hrm" aria-expanded="false" aria-controls="hrm"
+                                class="side-nav-link">
+                                <span class="menu-icon"><i class="ti ti-accessible"></i></span>
+                                <span class="menu-text" data-lang="hrm">settings</span>
+                                <span class="menu-arrow"></span>
                             </a>
+                            <div class="collapse" id="hrm">
+                                <ul class="sub-menu">
+                                    <li class="side-nav-item">
+                                        <a data-bs-toggle="collapse" href="#staffs" aria-expanded="false"
+                                            aria-controls="staffs" class="side-nav-link">
+                                            <span class="menu-text" data-lang="staffs">Staffs</span>
+                                            <span class="menu-arrow"></span>
+                                        </a>
+                                        <div class="collapse" id="staffs">
+                                            <ul class="sub-menu">
+                                                <li class="side-nav-item">
+                                                    <a href="apps-hrm-staffs.html" class="side-nav-link">
+                                                        <span class="menu-text" data-lang="apps-hrm-staffs">Staffs
+                                                            List</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="apps-hrm-staff-profile.html" class="side-nav-link">
+                                                        <span class="menu-text" data-lang="apps-hrm-staff-profile">Staff
+                                                            Profile</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="apps-hrm-staff-add.html" class="side-nav-link">
+                                                        <span class="menu-text" data-lang="apps-hrm-staff-add">Add
+                                                            Staffs</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="side-nav-item">
+                                        <a href="apps-hrm-departments.html" class="side-nav-link">
+                                            <span class="menu-text" data-lang="apps-hrm-departments">Departments</span>
+                                        </a>
+                                    </li>
+                                    <li class="side-nav-item">
+                                        <a href="apps-hrm-attendance.html" class="side-nav-link">
+                                            <span class="menu-text" data-lang="apps-hrm-attendance">Attendance</span>
+                                        </a>
+                                    </li>
+                                    <li class="side-nav-item">
+                                        <a data-bs-toggle="collapse" href="#leaves" aria-expanded="false"
+                                            aria-controls="leaves" class="side-nav-link">
+                                            <span class="menu-text" data-lang="leaves">Leaves</span>
+                                            <span class="menu-arrow"></span>
+                                        </a>
+                                        <div class="collapse" id="leaves">
+                                            <ul class="sub-menu">
+                                                <li class="side-nav-item">
+                                                    <a href="apps-hrm-leaves.html" class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="apps-hrm-leaves">Leaves</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="apps-hrm-leave-add.html" class="side-nav-link">
+                                                        <span class="menu-text" data-lang="apps-hrm-leave-add">Add
+                                                            Leave</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="side-nav-item">
+                                        <a href="apps-hrm-holidays.html" class="side-nav-link">
+                                            <span class="menu-text" data-lang="apps-hrm-holidays">Holidays</span>
+                                        </a>
+                                    </li>
+                                    <li class="side-nav-item">
+                                        <a href="apps-hrm-payroll.html" class="side-nav-link">
+                                            <span class="menu-text" data-lang="apps-hrm-payroll">Payroll</span>
+                                        </a>
+                                    </li>
+                                    <li class="side-nav-item">
+                                        <a href="apps-hrm-create-salary-slip.html" class="side-nav-link">
+                                            <span class="menu-text" data-lang="apps-hrm-create-salary-slip">Create
+                                                Salary Slip</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
-                    </ul>
-                </div>
-                </li>
-                </ul>
-            </div>
-            </li>
-            <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons"
-                    class="side-nav-link">
-                    <span class="menu-icon"><i class="ti ti-icons"></i></span>
-                    <span class="menu-text" data-lang="icons">Icons</span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="icons">
-                    <ul class="sub-menu">
-                        <li class="side-nav-item">
-                            <a href="icons-tabler.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="icons-tabler">Tabler</span>
-                            </a>
+                       
+                                    
+                               
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-fixed-columns.html"
+                                                        class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-fixed-columns">Fixed
+                                                            Columns</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-fixed-header.html" class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-fixed-header">Fixed
+                                                            Header</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-columns.html" class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-columns">Show &amp; Hide
+                                                            Column</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-child-rows.html" class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-child-rows">Child Rows</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-column-searching.html"
+                                                        class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-column-searching">Column
+                                                            Searching</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-range-search.html" class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-range-search">Range
+                                                            Search</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-rows-add.html" class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-rows-add">Add Rows</span>
+                                                    </a>
+                                                </li>
+                                                <li class="side-nav-item">
+                                                    <a href="tables-datatables-checkbox-select.html"
+                                                        class="side-nav-link">
+                                                        <span class="menu-text"
+                                                            data-lang="tables-datatables-checkbox-select">Checkbox
+                                                            Select</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                         <li class="side-nav-item">
                             <a href="icons-lucide.html" class="side-nav-link">
