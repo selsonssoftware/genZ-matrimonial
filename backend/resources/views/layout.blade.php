@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Projects Dashboard | Paces - Multipurpose Tailwind CSS & Bootstrap Admin Dashboard Template</title>
+    <title>Genz Matrimony</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description"
         content="Paces is a modern, responsive admin dashboard available on ThemeForest. Ideal for building CRM, CMS, project management tools, and custom web applications with a clean UI, flexible layouts, and rich features." />
@@ -14,10 +14,10 @@
     <meta name="author" content="Coderthemes" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('dashboardassets/images/favicon.ico') }}" />
+    <link rel="shortcut icon" href="{{ asset('dashboardassets/images/top-logo.png') }}" />
     <!-- Theme Config Js -->
     <script src="{{ asset('dashboardassets/js/config.js') }}"></script>
-    <script src="demo.js') }}"></script>
+    <script src="{{ asset('dashboardassets/js/demo.js') }}"></script>
 
     <!-- Vendor css -->
     <link href="{{ asset('dashboardassets/css/vendors.min.css') }}" rel="stylesheet" type="text/css" />
@@ -36,9 +36,9 @@
                     <!-- Topbar Brand Logo -->
                     <div class="logo-topbar">
                         <!-- Logo light -->
-                        <a href="index.html" class="logo-light">
+                        <a href="/" class="logo-light">
                             <span class="logo-lg">
-                                <img src="{{ asset('dashboardassets/images/logo.png') }}" alt="logo" />
+                                <img src="{{ asset('dashboardassets/images/main-logo.png') }}" alt="logo" />
                             </span>
                             <span class="logo-sm">
                                 <img src="{{ asset('dashboardassets/images/logo-sm.png') }}" alt="small logo" />
@@ -46,7 +46,7 @@
                         </a>
 
                         <!-- Logo Dark -->
-                        <a href="index.html" class="logo-dark">
+                        <a href="/" class="logo-dark">
                             <span class="logo-lg">
                                 <img src="{{ asset('dashboardassets/images/logo-black.png') }}" alt="dark logo" />
                             </span>
@@ -960,9 +960,10 @@
         <!-- Topbar End -->
         <div class="sidenav-menu">
             <!-- Brand Logo -->
-            <a href="index.html" class="logo">
+            <a href="/" class="logo">
                 <span class="logo logo-light">
-                    <span class="logo-lg"><img src="{{ asset('dashboardassets/images/logo.png') }}" alt="logo" /></span>
+                    <span class="logo-lg"><img src="{{ asset('dashboardassets/images/main-logo.png') }}"
+                            alt="logo" /></span>
                     <span class="logo-sm"><img src="{{ asset('dashboardassets/images/logo-sm.png') }}"
                             alt="small logo" /></span>
                 </span>
@@ -1091,37 +1092,14 @@
                             </a>
                         </li>
 
+
                         <li class="side-nav-item">
                             <a href="{{ url('/membership') }}" class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-currency-rupee"></i></span>
-                                <span class="menu-text">Membership & Payments</span>
+                                <span class="menu-icon">
+                                    <i class="ti ti-wallet"></i>
+                                </span>
+                                <span class="menu-text">Membership &amp; Payments</span>
                             </a>
-                            <a data-bs-toggle="collapse" href="/membership" aria-expanded="false"
-                                aria-controls="invoice" class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-invoice"></i></span>
-                                <span class="menu-text" data-lang="invoice">Membership and Payments</span>
-                                <!-- <span class="menu-arrow"></span> -->
-                            </a>
-                            <!-- <div class="collapse" id="invoice">
-                                <ul class="sub-menu">
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-list.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-list">Invoices</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-details.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-details">Single
-                                                Invoice</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-create.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-create">New Invoice</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div> -->
                         </li>
 
                         <li class="side-nav-item">
@@ -1129,56 +1107,21 @@
                                 <span class="menu-icon">
                                     <i class="ti ti-heart-handshake"></i>
                                 </span>
-
                                 <span class="menu-text">Matrimony Master Data</span>
                             </a>
                         </li>
 
                         <li class="side-nav-item">
-                            <a data-bs-toggle="collapse" href="#users" aria-expanded="false" aria-controls="users"
-                                class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-users"></i></span>
-                                <span class="menu-text" data-lang="users">CMS & Communication</span>
-                                <span class="menu-arrow"></span>
+                            <a href="{{ url('/cms-communication') }}" class="side-nav-link">
+                                <span class="menu-icon">
+                                    <i class="ti ti-message-circle"></i>
+                                </span>
+                                <span class="menu-text">CMS & Communication</span>
                             </a>
-                            <div class="collapse" id="users">
-                                <ul class="sub-menu">
-                                    <li class="side-nav-item">
-                                        <a href="apps-users-contacts.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-users-contacts">Contacts</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-users-profile.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-users-profile">Profile</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-users-account-settings.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-users-account-settings">Account
-                                                Settings</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-users-roles.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-users-roles">Roles</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-users-role-details.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-users-role-details">Role
-                                                Details</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-users-permissions.html" class="side-nav-link">
-                                            <span class="menu-text"
-                                                data-lang="apps-users-permissions">Permissions</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                         </li>
+
+
+
                         <li class="side-nav-item">
                             <a href="{{ url('/report') }}" class="side-nav-link">
                                 <span class="menu-icon">
@@ -2038,7 +1981,7 @@
     <script src="{{ asset('dashboardassets/js/pages/custom-table.js') }}"></script>
 
     <!-- Dashboard js -->
-    <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js') }}') }}"></script>
+    <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js') }}"></script>
 </body>
 
 </html>
