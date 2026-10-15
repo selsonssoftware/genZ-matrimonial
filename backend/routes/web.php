@@ -93,15 +93,15 @@ Route::middleware('auth')->group(function () {
         })->name('report');
 
         Route::get('/setting', function () {
-            return view('setting');
+            return view('admin.setting');
         })->name('setting');
 
         Route::get('/settings', function () {
-            return view('setting');
+            return view('admin.setting');
         })->name('settings');
 
         Route::get('/cms-communication', function () {
-            return view('cms-communication');
+            return view('admin.cms-communication');
         })->name('cms-communication');
     });
 
@@ -118,12 +118,12 @@ Route::middleware('auth')->group(function () {
         return view('admin.matrimonymasterdata');
     });
     Route::get('/cms-communication', function () {
-        return view('cms-communication');
+        return view('admin.cms-communication');
     });
     Route::get('/report', function () {
         return view('admin.report');
     });
     Route::get('/settings', function () {
-        return view('setting');
+        return view('admin.setting');
     })->name('settings');
 });

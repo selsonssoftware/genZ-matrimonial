@@ -34,7 +34,7 @@ class AdminController extends Controller
             ->latest()
             ->get();
 
-        return view('admins', compact('admins'));
+        return view('admin.admins', compact('admins'));
     }
 
     public function edit($id)
@@ -43,7 +43,7 @@ class AdminController extends Controller
 
         $admin = $this->findAdmin($id);
 
-        return view('admin-edit', compact('admin'));
+        return view('admin.admin-edit', compact('admin'));
     }
 
 
