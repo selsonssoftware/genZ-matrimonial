@@ -26,6 +26,28 @@
     <link id="app-style" href="{{ asset('dashboardassets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
 
 </head>
+<style>
+
+    #user-profile-settings {
+    background-image: url("/dashboardassets/images/user-bg-pattern.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    }
+    .stock-image {
+    background-image: url("/dashboardassets/images/stock/small-8.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.theme-settings-header {
+    background-image: url("/dashboardassets/images/settings-bg.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+</style>
 
 <body>
     <!-- Begin page -->
@@ -393,8 +415,7 @@
                                         <!-- end col-->
 
                                         <div class="col-sm-4">
-                                            <div class="h-100 position-relative rounded-end rounded-0 overflow-hidden"
-                                                style="background: url({{ asset('dashboardassets/images/stock/small-8.jpg') }}); background-size: cover">
+                                            <div class="stock-image h-100 position-relative rounded-end rounded-0 overflow-hidden">
                                                 <div
                                                     class="p-3 card-img-overlay bg-gradient bg-secondary bg-opacity-90 d-flex align-items-center justify-content-center">
                                                     <div class="text-center text-white">
@@ -986,8 +1007,8 @@
             </button>
 
             <div class="scrollbar" data-simplebar="">
-                <div id="user-profile-settings" class="sidenav-user"
-                    style="background: url({{ asset('dashboardassets/images/user-bg-pattern.svg') }})">
+                <div id="user-profile-settings"
+     class="sidenav-user">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <a href="#!" class="link-reset">
@@ -1045,7 +1066,7 @@
                         <li class="side-nav-title mt-2">Main</li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/') }}" class="side-nav-link">
+                            <a href="{{ url('/admin') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-dashboard"></i>
                                 </span>
@@ -1055,7 +1076,7 @@
 
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/management') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/management') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-users"></i>
                                 </span>
@@ -1066,14 +1087,14 @@
 
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/profile') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/profile') }}" class="side-nav-link">
                                 <span class="menu-icon"><i class="ti ti-message"></i></span>
                                 <span class="menu-text" data-lang="apps-chat">Profile Verification</span>
                             </a>
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/vendors') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/vendors') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-briefcase"></i>
                                 </span>
@@ -1083,7 +1104,7 @@
 
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/matches-interests') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/matches-interests') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-list-check"></i>
                                 </span>
@@ -1092,11 +1113,11 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/membership') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/membership') }}" class="side-nav-link">
                                 <span class="menu-icon"><i class="ti ti-currency-rupee"></i></span>
                                 <span class="menu-text">Membership & Payments</span>
                             </a>
-                            <a data-bs-toggle="collapse" href="/membership" aria-expanded="false"
+                            <a data-bs-toggle="collapse" href="/admin/membership" aria-expanded="false"
                                 aria-controls="invoice" class="side-nav-link">
                                 <span class="menu-icon"><i class="ti ti-invoice"></i></span>
                                 <span class="menu-text" data-lang="invoice">Membership and Payments</span>
@@ -1125,7 +1146,7 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/matrimonymasterdata') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/matrimonymasterdata') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-heart-handshake"></i>
                                 </span>
@@ -1144,7 +1165,7 @@
                             <div class="collapse" id="users">
                                 <ul class="sub-menu">
                                     <li class="side-nav-item">
-                                        <a href="apps-users-contacts.html" class="side-nav-link">
+                                        <a href="{{ url('/admin/users/contacts') }}" class="side-nav-link">
                                             <span class="menu-text" data-lang="apps-users-contacts">Contacts</span>
                                         </a>
                                     </li>
@@ -1176,11 +1197,24 @@
                                                 data-lang="apps-users-permissions">Permissions</span>
                                         </a>
                                     </li>
+                                    
                                 </ul>
                             </div>
                         </li>
+
+
+<li class="side-nav-item">
+    <a href="{{ route('admin.vendor-assignments.index') }}" class="side-nav-link">
+        <span class="menu-icon">
+            <i class="ti ti-users"></i>
+        </span>
+        <span class="menu-text">Vendor Assignment Report</span>
+    </a>
+</li>
+
+
                         <li class="side-nav-item">
-                            <a href="{{ url('/report') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/report') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-briefcase"></i>
                                 </span>
@@ -1189,7 +1223,7 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/settings') }}" class="side-nav-link">
+                            <a href="{{ url('/admin/settings') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-briefcase"></i>
                                 </span>
@@ -1358,9 +1392,12 @@
     <!-- Sidenav Menu End -->
 
     @yield('content')
-    <div class="offcanvas offcanvas-end overflow-hidden" tabindex="-1" id="theme-settings-offcanvas">
-        <div class="d-flex justify-content-between text-bg-primary gap-2 p-3"
-            style="background-image: url({{ asset('dashboardassets/images/settings-bg.png') }})">
+
+<div class="offcanvas offcanvas-end overflow-hidden"
+     tabindex="-1"
+     id="theme-settings-offcanvas">
+
+    <div class="theme-settings-header d-flex justify-content-between text-bg-primary gap-2 p-3">
             <div>
                 <h5 class="mb-1 fw-bold text-white text-uppercase">Admin Customizer</h5>
                 <p class="text-white text-opacity-75 fst-italic fw-medium mb-0">Easily configure layout, styles, and
