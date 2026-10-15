@@ -15,31 +15,31 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('dashboard');
+    return view('admin.dashboard');
 });
 Route::get('/management', function () {
-    return view('management');
+    return view('admin.management');
 });
 Route::get('/profile', function () {
-    return view('profile');
+    return view('admin.profile');
 });
 Route::get('/vendors', function () {
-    return view('vendors');
+    return view('admin.vendors');
 });
 Route::get('/matches-interests', function () {
-    return view('matches-interests');
+    return view('admin.matches-interests');
 });
 Route::get('/membership', function () {
-    return view('membership');
+    return view('admin.membership');
 });
 Route::get('/matrimonymasterdata', function () {
-    return view('matrimonymasterdata');
+    return view('admin.matrimonymasterdata');
 });
 
 Route::get('/report', function () {
-    return view('report');
+    return view('admin.report');
 });
 
 Route::get('/setting', function () {
-    return view('setting');
+    return view('admin.setting');
 });
