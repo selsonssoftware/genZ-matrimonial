@@ -35,3 +35,11 @@ Route::get('/membership', function () {
 Route::get('/matrimonymasterdata', function () {
     return view('matrimonymasterdata');
 });
+
+Route::get('/report', function () {
+    return view('report');
+});
+
+Route::get('/setting', function () {
+    return view('setting');
+});
