@@ -8,16 +8,16 @@
                 <div class="container-fluid">
                     <div class="page-title-head d-flex align-items-center">
                         <div class="flex-grow-1">
-                            <h4 class="page-main-title m-0">Shop Settings</h4>
+                            <h4 class="page-main-title m-0">Settings</h4>
                         </div>
 
-                        <div class="text-end">
+                        <!-- <div class="text-end">
                             <ol class="breadcrumb m-0 py-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Paces</a></li>
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
                                 <li class="breadcrumb-item active">Shop Settings</li>
                             </ol>
-                        </div>
+                        </div> -->
                     </div>
 
 
