@@ -61,13 +61,13 @@
 
             <a href="{{ route('admin.profile-verification.index', ['status' => 'all']) }}"
                class="btn btn-sm px-3 py-2 rounded-3 fw-bold {{ ($status ?? 'pending') === 'all' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
-               style="{{ ($status ?? 'pending') === 'all' ? 'background-color: #561325;' : '' }}">
+                    @if(($status ?? 'pending') === 'all') style="background-color: #561325;" @endif>
                 All profiles
             </a>
 
             <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
                class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'pending' ? 'text-white' : 'btn-light text-muted' }}"
-               style="{{ ($status ?? 'pending') === 'pending' ? 'background-color: #561325;' : '' }}">
+                    @if(($status ?? 'pending') === 'pending') style="background-color: #561325;" @endif>
                 Pending
                 <span class="badge bg-white ms-1"
                       style="color: #561325;">
