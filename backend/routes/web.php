@@ -8,6 +8,10 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MatchesInterestsController;
 
+use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\Admin\CmsController;
+use App\Http\Controllers\Admin\VendorAssignmentReportController;
+
 /*
 |--------------------------------------------------------------------------
 | Public / Authentication Routes
@@ -66,17 +70,42 @@ Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function (
         Route::get('/vendors', [VendorController::class, 'index'])->name('admin.vendors.index');
         Route::post('/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
         Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
-        Route::get('/vendor-assignments', [VendorController::class, 'assignments'])->name('admin.vendor-assignments.index');
 
 Route::get('/matches-interests', [
     MatchesInterestsController::class,
     'index'
 ])->name('admin.matches-interests');
         
+Route::get('/vendor-assignment-report', [
+    VendorAssignmentReportController::class,
+    'index'
+])->name('admin.vendor-assignments.index');
 
-        Route::get('/membership', function () {
-            return view('admin.membership');
-        })->name('admin.membership');
+
+Route::get('/matches-interests', [
+    MatchesInterestsController::class,
+    'index'
+])->name('admin.matches-interests');
+        
+Route::get('/membership', [
+    MembershipController::class,
+    'index'
+])->name('admin.membership');
+
+Route::post('/membership/plans', [
+    MembershipController::class,
+    'storePlan'
+])->name('admin.membership.plans.store');
+
+Route::put('/membership/plans/{id}', [
+    MembershipController::class,
+    'updatePlan'
+])->name('admin.membership.plans.update');
+
+Route::get('/membership/export', [
+    MembershipController::class,
+    'export'
+])->name('admin.membership.export');
 
         Route::get('/matrimonymasterdata', function () {
             return view('admin.matrimonymasterdata');
@@ -93,8 +122,15 @@ Route::get('/matches-interests', [
             return view('admin.setting');
         })->name('settings');
 
-        Route::get('/cms-communication', function () {
-            return view('admin.cms-communication');
-        })->name('admin.cms-communication');
+       // CMS & Communication - Homepage Banner
+Route::get('/cms-communication', [
+    CmsController::class,
+    'index'
+])->name('admin.cms-communication');
+
+Route::post('/cms-communication/banner', [
+    CmsController::class,
+    'updateBanner'
+])->name('cms.banner.update');
     });
 });
