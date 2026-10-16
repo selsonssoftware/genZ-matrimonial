@@ -546,9 +546,7 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-6 text-center text-md-start">
-                                <script>
-                                    document.write(new Date().getFullYear())
-                                </script>
+                                {{ date('Y') }}
                                 © Paces - By <span class="fw-bold text-decoration-underline text-uppercase text-reset fs-12">Coderthemes</span>
                             </div>
                             <div class="col-md-6">
@@ -564,8 +562,5 @@
                 <!-- end Footer -->
 
             </div>
-
-
-
 
 @endsection
