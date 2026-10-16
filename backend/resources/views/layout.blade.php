@@ -26,6 +26,28 @@
     <link id="app-style" href="{{ asset('dashboardassets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
 
 </head>
+<style>
+
+    #user-profile-settings {
+    background-image: url("/dashboardassets/images/user-bg-pattern.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    }
+    .stock-image {
+    background-image: url("/dashboardassets/images/stock/small-8.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.theme-settings-header {
+    background-image: url("/dashboardassets/images/settings-bg.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+</style>
 
 <body>
     <!-- Begin page -->
@@ -36,7 +58,7 @@
                     <!-- Topbar Brand Logo -->
                     <div class="logo-topbar">
                         <!-- Logo light -->
-                        <a href="/dashboard" class="logo-light">
+                        <a href="{{ route('dashboard') }}" class="logo-light">
                             <span class="logo-lg">
                                 <img src="{{ asset('dashboardassets/images/main-logo.png') }}" alt="logo" />
                             </span>
@@ -46,7 +68,7 @@
                         </a>
 
                         <!-- Logo Dark -->
-                        <a href="/" class="logo-dark">
+                        <a href="{{ route('dashboard') }}" class="logo-dark">
                             <span class="logo-lg">
                                 <img src="{{ asset('dashboardassets/images/logo-black.png') }}" alt="dark logo" />
                             </span>
@@ -393,8 +415,7 @@
                                         <!-- end col-->
 
                                         <div class="col-sm-4">
-                                            <div class="h-100 position-relative rounded-end rounded-0 overflow-hidden"
-                                                style="background: url({{ asset('dashboardassets/images/stock/small-8.jpg') }}); background-size: cover">
+                                            <div class="stock-image h-100 position-relative rounded-end rounded-0 overflow-hidden">
                                                 <div
                                                     class="p-3 card-img-overlay bg-gradient bg-secondary bg-opacity-90 d-flex align-items-center justify-content-center">
                                                     <div class="text-center text-white">
@@ -901,8 +922,8 @@
                                     class="rounded-circle me-lg-2 d-flex" alt="user-image" />
                                 <div class="d-lg-flex align-items-center gap-1 d-none">
                                     <span>
-                                        <h5 class="my-0 lh-1 pro-username">David Dev</h5>
-                                        <span class="fs-xs lh-1">Admin Head</span>
+                                        <h5 class="my-0 lh-1 pro-username">{{ Auth::user()->name ?? 'Admin' }}</h5>
+                                        <span class="fs-xs lh-1">{{ ucfirst(Auth::user()->role ?? 'Admin') }}</span>
                                     </span>
                                     <i class="ti ti-chevron-down align-middle"></i>
                                 </div>
@@ -914,40 +935,31 @@
                                 </div>
 
                                 <!-- My Profile -->
-                                <a href="#!" class="dropdown-item">
+                                <a href="{{ route('admin.profile-verification.index') }}" class="dropdown-item">
                                     <i class="ti ti-user-circle me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Profile</span>
                                 </a>
 
-                                <!-- Notifications -->
-                                <a href="javascript:void(0);" class="dropdown-item">
-                                    <i class="ti ti-bell-ringing me-1 fs-lg align-middle"></i>
-                                    <span class="align-middle">Notifications</span>
-                                </a>
-
                                 <!-- Settings -->
-                                <a href="javascript:void(0);" class="dropdown-item">
+                                <a href="{{ route('settings') }}" class="dropdown-item">
                                     <i class="ti ti-settings-2 me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Account Settings</span>
                                 </a>
 
-                                <!-- Support -->
-                                <a href="javascript:void(0);" class="dropdown-item">
-                                    <i class="ti ti-headset me-1 fs-lg align-middle"></i>
-                                    <span class="align-middle">Support Center</span>
+                                <!-- Change Password -->
+                                <a href="{{ route('change.password') }}" class="dropdown-item">
+                                    <i class="ti ti-key me-1 fs-lg align-middle"></i>
+                                    <span class="align-middle">Change Password</span>
                                 </a>
 
                                 <!-- Divider -->
                                 <div class="dropdown-divider"></div>
 
-                                <!-- Lock -->
-                                <a href="auth-lock-screen.html" class="dropdown-item">
-                                    <i class="ti ti-lock me-1 fs-lg align-middle"></i>
-                                    <span class="align-middle">Lock Screen</span>
-                                </a>
-
                                 <!-- Logout -->
-                                <a href="javascript:void(0);" class="dropdown-item fw-semibold">
+                                <form id="topbar-logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                                <a href="javascript:void(0);" onclick="document.getElementById('topbar-logout-form').submit();" class="dropdown-item fw-semibold text-danger">
                                     <i class="ti ti-logout me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Log Out</span>
                                 </a>
@@ -960,7 +972,7 @@
         <!-- Topbar End -->
         <div class="sidenav-menu">
             <!-- Brand Logo -->
-            <a href="/dashboard" class="logo">
+            <a href="{{ route('dashboard') }}" class="logo">
                 <span class="logo logo-light">
                     <span class="logo-lg"><img src="{{ asset('dashboardassets/images/main-logo.png') }}"
                             alt="logo" /></span>
@@ -987,15 +999,15 @@
             </button>
 
             <div class="scrollbar" data-simplebar="">
-                <div id="user-profile-settings" class="sidenav-user"
-                    style="background: url({{ asset('dashboardassets/images/user-bg-pattern.svg') }})">
+                <div id="user-profile-settings"
+     class="sidenav-user">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <a href="#!" class="link-reset">
                                 <img src="{{ asset('dashboardassets/images/users/user-1.jpg') }}" alt="user-image"
                                     class="rounded-circle mb-2 avatar-md" />
-                                <span class="sidenav-user-name fw-bold">David Dev</span>
-                                <span class="fs-12 fw-semibold" data-lang="user-role">Art Director</span>
+                                <span class="sidenav-user-name fw-bold">{{ Auth::user()->name ?? 'Admin' }}</span>
+                                <span class="fs-12 fw-semibold" data-lang="user-role">{{ ucfirst(Auth::user()->role ?? 'Super Admin') }}</span>
                             </a>
                         </div>
                         <div>
@@ -1012,25 +1024,30 @@
                                 </div>
 
                                 <!-- My Profile -->
-                                <a href="#!" class="dropdown-item">
+                                <a href="{{ route('admin.profile-verification.index') }}" class="dropdown-item">
                                     <i class="ti ti-user-circle me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Profile</span>
                                 </a>
 
                                 <!-- Settings -->
-                                <a href="javascript:void(0);" class="dropdown-item">
+                                <a href="{{ route('settings') }}" class="dropdown-item">
                                     <i class="ti ti-settings-2 me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Account Settings</span>
                                 </a>
 
-                                <!-- Lock -->
-                                <a href="auth-lock-screen.html" class="dropdown-item">
-                                    <i class="ti ti-lock me-1 fs-lg align-middle"></i>
-                                    <span class="align-middle">Lock Screen</span>
+                                <!-- Change Password -->
+                                <a href="{{ route('change.password') }}" class="dropdown-item">
+                                    <i class="ti ti-key me-1 fs-lg align-middle"></i>
+                                    <span class="align-middle">Change Password</span>
                                 </a>
 
+                                <div class="dropdown-divider"></div>
+
                                 <!-- Logout -->
-                                <a href="javascript:void(0);" class="dropdown-item text-danger fw-semibold">
+                                <form id="sidenav-logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                                <a href="javascript:void(0);" onclick="document.getElementById('sidenav-logout-form').submit();" class="dropdown-item text-danger fw-semibold">
                                     <i class="ti ti-logout me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Log Out</span>
                                 </a>
@@ -1046,7 +1063,7 @@
                         <li class="side-nav-title mt-2">Main</li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/dashboard') }}" class="side-nav-link">
+                            <a href="{{ route('dashboard') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-dashboard"></i>
                                 </span>
@@ -1054,9 +1071,8 @@
                             </a>
                         </li>
 
-
                         <li class="side-nav-item">
-                            <a href="{{ url('/management') }}" class="side-nav-link">
+                            <a href="{{ route('users.index') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-users"></i>
                                 </span>
@@ -1064,17 +1080,15 @@
                             </a>
                         </li>
 
-
-
                         <li class="side-nav-item">
-                            <a href="{{ url('/profile') }}" class="side-nav-link">
+                            <a href="{{ route('admin.profile-verification.index') }}" class="side-nav-link">
                                 <span class="menu-icon"><i class="ti ti-message"></i></span>
                                 <span class="menu-text" data-lang="apps-chat">Profile Verification</span>
                             </a>
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/vendors') }}" class="side-nav-link">
+                            <a href="{{ route('admin.vendors.index') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-briefcase"></i>
                                 </span>
@@ -1082,10 +1096,8 @@
                             </a>
                         </li>
 
-
-
                         <li class="side-nav-item">
-                            <a href="{{ url('/admins') }}" class="side-nav-link">
+                            <a href="{{ route('admins.index') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-user-shield"></i>
                                 </span>
@@ -1093,10 +1105,8 @@
                             </a>
                         </li>
 
-
-
                         <li class="side-nav-item">
-                            <a href="{{ url('/matches-interests') }}" class="side-nav-link">
+                            <a href="{{ route('admin.matches-interests') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-list-check"></i>
                                 </span>
@@ -1104,46 +1114,15 @@
                             </a>
                         </li>
 
-
                         <li class="side-nav-item">
-
-                            <a href="{{ url('/membership') }}" class="side-nav-link">
-                                <span class="menu-icon">
-                                    <i class="ti ti-wallet"></i>
-                                </span>
+                            <a href="{{ route('admin.membership') }}" class="side-nav-link">
+                                <span class="menu-icon"><i class="ti ti-currency-rupee"></i></span>
                                 <span class="menu-text">Membership &amp; Payments</span>
                             </a>
-
-                            <a data-bs-toggle="collapse" href="{{ url('/membership') }}" aria-expanded="false"
-                                aria-controls="invoice" class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-invoice"></i></span>
-                                <span class="menu-text" data-lang="invoice">Membership and Payments</span>
-                                <!-- <span class="menu-arrow"></span> -->
-                            </a>
-                            <!-- <div class="collapse" id="invoice">
-                                <ul class="sub-menu">
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-list.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-list">Invoices</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-details.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-details">Single
-                                                Invoice</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-create.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-create">New Invoice</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div> -->
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/matrimonymasterdata') }}" class="side-nav-link">
+                            <a href="{{ route('admin.matrimonymasterdata') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-heart-handshake"></i>
                                 </span>
@@ -1152,18 +1131,25 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/cms-communication') }}" class="side-nav-link">
+                            <a href="{{ route('admin.cms-communication') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-message-circle"></i>
                                 </span>
-                                <span class="menu-text">CMS & Communication</span>
+                                <span class="menu-text">CMS &amp; Communication</span>
                             </a>
                         </li>
 
-
+                        <li class="side-nav-item">
+                            <a href="{{ route('admin.vendor-assignments.index') }}" class="side-nav-link">
+                                <span class="menu-icon">
+                                    <i class="ti ti-users"></i>
+                                </span>
+                                <span class="menu-text">Vendor Assignment Report</span>
+                            </a>
+                        </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/report') }}" class="side-nav-link">
+                            <a href="{{ route('admin.report') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-briefcase"></i>
                                 </span>
@@ -1172,14 +1158,13 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/settings') }}" class="side-nav-link">
+                            <a href="{{ route('settings') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-settings"></i>
                                 </span>
                                 <span class="menu-text" data-lang="settings">Settings</span>
                             </a>
                         </li>
-
 
                         <li class="side-nav-item">
                             <form action="{{ route('logout') }}" method="POST" class="m-0">
@@ -1197,225 +1182,19 @@
                             </form>
                         </li>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-fixed-columns.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-fixed-columns">Fixed
-                                    Columns</span>
-                            </a>
-                        </li>
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-fixed-header.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-fixed-header">Fixed
-                                    Header</span>
-                            </a>
-                        </li>
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-columns.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-columns">Show &amp; Hide
-                                    Column</span>
-                            </a>
-                        </li>
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-child-rows.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-child-rows">Child Rows</span>
-                            </a>
-                        </li>
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-column-searching.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-column-searching">Column
-                                    Searching</span>
-                            </a>
-                        </li>
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-range-search.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-range-search">Range
-                                    Search</span>
-                            </a>
-                        </li>
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-rows-add.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-rows-add">Add Rows</span>
-                            </a>
-                        </li>
-                        <li class="side-nav-item">
-                            <a href="tables-datatables-checkbox-select.html" class="side-nav-link">
-                                <span class="menu-text" data-lang="tables-datatables-checkbox-select">Checkbox
-                                    Select</span>
-                            </a>
-                        </li>
                     </ul>
                 </div>
-                </li>
-                </ul>
             </div>
-            </li>
-            <li class="side-nav-item">
-                <a href="icons-lucide.html" class="side-nav-link">
-                    <span class="menu-text" data-lang="icons-lucide">Lucide</span>
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a href="icons-remix.html" class="side-nav-link">
-                    <span class="menu-text" data-lang="icons-remix">Remix</span>
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a href="icons-solar-duotone.html" class="side-nav-link">
-                    <span class="menu-text" data-lang="icons-solar-duotone">Solar Duotone</span>
-                </a>
-            </li>
-            <li class="side-nav-item">
-                <a href="icons-flags.html" class="side-nav-link">
-                    <span class="menu-text" data-lang="icons-flags">Flags</span>
-                </a>
-            </li>
-            </ul>
         </div>
-        </li>
-        <li class="side-nav-item">
-            <a data-bs-toggle="collapse" href="#maps" aria-expanded="false" aria-controls="maps" class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-map"></i></span>
-                <span class="menu-text" data-lang="maps">Maps</span>
-                <span class="menu-arrow"></span>
-            </a>
-            <div class="collapse" id="maps">
-                <ul class="sub-menu">
-                    <li class="side-nav-item">
-                        <a href="maps-google.html" class="side-nav-link">
-                            <span class="menu-text" data-lang="maps-google">Google Maps</span>
-                        </a>
-                    </li>
-                    <li class="side-nav-item">
-                        <a href="maps-vector.html" class="side-nav-link">
-                            <span class="menu-text" data-lang="maps-vector">Vector Maps</span>
-                        </a>
-                    </li>
-                    <li class="side-nav-item">
-                        <a href="maps-leaflet.html" class="side-nav-link">
-                            <span class="menu-text" data-lang="maps-leaflet">Leaflet Maps</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-        <li class="side-nav-title mt-2" data-lang="menu-items">Menu Items</li>
-        <li class="side-nav-item">
-            <a data-bs-toggle="collapse" href="#menu-levels" aria-expanded="false" aria-controls="menu-levels"
-                class="side-nav-link">
-                <span class="menu-icon"><i class="ti ti-sitemap"></i></span>
-                <span class="menu-text" data-lang="menu-levels">Menu Levels</span>
-                <span class="menu-arrow"></span>
-            </a>
-            <div class="collapse" id="menu-levels">
-                <ul class="sub-menu">
-                    <li class="side-nav-item">
-                        <a data-bs-toggle="collapse" href="#second-level" aria-expanded="false"
-                            aria-controls="second-level" class="side-nav-link">
-                            <span class="menu-text" data-lang="second-level">Second Level</span>
-                            <span class="menu-arrow"></span>
-                        </a>
-                        <div class="collapse" id="second-level">
-                            <ul class="sub-menu">
-                                <li class="side-nav-item">
-                                    <a href="#" class="side-nav-link">
-                                        <span class="menu-text" data-lang="menu-item-1">Item 2.1</span>
-                                    </a>
-                                </li>
-                                <li class="side-nav-item">
-                                    <a href="#" class="side-nav-link">
-                                        <span class="menu-text" data-lang="menu-item-2">Item 2.2</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="side-nav-item">
-                        <a data-bs-toggle="collapse" href="#second-level-2" aria-expanded="false"
-                            aria-controls="second-level-2" class="side-nav-link">
-                            <span class="menu-text" data-lang="second-level-2">Second Level</span>
-                            <span class="menu-arrow"></span>
-                        </a>
-                        <div class="collapse" id="second-level-2">
-                            <ul class="sub-menu">
-                                <li class="side-nav-item">
-                                    <a href="#" class="side-nav-link">
-                                        <span class="menu-text" data-lang="menu-item-3">Item 2.1</span>
-                                    </a>
-                                </li>
-                                <li class="side-nav-item">
-                                    <a data-bs-toggle="collapse" href="#menu-item-4" aria-expanded="false"
-                                        aria-controls="menu-item-4" class="side-nav-link">
-                                        <span class="menu-text" data-lang="menu-item-4">Item 2.2</span>
-                                        <span class="menu-arrow"></span>
-                                    </a>
-                                    <div class="collapse" id="menu-item-4">
-                                        <ul class="sub-menu">
-                                            <li class="side-nav-item">
-                                                <a href="#" class="side-nav-link">
-                                                    <span class="menu-text" data-lang="menu-item-5">Item
-                                                        3.1</span>
-                                                </a>
-                                            </li>
-                                            <li class="side-nav-item">
-                                                <a href="#" class="side-nav-link">
-                                                    <span class="menu-text" data-lang="menu-item-6">Item
-                                                        3.2</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </li>
-        <li class="side-nav-item">
-            <a href="#" class="side-nav-link disabled">
-                <span class="menu-icon"><i class="ti ti-ban"></i></span>
-                <span class="menu-text" data-lang="disabled-menu">Disabled Menu</span>
-            </a>
-        </li>
-        <li class="side-nav-item">
-            <a href="#" class="side-nav-link special-menu">
-                <span class="menu-icon"><i class="ti ti-star"></i></span>
-                <span class="menu-text" data-lang="special-menu">Special Menu</span>
-            </a>
-        </li>
-        </ul>
-    </div>
-    </div>
-    </div>
-    <!-- Sidenav Menu End -->
+        <!-- Sidenav Menu End -->
 
     @yield('content')
-    <div class="offcanvas offcanvas-end overflow-hidden" tabindex="-1" id="theme-settings-offcanvas">
-        <div class="d-flex justify-content-between text-bg-primary gap-2 p-3"
-            style="background-image: url({{ asset('dashboardassets/images/settings-bg.png') }})">
+
+<div class="offcanvas offcanvas-end overflow-hidden"
+     tabindex="-1"
+     id="theme-settings-offcanvas">
+
+    <div class="theme-settings-header d-flex justify-content-between text-bg-primary gap-2 p-3">
             <div>
                 <h5 class="mb-1 fw-bold text-white text-uppercase">Admin Customizer</h5>
                 <p class="text-white text-opacity-75 fst-italic fw-medium mb-0">Easily configure layout, styles, and
@@ -2093,7 +1872,7 @@
     <script src="{{ asset('dashboardassets/js/pages/custom-table.js') }}"></script>
 
     <!-- Dashboard js -->
-    <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js') }}"></script>
+    <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js"></script>
 </body>
 
 </html>
