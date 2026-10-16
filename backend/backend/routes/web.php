@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MatchesInterestsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,9 +68,11 @@ Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function (
         Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
         Route::get('/vendor-assignments', [VendorController::class, 'assignments'])->name('admin.vendor-assignments.index');
 
-        Route::get('/matches-interests', function () {
-            return view('admin.matches-interests');
-        })->name('admin.matches-interests');
+Route::get('/matches-interests', [
+    MatchesInterestsController::class,
+    'index'
+])->name('admin.matches-interests');
+        
 
         Route::get('/membership', function () {
             return view('admin.membership');
