@@ -107,8 +107,8 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="col-xl-3 col-md-3 col-sm-6 text-sm-end text-start">
-
+                <div class="col-xl-3 col-md-4 col-sm-5 text-sm-end text-start">
+                  <div class="d-flex justify-content-end align-items-center gap-2 flex-nowrap">
                     <button type="submit"
                             class="btn btn-sm text-nowrap text-white fw-semibold px-3 py-2 rounded-3 shadow-sm"
                             style="background-color: #561325;">
@@ -122,7 +122,7 @@
                             style="background-color: #561325;">
                         <i class="ti ti-plus me-1"></i> Add Vendor
                     </button>
-
+                  </div>
                 </div>
             </div>
         </form>
@@ -329,49 +329,198 @@
     </div>
 
     <!-- Add Vendor Modal -->
-    <div class="modal fade" id="addVendorModal" tabindex="-1" aria-labelledby="addVendorModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 rounded-4 shadow">
-                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold" id="addVendorModalLabel" style="color: #561325;">Add New Vendor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  
+<div class="modal fade" id="addVendorModal" tabindex="-1"
+     aria-labelledby="addVendorModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow">
+
+            {{-- Modal Header --}}
+            <div class="modal-header px-4 pt-4 pb-3"
+                 style="border-bottom: 1px solid #f0e3e7;">
+
+                <div>
+                    <h5 class="modal-title fw-bold"
+                        id="addVendorModalLabel"
+                        style="color: #561325;">
+                        Add New Vendor
+                    </h5>
+
+                    <p class="text-muted small mb-0 mt-1">
+                        Enter the vendor details below.
+                    </p>
                 </div>
-        
-<form method="POST" action="{{ route('admin.vendors.store') }}">
-    @csrf
 
-    <!-- Agent Name -->
-    <input type="text" name="agent_name" required>
-
-    <!-- City -->
-    <input type="text" name="city" required>
-
-    <!-- Status -->
-    <select name="status" required>
-        <option value="Active">Active</option>
-        <option value="Pending">Pending</option>
-        <option value="Suspended">Suspended</option>
-    </select>
-
-    <!-- Commission -->
-    <input type="number" name="commission" min="0" required>
-
-    <!-- Email -->
-    <input type="email" name="email" required>
-
-    <!-- Password -->
-    <input type="password" name="password" required>
-
-    <!-- Confirm Password -->
-    <input type="password" name="password_confirmation" required>
-
-    <button type="submit">Add Vendor</button>
-</form>
-
-
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
+
+            {{-- Form --}}
+            <form method="POST"
+                  action="{{ route('admin.vendors.store') }}">
+                @csrf
+
+                <div class="modal-body px-4 py-4">
+
+                    <div class="row g-3">
+
+                        {{-- Agent Name --}}
+                        <div class="col-md-6">
+                            <label for="agent_name"
+                                   class="form-label fw-semibold">
+                                Agent Name <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="agent_name"
+                                   name="agent_name"
+                                   class="form-control"
+                                   placeholder="Enter agent name"
+                                   value="{{ old('agent_name') }}"
+                                   required>
+                        </div>
+
+                        {{-- City --}}
+                        <div class="col-md-6">
+                            <label for="city"
+                                   class="form-label fw-semibold">
+                                City <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   id="city"
+                                   name="city"
+                                   class="form-control"
+                                   placeholder="Enter city"
+                                   value="{{ old('city') }}"
+                                   required>
+                        </div>
+
+                        {{-- Email --}}
+                        <div class="col-md-6">
+                            <label for="email"
+                                   class="form-label fw-semibold">
+                                Email Address <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="vendor@example.com"
+                                   value="{{ old('email') }}"
+                                   required>
+                        </div>
+
+                        {{-- Status --}}
+                        <div class="col-md-6">
+                            <label for="status"
+                                   class="form-label fw-semibold">
+                                Vendor Status <span class="text-danger">*</span>
+                            </label>
+
+                          <select id="vendor_status"
+        name="status"
+        class="form-select"
+        style="display: block !important;
+               width: 100%;
+               min-height: 42px;
+               background-color: #fff;
+               color: #333;
+               border: 1px solid #ced4da;
+               appearance: auto;
+               -webkit-appearance: auto;"
+        required>
+    <option value="Active" {{ old('status', 'Active') === 'Active' ? 'selected' : '' }}>
+        Active
+    </option>
+    <option value="Pending" {{ old('status') === 'Pending' ? 'selected' : '' }}>
+        Pending
+    </option>
+    <option value="Suspended" {{ old('status') === 'Suspended' ? 'selected' : '' }}>
+        Suspended
+    </option>
+</select>
+                        </div>
+
+                        {{-- Commission --}}
+                        <div class="col-md-6">
+                            <label for="commission"
+                                   class="form-label fw-semibold">
+                                Commission (%) <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="number"
+                                   id="commission"
+                                   name="commission"
+                                   class="form-control"
+                                   placeholder="Enter commission"
+                                   min="0"
+                                   step="0.01"
+                                   value="{{ old('commission') }}"
+                                   required>
+                        </div>
+
+                        {{-- Password --}}
+                        <div class="col-md-6">
+                            <label for="password"
+                                   class="form-label fw-semibold">
+                                Password <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Create password"
+                                   required>
+                        </div>
+
+                        {{-- Confirm Password --}}
+                        <div class="col-md-6">
+                            <label for="password_confirmation"
+                                   class="form-label fw-semibold">
+                                Confirm Password <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="password"
+                                   id="password_confirmation"
+                                   name="password_confirmation"
+                                   class="form-control"
+                                   placeholder="Confirm password"
+                                   required>
+                        </div>
+
+                    </div>
+                </div>
+
+                {{-- Footer Buttons --}}
+                <div class="modal-footer px-4 py-3"
+                     style="border-top: 1px solid #f0e3e7;">
+
+                    <button type="button"
+                            class="btn btn-light border rounded-3 px-4"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn text-white fw-semibold rounded-3 px-4"
+                            style="background-color: #561325;">
+                        <i class="ti ti-plus me-1"></i>
+                        Add Vendor
+                    </button>
+
+                </div>
+
+            </form>
+
         </div>
     </div>
+</div>
+
 
    
 @endsection

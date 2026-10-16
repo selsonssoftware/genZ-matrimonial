@@ -57,43 +57,59 @@
 <div class="card border-0 shadow-sm rounded-4 mb-4"
      style="border: 1px solid #F3E5E8 !important;">
     <div class="card-body p-2">
-        <div class="d-flex flex-wrap gap-2 fs-12 fw-semibold">
+       <div class="d-flex flex-wrap gap-2 fs-12 fw-semibold">
 
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'all']) }}"
-               class="btn btn-sm px-3 py-2 rounded-3 fw-bold {{ ($status ?? 'pending') === 'all' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
-               style="{{ ($status ?? 'pending') === 'all' ? 'background-color: #561325;' : '' }}">
-                All profiles
-            </a>
+    @php
+        $currentStatus = $status ?? 'pending';
+    @endphp
 
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
-               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'pending' ? 'text-white' : 'btn-light text-muted' }}"
-               style="{{ ($status ?? 'pending') === 'pending' ? 'background-color: #561325;' : '' }}">
-                Pending
-                <span class="badge bg-white ms-1"
-                      style="color: #561325;">
-                    {{ $counts['pending'] ?? 0 }}
-                </span>
-            </a>
+    {{-- All Profiles --}}
+    <a href="{{ route('admin.profile-verification.index', ['status' => 'all']) }}"
+       class="btn btn-sm px-3 py-2 rounded-3 fw-bold
+       {{ $currentStatus === 'all' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
+    @if($currentStatus === 'all') style="background-color: #561325; border-color: #561325;" @endif>
+        All profiles
+    </a>
 
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'approved']) }}"
-               class="btn btn-sm btn-light border-0 text-muted px-3 py-2 rounded-3">
-                Approved
-                <span class="ms-1">{{ $counts['approved'] ?? 0 }}</span>
-            </a>
+    {{-- Pending --}}
+    <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
+       class="btn btn-sm px-3 py-2 rounded-3
+       {{ $currentStatus === 'pending' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
+         @if($currentStatus === 'pending') style="background-color: #561325; border-color: #561325;" @endif>
+        Pending
+        <span class="badge bg-white ms-1" style="color: #561325;">
+            {{ $counts['pending'] ?? 0 }}
+        </span>
+    </a>
 
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'rejected']) }}"
-               class="btn btn-sm btn-light border-0 text-muted px-3 py-2 rounded-3">
-                Rejected
-                <span class="ms-1">{{ $counts['rejected'] ?? 0 }}</span>
-            </a>
+    {{-- Approved --}}
+    <a href="{{ route('admin.profile-verification.index', ['status' => 'approved']) }}"
+       class="btn btn-sm px-3 py-2 rounded-3
+       {{ $currentStatus === 'approved' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
+    @if($currentStatus === 'approved') style="background-color: #561325; border-color: #561325;" @endif>
+        Approved
+        <span class="ms-1">{{ $counts['approved'] ?? 0 }}</span>
+    </a>
 
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'update_requested']) }}"
-               class="btn btn-sm btn-light border-0 text-muted px-3 py-2 rounded-3">
-                Update requested
-                <span class="ms-1">{{ $counts['update_requested'] ?? 0 }}</span>
-            </a>
+    {{-- Rejected --}}
+    <a href="{{ route('admin.profile-verification.index', ['status' => 'rejected']) }}"
+       class="btn btn-sm px-3 py-2 rounded-3
+       {{ $currentStatus === 'rejected' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
+    @if($currentStatus === 'rejected') style="background-color: #561325; border-color: #561325;" @endif>
+        Rejected
+        <span class="ms-1">{{ $counts['rejected'] ?? 0 }}</span>
+    </a>
 
-        </div>
+    {{-- Update Requested --}}
+    <a href="{{ route('admin.profile-verification.index', ['status' => 'update_requested']) }}"
+       class="btn btn-sm px-3 py-2 rounded-3
+       {{ $currentStatus === 'update_requested' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
+         @if($currentStatus === 'update_requested') style="background-color: #561325; border-color: #561325;" @endif>
+        Update requested
+        <span class="ms-1">{{ $counts['update_requested'] ?? 0 }}</span>
+    </a>
+
+</div>
     </div>
 </div>
 
