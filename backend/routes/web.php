@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MatchesInterestsController;
+use App\Http\Controllers\Admin\MembershipController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,10 +74,25 @@ Route::get('/matches-interests', [
     'index'
 ])->name('admin.matches-interests');
         
+Route::get('/membership', [
+    MembershipController::class,
+    'index'
+])->name('admin.membership');
 
-        Route::get('/membership', function () {
-            return view('admin.membership');
-        })->name('admin.membership');
+Route::post('/membership/plans', [
+    MembershipController::class,
+    'storePlan'
+])->name('admin.membership.plans.store');
+
+Route::put('/membership/plans/{id}', [
+    MembershipController::class,
+    'updatePlan'
+])->name('admin.membership.plans.update');
+
+Route::get('/membership/export', [
+    MembershipController::class,
+    'export'
+])->name('admin.membership.export');
 
         Route::get('/matrimonymasterdata', function () {
             return view('admin.matrimonymasterdata');
