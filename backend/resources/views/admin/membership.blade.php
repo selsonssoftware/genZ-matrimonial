@@ -3,30 +3,68 @@
 @section('content')
 
 <style>
+
 /* =====================================================
-   MEMBERSHIP PAGE - COMPLETE RESPONSIVE CSS
+   MEMBERSHIP PAGE - FULL RESPONSIVE CSS
+   Sidebar overlap + horizontal overflow fix
 ===================================================== */
 
-/* Box sizing */
+/* Global box sizing */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Prevent page-level horizontal overflow */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* =====================================================
+   MAIN MEMBERSHIP PAGE
+===================================================== */
+
+.membership-page {
+    --sidebar-width: 250px;
+
+    /*
+      Desktop:
+      Reserve space for the fixed sidebar.
+    */
+    width: calc(100% - var(--sidebar-width));
+    max-width: calc(100% - var(--sidebar-width));
+    min-width: 0;
+
+    margin-left: var(--sidebar-width);
+
+    background: #f7f3f4;
+    color: #542432;
+    font-size: 13px;
+    min-height: 100vh;
+
+    overflow-x: clip;
+    overflow-wrap: anywhere;
+}
+
+/* Keep every child within available width */
 .membership-page,
 .membership-page *,
 .membership-page *::before,
 .membership-page *::after {
     box-sizing: border-box;
+    min-width: 0;
 }
 
-/* Main page */
-.membership-page {
-    background: #f7f3f4;
-    color: #542432;
-    font-size: 13px;
-
-    width: 100%;
+/* Media elements */
+.membership-page img,
+.membership-page video,
+.membership-page iframe {
     max-width: 100%;
-    min-width: 0;
-    min-height: 100vh;
-
-    overflow-x: clip;
 }
 
 /* =====================================================
@@ -90,12 +128,18 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
-
     padding: 24px;
+    margin: 0;
 }
 
 .membership-main > section {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.membership-main > *,
+.membership-main section > * {
     max-width: 100%;
     min-width: 0;
 }
@@ -137,6 +181,7 @@
 .membership-stat {
     padding: 15px;
     min-height: 112px;
+    overflow: hidden;
 }
 
 .membership-stat-icon {
@@ -214,6 +259,7 @@
     justify-content: space-between;
 
     overflow-wrap: anywhere;
+    background: #fff;
 }
 
 .membership-plan-top {
@@ -250,7 +296,6 @@
     font-weight: 800;
     color: #572332;
     margin: 0 0 5px;
-
     overflow-wrap: anywhere;
 }
 
@@ -259,7 +304,6 @@
     font-weight: 800;
     color: #702c43;
     margin: 0;
-
     overflow-wrap: anywhere;
 }
 
@@ -275,7 +319,7 @@
 }
 
 /* =====================================================
-   BUTTONS
+   BUTTONS - ORIGINAL COLORS PRESERVED
 ===================================================== */
 
 .membership-btn {
@@ -321,6 +365,7 @@
 }
 
 .membership-plan .membership-btn {
+    display: block;
     width: 100%;
 }
 
@@ -334,13 +379,15 @@
     min-width: 0;
 
     padding: 18px;
+    background: #fff;
 }
 
 .membership-table-card > * {
     min-width: 0;
+    max-width: 100%;
 }
 
-/* Table wrapper handles horizontal scrolling */
+/* Horizontal scroll belongs only to the table wrapper */
 .membership-table-wrap {
     display: block;
 
@@ -359,7 +406,7 @@
     margin-top: 15px;
 }
 
-/* Keep table scroll inside its wrapper */
+/* Table can be wider than wrapper */
 .membership-table {
     width: 100%;
     min-width: 850px;
@@ -459,11 +506,12 @@
 }
 
 /* =====================================================
-   FORM FOCUS
+   FORM CONTROLS
 ===================================================== */
 
 .membership-page .form-control,
 .membership-page .form-select {
+    width: 100%;
     max-width: 100%;
     min-width: 0;
 }
@@ -475,16 +523,51 @@
 }
 
 /* =====================================================
+   GENERAL OVERFLOW PROTECTION
+===================================================== */
+
+.membership-page h1,
+.membership-page h2,
+.membership-page h3,
+.membership-page h4,
+.membership-page p,
+.membership-page a,
+.membership-page button {
+    overflow-wrap: anywhere;
+}
+
+.membership-page .row {
+    max-width: 100%;
+}
+
+.membership-page [class*="col-"] {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* =====================================================
    MEDIUM SCREENS
 ===================================================== */
 
-@media (max-width: 1100px) {
+@media (max-width: 1100px) and (min-width: 769px) {
+    .membership-page {
+        --sidebar-width: 250px;
+
+        width: calc(100% - var(--sidebar-width));
+        max-width: calc(100% - var(--sidebar-width));
+        margin-left: var(--sidebar-width);
+    }
+
     .membership-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .membership-plans {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .membership-main {
+        padding: 20px;
     }
 }
 
@@ -493,6 +576,16 @@
 ===================================================== */
 
 @media (max-width: 768px) {
+    /*
+      Use this mobile rule only when the sidebar
+      is hidden or collapsed by the main layout.
+    */
+    .membership-page {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+    }
+
     .membership-header {
         padding: 18px;
         align-items: flex-start;
@@ -509,6 +602,14 @@
 
     .membership-table-card {
         padding: 14px;
+    }
+
+    .membership-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .membership-plans {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -616,6 +717,7 @@
         padding: 8px 9px;
     }
 }
+
 </style>
 
 <div class="membership-page">

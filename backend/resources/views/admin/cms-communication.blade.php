@@ -1,222 +1,496 @@
 @extends('layout')
 
 @section('content')
-    <div class="content-page">
-        <div class="container-fluid py-4 px-4" style="background-color: #FAF5F5; min-height: 100vh;">
 
-            <!-- Header Section -->
-            <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
-                <div>
-                    <h3 class="fw-bold mb-1" style="color: #561325;">CMS & Communication</h3>
-                    <p class="text-muted mb-0 fs-13">Manage website content, announcements, enquiries and notifications.</p>
-                </div>
+<style>
+    .cms-page {
+        background: #FAF5F5;
+        min-height: 100vh;
+        color: #542432;
+    }
 
-                <div class="d-flex align-items-center gap-3">
-                    <div class="input-group shadow-sm" style="width: 170px;">
-                        <span class="input-group-text bg-white border-end-0 text-muted ps-2 pe-1 py-1">
-                            <i class="ti ti-search fs-14"></i>
-                        </span>
-                        <input type="text" class="form-control form-control-sm border-start-0 ps-1 py-1 fs-12 bg-white"
-                            placeholder="Search" />
+    .cms-module {
+        border: 1px solid #F3E5E8 !important;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .cms-module:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(86, 19, 37, .08) !important;
+    }
+
+    .cms-manage-btn {
+        background: #FCECEE;
+        color: #561325;
+        border: 0;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+    .cms-manage-btn:hover {
+        background: #561325;
+        color: #fff;
+    }
+
+    .cms-input {
+        background: #F8F4F5;
+        border: 1px solid transparent;
+    }
+
+    .cms-input:focus {
+        background: #fff;
+        border-color: #d9aab5;
+        box-shadow: 0 0 0 .15rem rgba(86, 19, 37, .08);
+    }
+
+    .cms-save-btn {
+        background: #561325;
+        color: #fff;
+    }
+
+    .cms-save-btn:hover {
+        background: #70263d;
+        color: #fff;
+    }
+
+    .cms-preview {
+        background: #4A1222;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @media (max-width: 576px) {
+        .cms-page {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .cms-header-actions {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .cms-preview {
+            padding: 20px !important;
+        }
+
+        .cms-preview h2 {
+            font-size: 21px !important;
+            overflow-wrap: anywhere;
+        }
+    }
+</style>
+
+<div class="content-page">
+    <div class="container-fluid cms-page py-4 px-4">
+
+        {{-- Success message --}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        {{-- Error message --}}
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- Header --}}
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
+            <div>
+                <h3 class="fw-bold mb-1" style="color:#561325;">
+                    CMS & Communication
+                </h3>
+                <p class="text-muted mb-0 fs-13">
+                    Manage website content, announcements, enquiries and notifications.
+                </p>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 cms-header-actions">
+                <form action="{{ route('admin.cms-communication') }}"
+                      method="GET" class="input-group shadow-sm"
+                      style="width:170px;">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="ti ti-search"></i>
+                    </span>
+                    <input type="text" name="search"
+                           class="form-control form-control-sm border-start-0"
+                           placeholder="Search modules"
+                           value="{{ request('search') }}">
+                </form>
+
+                <button type="button"
+                        class="btn border rounded-circle shadow-sm"
+                        style="width:34px;height:34px;background:#fff;"
+                        title="Notifications"
+                        onclick="showCmsMessage('Notifications', 'Notification management needs to be connected to your notification data.')">
+                    <i class="ti ti-bell text-muted"></i>
+                </button>
+
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold"
+                         style="background:#561325;width:34px;height:34px;font-size:12px;">
+                        AJ
                     </div>
-
-                    <button
-                        class="btn btn-sm btn-white border rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                        style="width: 34px; height: 34px; background-color: #fff;">
-                        <i class="ti ti-bell fs-16 text-muted"></i>
-                    </button>
-
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold fs-12 shadow-sm"
-                            style="background-color: #561325; width: 34px; height: 34px;">
-                            AJ
-                        </div>
-                        <div class="d-none d-sm-block text-start lh-1">
-                            <span class="fw-bold d-block text-dark fs-13">Admin</span>
-                            <small class="text-muted fs-11">Super Admin</small>
-                        </div>
+                    <div class="d-none d-sm-block lh-1">
+                        <span class="fw-bold d-block text-dark fs-13">Admin</span>
+                        <small class="text-muted fs-11">Super Admin</small>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="row g-4 align-items-start">
+        <div class="row g-4 align-items-start">
 
-                <!-- Left Side: CMS Modules List Cards -->
-                <div class="col-lg-5 col-md-12 d-flex flex-column gap-3">
+            {{-- Left: CMS modules --}}
+            <div class="col-lg-5 col-md-12 d-flex flex-column gap-3">
 
-                    <!-- Homepage Banners Card (Active) -->
-                    <div class="card border-0 shadow-sm rounded-4 bg-white" style="border: 1px solid #F5D3D8 !important;">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
-                                    style="width: 32px; height: 32px; background-color: #FCECEE; color: #561325; font-size: 16px;">✦</span>
-                                <div>
-                                    <h6 class="fw-bold mb-1 fs-13 text-dark">Homepage banners</h6>
-                                    <p class="text-muted mb-0 fs-11">Create and schedule promotional banners</p>
-                                </div>
+                {{-- Homepage banners --}}
+                <div class="card border-0 shadow-sm rounded-4 bg-white cms-module">
+                    <div class="card-body p-3 d-flex align-items-center justify-content-between gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                  style="width:32px;height:32px;background:#FCECEE;color:#561325;">
+                                ✦
+                            </span>
+                            <div>
+                                <h6 class="fw-bold mb-1 fs-13 text-dark">Homepage banners</h6>
+                                <p class="text-muted mb-0 fs-11">
+                                    Create and schedule promotional banners
+                                </p>
                             </div>
-                            <a href="javascript:void(0)" class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11"
-                                style="background-color: #FCECEE; color: #561325; text-decoration: none;">
-                                Manage →
-                            </a>
                         </div>
-                    </div>
 
-                    <!-- FAQs & Help Card -->
-                    <div class="card border-0 shadow-sm rounded-4 bg-white" style="border: 1px solid #F3E5E8 !important;">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
-                                    style="width: 32px; height: 32px; background-color: #FCECEE; color: #561325; font-size: 16px;">✦</span>
-                                <div>
-                                    <h6 class="fw-bold mb-1 fs-13 text-dark">FAQs & help</h6>
-                                    <p class="text-muted mb-0 fs-11">Answers to common member questions</p>
-                                </div>
-                            </div>
-                            <a href="javascript:void(0)"
-                                class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11 text-muted"
-                                style="background-color: #FAF0F2; text-decoration: none;">
-                                Manage →
-                            </a>
-                        </div>
+                        <a href="#banner-editor"
+                           class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11 cms-manage-btn">
+                            Manage →
+                        </a>
                     </div>
-
-                    <!-- Email / SMS Templates Card -->
-                    <div class="card border-0 shadow-sm rounded-4 bg-white" style="border: 1px solid #F3E5E8 !important;">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
-                                    style="width: 32px; height: 32px; background-color: #FCECEE; color: #561325; font-size: 16px;">✦</span>
-                                <div>
-                                    <h6 class="fw-bold mb-1 fs-13 text-dark">Email / SMS templates</h6>
-                                    <p class="text-muted mb-0 fs-11">Registration and payment messages</p>
-                                </div>
-                            </div>
-                            <a href="javascript:void(0)"
-                                class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11 text-muted"
-                                style="background-color: #FAF0F2; text-decoration: none;">
-                                Manage →
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Enquiries & Complaints Card -->
-                    <div class="card border-0 shadow-sm rounded-4 bg-white" style="border: 1px solid #F3E5E8 !important;">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
-                                    style="width: 32px; height: 32px; background-color: #FCECEE; color: #561325; font-size: 16px;">✦</span>
-                                <div>
-                                    <h6 class="fw-bold mb-1 fs-13 text-dark">Enquiries & complaints</h6>
-                                    <p class="text-muted mb-0 fs-11">Track member support requests</p>
-                                </div>
-                            </div>
-                            <a href="javascript:void(0)"
-                                class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11 text-muted"
-                                style="background-color: #FAF0F2; text-decoration: none;">
-                                Manage →
-                            </a>
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- Right Side: Edit & Preview Form Panel -->
-                <div class="col-lg-7 col-md-12">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white"
-                        style="border: 1px solid #F3E5E8 !important;">
+                {{-- FAQs --}}
+                <div class="card border-0 shadow-sm rounded-4 bg-white cms-module">
+                    <div class="card-body p-3 d-flex align-items-center justify-content-between gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                  style="width:32px;height:32px;background:#FCECEE;color:#561325;">
+                                ✦
+                            </span>
+                            <div>
+                                <h6 class="fw-bold mb-1 fs-13 text-dark">FAQs & help</h6>
+                                <p class="text-muted mb-0 fs-11">
+                                    Answers to common member questions
+                                </p>
+                            </div>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11 cms-manage-btn"
+                                onclick="showCmsMessage('FAQs & Help', 'FAQ management is not connected to a database yet. A FAQ table and CRUD controller are needed to add, edit and delete FAQs.')">
+                            Manage →
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Email and SMS --}}
+                <div class="card border-0 shadow-sm rounded-4 bg-white cms-module">
+                    <div class="card-body p-3 d-flex align-items-center justify-content-between gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                  style="width:32px;height:32px;background:#FCECEE;color:#561325;">
+                                ✦
+                            </span>
+                            <div>
+                                <h6 class="fw-bold mb-1 fs-13 text-dark">Email / SMS templates</h6>
+                                <p class="text-muted mb-0 fs-11">
+                                    Registration and payment messages
+                                </p>
+                            </div>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11 cms-manage-btn"
+                                onclick="showCmsMessage('Email / SMS Templates', 'Template management needs a templates table, controller and delivery configuration before messages can be managed or sent.')">
+                            Manage →
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Enquiries --}}
+                <div class="card border-0 shadow-sm rounded-4 bg-white cms-module">
+                    <div class="card-body p-3 d-flex align-items-center justify-content-between gap-2">
+                        <div class="d-flex align-items-center justify-content-between gap-2 w-100">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                      style="width:32px;height:32px;background:#FCECEE;color:#561325;">
+                                    ✦
+                                </span>
+                                <div>
+                                    <h6 class="fw-bold mb-1 fs-13 text-dark">
+                                        Enquiries & complaints
+                                    </h6>
+                                    <p class="text-muted mb-0 fs-11">
+                                        Track member support requests
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button type="button"
+                                    class="btn btn-sm px-3 py-1 rounded-pill fw-semibold fs-11 cms-manage-btn"
+                                    onclick="showCmsMessage('Enquiries & Complaints', 'Enquiry management needs an enquiries table and controller to list, update and resolve support requests.')">
+                                Manage →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            {{-- Right: Homepage banner editor --}}
+            <div class="col-lg-7 col-md-12" id="banner-editor">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white"
+                     style="border:1px solid #F3E5E8!important;">
+
+                    <div class="mb-3">
+                        <h5 class="fw-bold mb-1" style="color:#561325;">
+                            Homepage Banner
+                        </h5>
+                        <p class="text-muted mb-0 fs-12">
+                            Preview and edit the public website hero banner.
+                        </p>
+                    </div>
+
+                    {{-- Live preview --}}
+                    <div class="rounded-4 p-3 mb-4" style="background:#F8F1F3;">
+                        <div class="cms-preview rounded-3 p-4 text-center text-white shadow-sm">
+
+                            <span class="text-uppercase fw-semibold mb-1"
+                                  style="font-size:11px;letter-spacing:1.5px;opacity:.85;">
+                                FIND YOUR
+                            </span>
+
+                            <h2 class="fw-bold mb-2" id="previewTitle"
+                                style="font-size:24px;letter-spacing:1px;">
+                                {{ strtoupper($banner->title ?? 'Find your life partner') }}
+                            </h2>
+
+                            <p class="fs-12 mb-3 text-white-50" id="previewSubtitle">
+                                {{ $banner->subtitle ?? 'A thoughtful match begins with a trusted profile.' }}
+                            </p>
+
+                            {{-- Uses the existing profile verification route.
+                                 Change this destination when your public profile-browsing route exists. --}}
+                            <a href="{{ route('admin.profile-verification.index') }}"
+                               class="btn btn-sm px-3 py-2 text-white fw-bold rounded-2 border-0 fs-11"
+                               style="background:#B58444;text-decoration:none;">
+                                Explore profiles
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Save banner --}}
+                    <form id="bannerForm"
+                          method="POST"
+                          action="{{ route('cms.banner.update') }}">
+                        @csrf
 
                         <div class="mb-3">
-                            <h5 class="fw-bold mb-1" style="color: #561325;">Homepage Banner</h5>
-                            <p class="text-muted mb-0 fs-12">Preview and edit the public website hero banner.</p>
+                            <label for="bannerTitleInput"
+                                   class="form-label fs-12 fw-bold text-dark mb-1">
+                                Banner title
+                            </label>
+
+                            <input type="text"
+                                   name="title"
+                                   id="bannerTitleInput"
+                                   class="form-control fs-13 py-2 rounded-3 cms-input"
+                                   value="{{ old('title', $banner->title ?? 'Find your life partner') }}"
+                                   maxlength="255"
+                                   required>
+
+                            @error('title')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
-                        <!-- Live Banner Preview Component -->
-                        <div class="rounded-4 p-3 mb-4" style="background-color: #F8F1F3;">
-                            <div class="rounded-3 p-4 text-center text-white position-relative shadow-sm"
-                                style="background-color: #4A1222; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <span class="text-uppercase fw-semibold mb-1"
-                                    style="font-size: 11px; letter-spacing: 1.5px; opacity: 0.85;">FIND YOUR</span>
-                                <h2 class="fw-bold mb-2 tracking-wide" id="previewTitle"
-                                    style="font-size: 24px; letter-spacing: 1px;">LIFE PARTNER</h2>
-                                <p class="fs-12 mb-3 text-white-50" id="previewSubtitle">A thoughtful match begins with a
-                                    trusted profile.</p>
-                                <button type="button"
-                                    class="btn btn-sm px-3 py-1 text-white fw-bold rounded-2 border-0 fs-11"
-                                    style="background-color: #B58444;">
-                                    Explore profiles
-                                </button>
-                            </div>
+                        <div class="mb-3">
+                            <label for="bannerSubtitleInput"
+                                   class="form-label fs-12 fw-bold text-dark mb-1">
+                                Subtitle
+                            </label>
+
+                            <input type="text"
+                                   name="subtitle"
+                                   id="bannerSubtitleInput"
+                                   class="form-control fs-13 py-2 rounded-3 cms-input"
+                                   value="{{ old('subtitle', $banner->subtitle ?? 'A thoughtful match begins with a trusted profile.') }}"
+                                   maxlength="2000">
+
+                            @error('subtitle')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
-                        <!-- Form Inputs -->
-                        <form id="bannerForm" method="POST" action="#">
-                            @csrf
-                            <div class="mb-3">
-                                <label class="form-label fs-12 fw-bold text-dark mb-1">Banner title</label>
-                                <input type="text" class="form-control fs-13 py-2 rounded-3 border-0" id="bannerTitleInput"
-                                    value="Find your life partner" style="background-color: #F8F4F5;">
-                            </div>
+                        <div class="mb-4" style="max-width:220px;">
+                            <label for="bannerStatus"
+                                   class="form-label fs-12 fw-bold text-dark mb-1">
+                                Status
+                            </label>
 
-                            <div class="mb-3">
-                                <label class="form-label fs-12 fw-bold text-dark mb-1">Subtitle</label>
-                                <input type="text" class="form-control fs-13 py-2 rounded-3 border-0"
-                                    id="bannerSubtitleInput" value="A thoughtful match begins with a trusted profile."
-                                    style="background-color: #F8F4F5;">
-                            </div>
+                            <select name="status"
+                                    id="bannerStatus"
+                                    class="form-select fs-13 py-2 rounded-3"
+                                    required>
+                                <option value="Published"
+                                    {{ old('status', $banner->status ?? 'Published') === 'Published' ? 'selected' : '' }}>
+                                    Published
+                                </option>
 
-                            <div class="mb-4" style="max-width: 220px;">
-                                <label class="form-label fs-12 fw-bold text-dark mb-1">Status</label>
-                                <select class="form-select fs-13 py-2 rounded-3 border" id="bannerStatus"
-                                    style="color: #28a745; font-weight: 600;">
-                                    <option value="Published" selected>Published ▾</option>
-                                    <option value="Draft">Draft ▾</option>
-                                    <option value="Archived">Archived ▾</option>
-                                </select>
-                            </div>
+                                <option value="Draft"
+                                    {{ old('status', $banner->status ?? '') === 'Draft' ? 'selected' : '' }}>
+                                    Draft
+                                </option>
 
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn text-white fw-semibold px-4 py-2 rounded-3 shadow-sm fs-13"
-                                    style="background-color: #561325;">
-                                    Save changes
-                                </button>
-                            </div>
-                        </form>
+                                <option value="Archived"
+                                    {{ old('status', $banner->status ?? '') === 'Archived' ? 'selected' : '' }}>
+                                    Archived
+                                </option>
+                            </select>
 
-                    </div>
+                            @error('status')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button"
+                                    class="btn btn-light border rounded-3 px-4 py-2"
+                                    id="resetBannerBtn">
+                                Reset
+                            </button>
+
+                            <button type="submit"
+                                    class="btn fw-semibold px-4 py-2 rounded-3 shadow-sm text-white cms-save-btn"
+                                    id="saveBannerBtn">
+                                Save changes
+                            </button>
+                        </div>
+                    </form>
+
                 </div>
-
             </div>
 
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const titleInput = document.getElementById('bannerTitleInput');
-            const subtitleInput = document.getElementById('bannerSubtitleInput');
-            const previewTitle = document.getElementById('previewTitle');
-            const previewSubtitle = document.getElementById('previewSubtitle');
-            const statusSelect = document.getElementById('bannerStatus');
+{{-- Reusable module information modal --}}
+<div class="modal fade" id="cmsMessageModal" tabindex="-1"
+     aria-labelledby="cmsMessageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="cmsMessageTitle"
+                    style="color:#561325;"></h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-muted" id="cmsMessageBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn text-white"
+                        style="background:#561325;"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-            // Title live preview update
-            titleInput.addEventListener('input', function () {
-                previewTitle.innerText = this.value.toUpperCase() || 'LIFE PARTNER';
-            });
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const titleInput = document.getElementById('bannerTitleInput');
+    const subtitleInput = document.getElementById('bannerSubtitleInput');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewSubtitle = document.getElementById('previewSubtitle');
+    const statusSelect = document.getElementById('bannerStatus');
+    const resetButton = document.getElementById('resetBannerBtn');
+    const saveButton = document.getElementById('saveBannerBtn');
+    const bannerForm = document.getElementById('bannerForm');
 
-            // Subtitle live preview update
-            subtitleInput.addEventListener('input', function () {
-                previewSubtitle.innerText = this.value || 'A thoughtful match begins with a trusted profile.';
-            });
+    // Keep initial values for Reset.
+    const initialTitle = titleInput.value;
+    const initialSubtitle = subtitleInput.value;
+    const initialStatus = statusSelect.value;
 
-            // Status select color toggle
-            statusSelect.addEventListener('change', function () {
-                if (this.value === 'Published') {
-                    this.style.color = '#28a745';
-                } else {
-                    this.style.color = '#6c757d';
-                }
-            });
-        });
-    </script>
+    function updateTitlePreview() {
+        previewTitle.textContent =
+            titleInput.value.trim().toUpperCase() || 'LIFE PARTNER';
+    }
+
+    function updateSubtitlePreview() {
+        previewSubtitle.textContent =
+            subtitleInput.value.trim() ||
+            'A thoughtful match begins with a trusted profile.';
+    }
+
+    function updateStatusColor() {
+        statusSelect.style.color =
+            statusSelect.value === 'Published' ? '#28a745' : '#6c757d';
+    }
+
+    titleInput.addEventListener('input', updateTitlePreview);
+    subtitleInput.addEventListener('input', updateSubtitlePreview);
+    statusSelect.addEventListener('change', updateStatusColor);
+
+    // Reset button.
+    resetButton.addEventListener('click', function () {
+        titleInput.value = initialTitle;
+        subtitleInput.value = initialSubtitle;
+        statusSelect.value = initialStatus;
+
+        updateTitlePreview();
+        updateSubtitlePreview();
+        updateStatusColor();
+    });
+
+    // Prevent accidental double-click submission.
+    bannerForm.addEventListener('submit', function () {
+        saveButton.disabled = true;
+        saveButton.textContent = 'Saving...';
+    });
+
+    updateTitlePreview();
+    updateSubtitlePreview();
+    updateStatusColor();
+});
+
+// Display a message for modules whose backend is not yet implemented.
+function showCmsMessage(title, message) {
+    document.getElementById('cmsMessageTitle').textContent = title;
+    document.getElementById('cmsMessageBody').textContent = message;
+
+    const modalElement = document.getElementById('cmsMessageModal');
+
+    if (window.bootstrap && bootstrap.Modal) {
+        bootstrap.Modal.getOrCreateInstance(modalElement).show();
+    } else {
+        // Fallback if Bootstrap modal JavaScript is not loaded.
+        window.alert(title + '\n\n' + message);
+    }
+}
+</script>
+
 @endsection
