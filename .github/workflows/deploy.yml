@@ -1,0 +1,88 @@
+name: Deploy Laravel to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
+
+      - name: Install Composer Dependencies (verify only)
+        working-directory: ./backend
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Write FTP credentials to .netrc
+        env:
+          FTP_SERVER:   ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          cat > ~/.netrc <<EOF
+          machine ${FTP_SERVER}
+          login ${FTP_USERNAME}
+          password ${FTP_PASSWORD}
+          EOF
+          chmod 600 ~/.netrc
+
+      - name: Write lftp deploy script
+        run: |
+          cat > /tmp/deploy.lftp <<'EOF'
+          set ftp:ssl-allow no
+          set ftp:passive-mode true
+          set net:max-retries 3
+          set net:timeout 30
+          set net:reconnect-interval-base 5
+          set net:reconnect-interval-multiplier 2
+          set mirror:parallel-transfer-count 4
+          set mirror:use-pget-n 4
+
+          cd /public_html
+
+          mirror -R \
+            --verbose \
+            --parallel=4 \
+            --exclude-glob .git* \
+            --exclude-glob node_modules/ \
+            --exclude-glob vendor/ \
+            --exclude-glob tests/ \
+            --exclude-glob storage/logs/ \
+            --exclude-glob storage/framework/cache/ \
+            --exclude-glob storage/framework/sessions/ \
+            --exclude-glob storage/framework/views/ \
+            --exclude-glob bootstrap/cache/ \
+            --exclude-glob .env \
+            --exclude-glob .env.* \
+            --exclude-glob '*.md' \
+            --exclude-glob phpunit.xml \
+            --exclude-glob .phpunit.cache/ \
+            --exclude-glob public/storage/ \
+            --exclude-glob '*.log' \
+            --exclude-glob '*.map' \
+            --exclude-glob .idea/ \
+            --exclude-glob .vscode/ \
+            . /public_html
+
+          bye
+          EOF
+
+      - name: Deploy to Hostinger via lftp
+        working-directory: ./backend
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          lftp -e "open ${FTP_SERVER}; source /tmp/deploy.lftp"
