@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,8 +15,11 @@ class AdminAuthController extends Controller
     // 1. Show Login Page
     public function showLoginForm()
     {
-        // Login page always open avuthundi
-        return view('login');
+        if (Auth::check()) {
+            return redirect()->intended(route('dashboard'));
+        }
+
+        return view('admin.login');
     }
 
     // 2. Admin Login
@@ -39,7 +44,7 @@ class AdminAuthController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard');
+            return redirect()->intended(route('dashboard'));
         }
 
         return back()
@@ -54,7 +59,7 @@ class AdminAuthController extends Controller
     // 3. Show Forgot Password Form
     public function showForgotPasswordForm()
     {
-        return view('forgot-password');
+        return view('admin.forgot-password');
     }
 
     // 4. Send Reset Link
@@ -115,7 +120,7 @@ class AdminAuthController extends Controller
     // 5. Show Reset Password Form
     public function showResetForm(Request $request, $token)
     {
-        return view('reset-password', [
+        return view('admin.reset-password', [
             'token' => $token,
             'email' => $request->query('email'),
         ]);
@@ -164,7 +169,7 @@ class AdminAuthController extends Controller
     // 7. Show Change Password Form
     public function showChangePasswordForm()
     {
-        return view('change-password');
+        return view('admin.change-password');
     }
 
     // 8. Update Password
