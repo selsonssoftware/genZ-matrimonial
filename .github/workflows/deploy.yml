@@ -1,17 +1,22 @@
-name: Deploy Laravel to Hostinger
+name: Deploy Laravel to Hostinger (on PR merge)
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - main
 
 jobs:
   deploy:
+    # Only run when the PR was actually merged, not just closed
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: main          # deploy the state of main AFTER merge
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -51,13 +56,14 @@ jobs:
           set mirror:parallel-transfer-count 4
           set mirror:use-pget-n 4
 
-          cd /public_html
+          cd /domains/oaotraders.com/public_html
 
           mirror -R \
             --verbose \
             --parallel=4 \
             --exclude-glob .git* \
             --exclude-glob node_modules/ \
+            --exclude-glob frontend/ \
             --exclude-glob vendor/ \
             --exclude-glob tests/ \
             --exclude-glob storage/logs/ \
@@ -75,7 +81,7 @@ jobs:
             --exclude-glob '*.map' \
             --exclude-glob .idea/ \
             --exclude-glob .vscode/ \
-            . /public_html
+            . /domains/oaotraders.com/public_html
 
           bye
           EOF
@@ -86,3 +92,20 @@ jobs:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
         run: |
           lftp -e "open ${FTP_SERVER}; source /tmp/deploy.lftp"
+
+      - name: Post-deploy — build caches on the server
+        uses: appleboy/ssh-action@v1
+        with:
+          host:     ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key:      ${{ secrets.SSH_PRIVATE_KEY }}
+          port:     ${{ secrets.SSH_PORT }}
+          script: |
+            cd ~/domains/oaotraders.com/public_html
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan migrate --force
