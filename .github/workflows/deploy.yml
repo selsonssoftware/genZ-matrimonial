@@ -2,8 +2,7 @@ name: Deploy Laravel to Hostinger
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   deploy:
@@ -19,24 +18,35 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
 
-      - name: Install Composer Dependencies
+      - name: Install Composer Dependencies (verify only)
         working-directory: ./backend
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
-      - name: Deploy to Hostinger via FTPS
+      - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server:   ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          protocol: ftps
-          security: loose
+          protocol: ftp
+          timeout: 120000
           local-dir: ./backend/
-          server-dir: ./public_html/
+          server-dir: /home/uXXXXXXXXX/public_html/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            .env
-            tests/**
+            **/vendor/**
+            **/tests/**
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+            **/bootstrap/cache/**
+            **/.env
+            **/.env.*
+            **/*.md
+            **/phpunit.xml
+            **/.phpunit.cache/**
+            **/public/storage/**
