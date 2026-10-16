@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -27,17 +27,14 @@ class AdminController extends Controller
 
     private function findAdmin($id)
     {
-        return User::whereRaw('LOWER(role) = ?', ['admin'])
-            ->findOrFail($id);
+        return Admin::findOrFail($id);
     }
 
     public function index()
     {
         $this->checkAdminAccess();
 
-        $admins = User::whereRaw('LOWER(role) = ?', ['admin'])
-            ->latest()
-            ->get();
+        $admins = Admin::latest()->get();
 
         return view('admin.admins', compact('admins'));
     }
@@ -51,7 +48,6 @@ class AdminController extends Controller
         return view('admin.admin-edit', compact('admin'));
     }
 
-
     public function update(Request $request, $id)
     {
         $this->checkAdminAccess();
@@ -61,13 +57,6 @@ class AdminController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
 
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($admin->id),
-            ],
-
             'password' => [
                 'nullable',
                 'string',
@@ -75,11 +64,9 @@ class AdminController extends Controller
             ],
         ]);
 
-        // Update name and email
         $admin->name = $request->name;
         $admin->email = $request->email;
 
-        // Update password only when a new password is entered
         if ($request->filled('password')) {
             $admin->password = Hash::make($request->password);
         }
@@ -91,14 +78,17 @@ class AdminController extends Controller
             ->with('success', 'Admin details updated successfully.');
     }
 
-
     public function destroy($id)
     {
         $this->checkAdminAccess();
 
         $admin = $this->findAdmin($id);
 
-        if ($admin->id == Auth::id()) {
+        if (
+            Auth::check() &&
+            strtolower((string) Auth::user()->email) ===
+            strtolower((string) $admin->email)
+        ) {
             return redirect()
                 ->route('admins.index')
                 ->with('error', 'You cannot delete your own admin account.');
