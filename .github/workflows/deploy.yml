@@ -20,6 +20,7 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
 
       - name: Install Composer Dependencies
+        working-directory: ./backend
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
       - name: Deploy to Hostinger via FTP
@@ -28,6 +29,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./backend/
           server-dir: /public_html/
           exclude: |
             **/.git*
