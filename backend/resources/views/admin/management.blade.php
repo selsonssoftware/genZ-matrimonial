@@ -11,8 +11,8 @@
                     <p class="text-muted mb-0 fs-13">Search, review and manage member accounts.</p>
                 </div>
 
-                <div class="d-flex align-items-center gap-3">
-                    <div class="input-group shadow-sm" style="width: 170px;">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="input-group shadow-sm" style="width: 170px; max-width: 100%;">
                         <span class="input-group-text bg-white border-end-0 text-muted ps-2 pe-1 py-1">
                             <i class="ti ti-search fs-14"></i>
                         </span>
@@ -20,7 +20,7 @@
                             placeholder="Search" />
                     </div>
 
-                    <button
+                    <button type="button"
                         class="btn btn-sm btn-white border rounded-circle d-flex align-items-center justify-content-center shadow-sm"
                         style="width: 34px; height: 34px; background-color: #fff;">
                         <i class="ti ti-bell fs-16 text-muted"></i>
@@ -42,8 +42,10 @@
             <!-- Filter & Actions Bar Card -->
             <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #F3E5E8 !important;">
                 <div class="card-body p-3">
-                    <div class="row g-2 align-items-center justify-content-between">
-                        <div class="col-xl-4 col-lg-3 col-md-6 col-12">
+                    <div class="row g-2 align-items-center">
+
+                        <!-- Search -->
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-12">
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0 text-muted ps-3">
                                     <i class="ti ti-search fs-14"></i>
@@ -53,6 +55,7 @@
                             </div>
                         </div>
 
+                        <!-- Gender -->
                         <div class="col-xl-2 col-lg-2 col-md-3 col-6">
                             <select id="filterGender" class="form-select fs-13 text-secondary border">
                                 <option value="">All genders</option>
@@ -61,6 +64,7 @@
                             </select>
                         </div>
 
+                        <!-- Status -->
                         <div class="col-xl-2 col-lg-2 col-md-3 col-6">
                             <select id="filterStatus" class="form-select fs-13 text-secondary border">
                                 <option value="">All statuses</option>
@@ -71,7 +75,8 @@
                             </select>
                         </div>
 
-                        <div class="col-xl-2 col-lg-2 col-md-6 col-6">
+                        <!-- Membership -->
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-12">
                             <select id="filterPlan" class="form-select fs-13 text-secondary border">
                                 <option value="">Membership</option>
                                 <option value="Free">Free</option>
@@ -79,26 +84,33 @@
                             </select>
                         </div>
 
-                        <div class="col-xl-2 col-lg-1 col-md-6 col-6 d-flex gap-2 justify-content-end">
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#addUserModal"
-                                class="btn btn-sm text-nowrap fw-semibold px-3 py-2 rounded-3"
-                                style="background-color: #FCECEE; color: #561325; border: 1px solid #F5D3D8;">
-                                + Add User
-                            </button>
+                        <!-- Action Buttons -->
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-12">
+                            <div class="d-flex gap-2 justify-content-xl-end justify-content-start flex-wrap">
 
-                            <a href="{{ route('users.export') }}" id="exportBtn"
-                                class="btn btn-sm text-nowrap text-white fw-semibold px-3 py-2 rounded-3 shadow-sm text-decoration-none d-flex align-items-center"
-                                style="background-color: #561325;">
-                                Export <i class="ti ti-download ms-1 fs-12"></i>
-                            </a>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#addUserModal"
+                                    class="btn btn-sm text-nowrap fw-semibold px-3 py-2 rounded-3"
+                                    style="background-color: #FCECEE; color: #561325; border: 1px solid #F5D3D8;">
+                                    + Add User
+                                </button>
+
+                                <a href="{{ route('users.export') }}" id="exportBtn"
+                                    class="btn btn-sm text-nowrap text-white fw-semibold px-3 py-2 rounded-3 shadow-sm text-decoration-none d-flex align-items-center"
+                                    style="background-color: #561325;">
+                                    Export <i class="ti ti-download ms-1 fs-12"></i>
+                                </a>
+
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
 
             <!-- Metric / Stats Cards -->
             <div class="row g-3 mb-4">
-                <div class="col-xl-3 col-sm-6">
+
+                <div class="col-xl-3 col-sm-6 col-12">
                     <div class="card border-0 shadow-sm rounded-4 h-100 bg-white"
                         style="border: 1px solid #F3E5E8 !important;">
                         <div class="card-body p-3">
@@ -106,25 +118,27 @@
                                 style="width: 24px; height: 24px; background-color: #FCECEE; color: #561325; font-size: 13px;">+</span>
                             <div class="text-muted fs-12 mb-1">All members</div>
                             <h3 class="fw-bold mb-0" style="color: #561325;" id="countAll">
-                                {{ number_format($counts['all'] ?? 0) }}</h3>
+                                {{ number_format($counts['all'] ?? 0) }}
+                            </h3>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-sm-6">
+                <div class="col-xl-3 col-sm-6 col-12">
                     <div class="card border-0 shadow-sm rounded-4 h-100 bg-white"
                         style="border: 1px solid #F3E5E8 !important;">
                         <div class="card-body p-3">
                             <span class="d-inline-flex align-items-center justify-content-center rounded-circle mb-2"
                                 style="width: 24px; height: 24px; background-color: #FCECEE; color: #561325; font-size: 13px;">+</span>
                             <div class="text-muted fs-12 mb-1">Active</div>
-                            <h3 class="fw-bold mb-0 text-dark" id="countActive">{{ number_format($counts['active'] ?? 0) }}
+                            <h3 class="fw-bold mb-0 text-dark" id="countActive">
+                                {{ number_format($counts['active'] ?? 0) }}
                             </h3>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-sm-6">
+                <div class="col-xl-3 col-sm-6 col-12">
                     <div class="card border-0 shadow-sm rounded-4 h-100 bg-white"
                         style="border: 1px solid #F3E5E8 !important;">
                         <div class="card-body p-3">
@@ -132,12 +146,13 @@
                                 style="width: 24px; height: 24px; background-color: #FCECEE; color: #561325; font-size: 13px;">+</span>
                             <div class="text-muted fs-12 mb-1">Pending</div>
                             <h3 class="fw-bold mb-0 text-dark" id="countPending">
-                                {{ number_format($counts['pending'] ?? 0) }}</h3>
+                                {{ number_format($counts['pending'] ?? 0) }}
+                            </h3>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-sm-6">
+                <div class="col-xl-3 col-sm-6 col-12">
                     <div class="card border-0 shadow-sm rounded-4 h-100 bg-white"
                         style="border: 1px solid #F3E5E8 !important;">
                         <div class="card-body p-3">
@@ -145,15 +160,18 @@
                                 style="width: 24px; height: 24px; background-color: #FCECEE; color: #561325; font-size: 13px;">+</span>
                             <div class="text-muted fs-12 mb-1">Suspended</div>
                             <h3 class="fw-bold mb-0 text-dark" id="countSuspended">
-                                {{ number_format($counts['suspended'] ?? 0) }}</h3>
+                                {{ number_format($counts['suspended'] ?? 0) }}
+                            </h3>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Members Table Section Card -->
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4"
                 style="border: 1px solid #F3E5E8 !important;">
+
                 <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
                     <h5 class="fw-bold mb-1" style="color: #561325;">All Members</h5>
                     <p class="text-muted fs-12 mb-0">Manage member profiles, membership and account status.</p>
@@ -179,9 +197,11 @@
                     </table>
                 </div>
 
-                <div class="card-footer bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                <div
+                    class="card-footer bg-white border-0 py-3 px-4 d-flex flex-wrap gap-2 justify-content-between align-items-center">
                     <span class="text-muted fs-12" id="paginationLabel">Showing 0 members</span>
                 </div>
+
             </div>
 
         </div>
@@ -191,18 +211,23 @@
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
+
                 <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
                     <h5 class="modal-title fw-bold" id="addUserModalLabel" style="color: #561325;">Add New Member</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <form id="addUserForm" method="POST" action="{{ route('users.store') }}">
                     @csrf
+
                     <div class="modal-body px-4">
+
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Full Name</label>
                             <input type="text" name="name" class="form-control fs-13" id="newUserName"
                                 placeholder="e.g. Priyan S." required />
                         </div>
+
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Gender</label>
@@ -217,11 +242,13 @@
                                     min="18" max="100" required />
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">City</label>
                             <input type="text" name="city" class="form-control fs-13" id="newUserCity"
                                 placeholder="e.g. Chennai" required />
                         </div>
+
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Status</label>
@@ -240,12 +267,15 @@
                                 </select>
                             </div>
                         </div>
+
                     </div>
+
                     <div class="modal-footer border-top-0 px-4 pb-4">
                         <button type="button" class="btn btn-light fs-13" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" id="saveUserBtn" class="btn fs-13 text-white fw-semibold"
                             style="background-color: #561325;">Create User</button>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -255,18 +285,23 @@
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
+
                 <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
                     <h5 class="modal-title fw-bold" id="editUserModalLabel" style="color: #561325;">Edit Member Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <form id="editUserForm">
                     @csrf
                     <input type="hidden" id="editDbId">
+
                     <div class="modal-body px-4">
+
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Full Name</label>
                             <input type="text" name="name" class="form-control fs-13" id="editUserName" required />
                         </div>
+
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Gender</label>
@@ -281,10 +316,12 @@
                                     max="100" required />
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">City</label>
                             <input type="text" name="city" class="form-control fs-13" id="editUserCity" required />
                         </div>
+
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Status</label>
@@ -303,12 +340,15 @@
                                 </select>
                             </div>
                         </div>
+
                     </div>
+
                     <div class="modal-footer border-top-0 px-4 pb-4">
                         <button type="button" class="btn btn-light fs-13" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" id="updateUserBtn" class="btn fs-13 text-white fw-semibold"
                             style="background-color: #561325;">Update Member</button>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -316,7 +356,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            let membersData = {!! json_encode($usersData ?? []) !!};
+
+            let membersData = @json($usersData ?? []);
 
             const statusColorMap = {
                 'Active': 'color: #28a745;',
@@ -333,41 +374,98 @@
             const paginationLabel = document.getElementById('paginationLabel');
             const exportBtn = document.getElementById('exportBtn');
 
+            function safeText(value) {
+                return String(value ?? '');
+            }
+
+            function escapeHtml(value) {
+                return safeText(value).replace(/[&<>"']/g, function (char) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    }[char];
+                });
+            }
+
             function renderRows(list) {
                 tbody.innerHTML = '';
+
                 if (!list || list.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">No members found in database.</td></tr>';
+                    tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    No members found in database.
+                                </td>
+                            </tr>`;
                     paginationLabel.innerText = 'Showing 0 members';
                     return;
                 }
 
                 list.forEach(item => {
                     const tr = document.createElement('tr');
+
                     tr.innerHTML = `
-                    <td class="ps-4 fw-semibold text-dark">${item.id}</td>
-                    <td class="text-dark fw-medium">${item.name}</td>
-                    <td class="text-muted">${item.gender || '-'} · ${item.age || '-'}</td>
-                    <td class="text-dark">${item.city || '-'}</td>
-                    <td>
-                        <span class="fw-semibold" style="${statusColorMap[item.status] || ''}">${item.status}</span>
-                    </td>
-                    <td>
-                        <span class="${item.plan === 'Premium' ? 'fw-bold text-dark' : 'text-muted'}">${item.plan}</span>
-                    </td>
-                    <td class="text-center pe-4">
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-light border-0 text-muted px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                •••
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 fs-13">
-                                <li><a class="dropdown-item py-2 text-dark" href="javascript:void(0)" onclick="openEditModal(${item.db_id})"><i class="ti ti-edit me-2 text-primary"></i> Edit</a></li>
-                                <li><a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="deleteUser(${item.db_id})"><i class="ti ti-trash me-2"></i> Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                `;
+                            <td class="ps-4 fw-semibold text-dark">
+                                ${escapeHtml(item.id)}
+                            </td>
+
+                            <td class="text-dark fw-medium">
+                                ${escapeHtml(item.name)}
+                            </td>
+
+                            <td class="text-muted">
+                                ${escapeHtml(item.gender || '-')} · ${escapeHtml(item.age || '-')}
+                            </td>
+
+                            <td class="text-dark">
+                                ${escapeHtml(item.city || '-')}
+                            </td>
+
+                            <td>
+                                <span class="fw-semibold" style="${statusColorMap[item.status] || ''}">
+                                    ${escapeHtml(item.status || '-')}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="${item.plan === 'Premium' ? 'fw-bold text-dark' : 'text-muted'}">
+                                    ${escapeHtml(item.plan || '-')}
+                                </span>
+                            </td>
+
+                            <td class="text-center pe-4">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border-0 text-muted px-2 py-1"
+                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        •••
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 fs-13">
+                                        <li>
+                                            <a class="dropdown-item py-2 text-dark"
+                                                href="javascript:void(0)"
+                                                onclick="openEditModal(${Number(item.db_id)})">
+                                                <i class="ti ti-edit me-2 text-primary"></i> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item py-2 text-danger"
+                                                href="javascript:void(0)"
+                                                onclick="deleteUser(${Number(item.db_id)})">
+                                                <i class="ti ti-trash me-2"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        `;
+
                     tbody.appendChild(tr);
                 });
+
                 paginationLabel.innerText = `Showing ${list.length} member(s)`;
             }
 
@@ -378,9 +476,11 @@
                 const plan = filterPlan.value;
 
                 const filtered = membersData.filter(item => {
-                    const matchesQuery = (item.name && item.name.toLowerCase().includes(query)) ||
-                        (item.id && item.id.toLowerCase().includes(query)) ||
-                        (item.city && item.city.toLowerCase().includes(query));
+                    const matchesQuery =
+                        safeText(item.name).toLowerCase().includes(query) ||
+                        safeText(item.id).toLowerCase().includes(query) ||
+                        safeText(item.city).toLowerCase().includes(query);
+
                     const matchesGender = !gender || item.gender === gender;
                     const matchesStatus = !status || item.status === status;
                     const matchesPlan = !plan || item.plan === plan;
@@ -398,6 +498,7 @@
                     status: filterStatus.value,
                     plan: filterPlan.value
                 });
+
                 exportBtn.href = `{{ route('users.export') }}?${params.toString()}`;
             }
 
@@ -409,6 +510,7 @@
             // Create User via AJAX
             document.getElementById('addUserForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
+
                 const saveBtn = document.getElementById('saveUserBtn');
                 saveBtn.disabled = true;
                 saveBtn.innerText = 'Saving...';
@@ -444,17 +546,21 @@
                         filterList();
 
                         const allCountElem = document.getElementById('countAll');
+
                         if (allCountElem) {
-                            allCountElem.innerText = parseInt(allCountElem.innerText.replace(/,/g, '')) + 1;
+                            allCountElem.innerText =
+                                parseInt(allCountElem.innerText.replace(/,/g, ''), 10) + 1;
                         }
 
                         const modalEl = document.getElementById('addUserModal');
                         const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
                         modal.hide();
+
                         this.reset();
                     } else {
                         alert(result.message || 'Error occurred while saving.');
                     }
+
                 } catch (error) {
                     console.error('Save failed:', error);
                     alert('Save error occurred. Check browser console.');
@@ -467,15 +573,16 @@
             // Open Edit Modal & Populate
             window.openEditModal = function (dbId) {
                 const user = membersData.find(u => u.db_id == dbId);
+
                 if (!user) return;
 
                 document.getElementById('editDbId').value = user.db_id;
-                document.getElementById('editUserName').value = user.name;
-                document.getElementById('editUserGender').value = user.gender;
-                document.getElementById('editUserAge').value = user.age;
-                document.getElementById('editUserCity').value = user.city;
-                document.getElementById('editUserStatus').value = user.status;
-                document.getElementById('editUserPlan').value = user.plan;
+                document.getElementById('editUserName').value = user.name || '';
+                document.getElementById('editUserGender').value = user.gender || 'Female';
+                document.getElementById('editUserAge').value = user.age || '';
+                document.getElementById('editUserCity').value = user.city || '';
+                document.getElementById('editUserStatus').value = user.status || 'Active';
+                document.getElementById('editUserPlan').value = user.plan || 'Free';
 
                 const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
                 editModal.show();
@@ -484,8 +591,10 @@
             // Update User Form Submit
             document.getElementById('editUserForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
+
                 const updateBtn = document.getElementById('updateUserBtn');
                 const dbId = document.getElementById('editDbId').value;
+
                 updateBtn.disabled = true;
                 updateBtn.innerText = 'Updating...';
 
@@ -493,7 +602,7 @@
                 formData.append('_method', 'PUT');
 
                 try {
-                    const response = await fetch(`/management/update/${dbId}`, {
+                    const response = await fetch(`/management/update/${encodeURIComponent(dbId)}`, {
                         method: 'POST',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
@@ -507,6 +616,7 @@
 
                     if (response.ok && result.success) {
                         const idx = membersData.findIndex(u => u.db_id == dbId);
+
                         if (idx !== -1) {
                             membersData[idx].name = result.data.name;
                             membersData[idx].gender = result.data.gender;
@@ -515,14 +625,19 @@
                             membersData[idx].status = result.data.status;
                             membersData[idx].plan = result.data.plan;
                         }
+
                         filterList();
 
                         const editModalEl = document.getElementById('editUserModal');
                         const modal = bootstrap.Modal.getInstance(editModalEl);
-                        modal.hide();
+
+                        if (modal) {
+                            modal.hide();
+                        }
                     } else {
                         alert(result.message || 'Update failed.');
                     }
+
                 } catch (error) {
                     console.error('Update error:', error);
                     alert('Failed to connect to server.');
@@ -537,7 +652,7 @@
                 if (!confirm('Are you sure you want to delete this user?')) return;
 
                 try {
-                    const response = await fetch(`/management/delete/${dbId}`, {
+                    const response = await fetch(`/management/delete/${encodeURIComponent(dbId)}`, {
                         method: 'DELETE',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
@@ -553,12 +668,17 @@
                         filterList();
 
                         const allCountElem = document.getElementById('countAll');
+
                         if (allCountElem) {
-                            allCountElem.innerText = Math.max(0, parseInt(allCountElem.innerText.replace(/,/g, '')) - 1);
+                            allCountElem.innerText = Math.max(
+                                0,
+                                parseInt(allCountElem.innerText.replace(/,/g, ''), 10) - 1
+                            );
                         }
                     } else {
                         alert(result.message || 'Failed to delete user.');
                     }
+
                 } catch (error) {
                     console.error('Delete error:', error);
                     alert('Error deleting user.');
@@ -568,6 +688,7 @@
             // Initial render
             renderRows(membersData);
             updateExportUrl();
+
         });
     </script>
 @endsection
