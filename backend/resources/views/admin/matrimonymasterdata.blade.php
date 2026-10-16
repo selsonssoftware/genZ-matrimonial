@@ -257,7 +257,7 @@
                         @endif
 
                         <div class="rounded-3 p-2 mb-3" style="background:#fbf2f4;">
-                            <div class="small fw-bold text-uppercase text-maroon mb-2">Hindu details</div>
+                            <div class="small fw-bold text-uppercase text-maroon mb-2">Details</div>
                             <div class="mb-2">
                                 <label class="form-label" for="filter-rasi">Rasi</label>
                                 <select class="form-select" id="filter-rasi" name="rasi">
