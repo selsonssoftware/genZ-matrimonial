@@ -2,7 +2,8 @@ name: Deploy Laravel to Hostinger
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -22,31 +23,49 @@ jobs:
         working-directory: ./backend
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
-      - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server:   ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          timeout: 120000
-          local-dir: ./backend/
-          server-dir: /home/uXXXXXXXXX/public_html/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/vendor/**
-            **/tests/**
-            **/storage/logs/**
-            **/storage/framework/cache/**
-            **/storage/framework/sessions/**
-            **/storage/framework/views/**
-            **/bootstrap/cache/**
-            **/.env
-            **/.env.*
-            **/*.md
-            **/phpunit.xml
-            **/.phpunit.cache/**
-            **/public/storage/**
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy to Hostinger via lftp
+        env:
+          FTP_SERVER:   ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        working-directory: ./backend
+        run: |
+          lftp -c "
+            set ftp:ssl-allow no;
+            set ftp:passive-mode true;
+            set net:max-retries 3;
+            set net:timeout 30;
+            set net:reconnect-interval-base 5;
+            set net:reconnect-interval-multiplier 2;
+            set mirror:parallel-transfer-count 4;
+            set mirror:use-pget-n 4;
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+            cd /public_html;
+            mirror -R \
+              --verbose \
+              --parallel=4 \
+              --exclude-glob .git* \
+              --exclude-glob node_modules/ \
+              --exclude-glob vendor/ \
+              --exclude-glob tests/ \
+              --exclude-glob storage/logs/ \
+              --exclude-glob storage/framework/cache/ \
+              --exclude-glob storage/framework/sessions/ \
+              --exclude-glob storage/framework/views/ \
+              --exclude-glob bootstrap/cache/ \
+              --exclude-glob .env \
+              --exclude-glob .env.* \
+              --exclude-glob '*.md' \
+              --exclude-glob phpunit.xml \
+              --exclude-glob .phpunit.cache/ \
+              --exclude-glob public/storage/ \
+              --exclude-glob '*.log' \
+              --exclude-glob '*.map' \
+              --exclude-glob .idea/ \
+              --exclude-glob .vscode/ \
+              . /public_html;
+            bye
+          "
