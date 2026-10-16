@@ -3,44 +3,48 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class AdminAuthController extends Controller
 {
     // 1. Show Login Page
     public function showLoginForm()
     {
-        if (Auth::check()) {
+        if (Auth::guard('admin')->check()) {
             return redirect()->intended(route('dashboard'));
         }
 
         return view('admin.login');
     }
 
-    // 2. Admin Login
+    // 2. Admin Login - admins table only
     public function login(Request $request)
     {
         $request->validate([
             'login' => 'required|string',
-            'password' => 'required',
+            'password' => 'required|string',
         ]);
 
-        $loginInput = trim($request->login);
+        $loginInput = trim($request->input('login'));
 
-        // Name or Email tho user ni search cheyyadam
-        $user = User::where('email', $loginInput)
+        $admin = Admin::where('email', $loginInput)
             ->orWhere('name', $loginInput)
             ->first();
 
-        // User dorikithe password verify cheyyadam
-        if ($user && Hash::check($request->password, $user->password)) {
-
-            Auth::login($user, $request->boolean('remember'));
+        if (
+            $admin &&
+            Hash::check($request->input('password'), $admin->password)
+        ) {
+            Auth::guard('admin')->login(
+                $admin,
+                $request->boolean('remember')
+            );
 
             $request->session()->regenerate();
 
@@ -54,55 +58,46 @@ class AdminAuthController extends Controller
             ->onlyInput('login');
     }
 
-
-
     // 3. Show Forgot Password Form
     public function showForgotPasswordForm()
     {
         return view('admin.forgot-password');
     }
 
-    // 4. Send Reset Link
-
+    // 4. Send Reset Link - admins table only
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email|exists:admins,email',
         ], [
             'email.exists' => 'No admin account found with this email.',
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return back()->withErrors([
-                'email' => 'No account found with this email.',
-            ]);
-        }
+        $admin = Admin::where('email', $request->email)->firstOrFail();
 
         $token = Str::random(60);
 
-        $user->reset_token = Hash::make($token);
-        $user->reset_token_created_at = now();
-        $user->save();
+        $admin->reset_token = Hash::make($token);
+        $admin->reset_token_created_at = now();
+        $admin->save();
 
         $resetLink = route('password.reset', [
             'token' => $token,
-            'email' => $request->email,
+            'email' => $admin->email,
         ]);
 
         try {
             Mail::raw(
-                "Hello {$user->name},\n\n"
+                "Hello {$admin->name},\n\n"
                 . "Click the link below to reset your password:\n\n"
                 . $resetLink
                 . "\n\nIf you did not request this, ignore this email.",
-                function ($message) use ($user) {
-                    $message->to($user->email)
+                function ($message) use ($admin) {
+                    $message->to($admin->email)
                         ->subject('Admin Password Reset');
                 }
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->withErrors([
@@ -116,7 +111,6 @@ class AdminAuthController extends Controller
         );
     }
 
-
     // 5. Show Reset Password Form
     public function showResetForm(Request $request, $token)
     {
@@ -126,58 +120,68 @@ class AdminAuthController extends Controller
         ]);
     }
 
-    // 6. Reset Password
+    // 6. Reset Password - admins table only
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'token' => 'required',
+            'token' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|min:3|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $admin = Admin::where('email', $request->email)->first();
 
         if (
-            !$user || !$user->reset_token ||
-            !Hash::check($request->token, $user->reset_token)
+            !$admin ||
+            !$admin->reset_token ||
+            !Hash::check($request->token, $admin->reset_token)
         ) {
             return back()->withErrors([
                 'email' => 'Invalid or expired token!',
             ]);
         }
 
-        // Optional expiry check: 60 minutes
-        if (
-            !$user->reset_token_created_at ||
-            now()->diffInMinutes($user->reset_token_created_at) > 60
-        ) {
+        if (!$admin->reset_token_created_at) {
             return back()->withErrors([
                 'email' => 'Reset link expired. Please request a new link.',
             ]);
         }
 
-        $user->password = Hash::make($request->password);
-        $user->reset_token = null;
-        $user->reset_token_created_at = null;
-        $user->save();
+        $createdAt = Carbon::parse($admin->reset_token_created_at);
+
+        if ($createdAt->lt(now()->subMinutes(60))) {
+            return back()->withErrors([
+                'email' => 'Reset link expired. Please request a new link.',
+            ]);
+        }
+
+        $admin->password = Hash::make($request->password);
+        $admin->reset_token = null;
+        $admin->reset_token_created_at = null;
+        $admin->save();
 
         return redirect()
             ->route('login')
-            ->with('success', 'Password reset successfully. Please login again.');
+            ->with(
+                'success',
+                'Password reset successfully. Please login again.'
+            );
     }
 
     // 7. Show Change Password Form
     public function showChangePasswordForm()
     {
+        abort_unless(Auth::guard('admin')->check(), 403);
+
         return view('admin.change-password');
     }
 
-    // 8. Update Password
+    // 8. Update Password - admins table only
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:3|different:current_password',
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|different:current_password',
             'new_password_confirmation' => 'required|same:new_password',
         ], [
             'current_password.required' => 'Current password is required.',
@@ -186,16 +190,19 @@ class AdminAuthController extends Controller
             'new_password_confirmation.same' => 'The confirmation password does not match.',
         ]);
 
-        $user = Auth::user();
+        $admin = Auth::guard('admin')->user();
 
-        if (!$user || !Hash::check($request->current_password, $user->password)) {
+        if (
+            !$admin ||
+            !Hash::check($request->current_password, $admin->password)
+        ) {
             return back()->withErrors([
                 'current_password' => 'The password you entered is incorrect.',
             ]);
         }
 
-        $user->password = Hash::make($request->new_password);
-        $user->save();
+        $admin->password = Hash::make($request->new_password);
+        $admin->save();
 
         return back()->with(
             'success',
@@ -206,7 +213,7 @@ class AdminAuthController extends Controller
     // 9. Admin Logout
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('admin')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
