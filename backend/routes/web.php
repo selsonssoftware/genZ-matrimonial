@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MatchesInterestsController;
+
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\CmsController;
 use App\Http\Controllers\Admin\VendorAssignmentReportController;
@@ -71,10 +72,16 @@ Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function (
         Route::post('/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
         Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
 
+Route::get('/matches-interests', [
+    MatchesInterestsController::class,
+    'index'
+])->name('admin.matches-interests');
+        
 Route::get('/vendor-assignment-report', [
     VendorAssignmentReportController::class,
     'index'
 ])->name('admin.vendor-assignments.index');
+
 
 Route::get('/matches-interests', [
     MatchesInterestsController::class,
@@ -130,5 +137,4 @@ Route::post('/cms-communication/banner', [
     'updateBanner'
 ])->name('cms.banner.update');
     });
-  
 });
