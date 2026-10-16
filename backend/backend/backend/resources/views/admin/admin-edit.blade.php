@@ -110,9 +110,9 @@
                             <div class="input-wrapper">
                                 <i class="ti ti-mail input-icon"></i>
 
-                                <input type="email" id="email" name="email" class="custom-input"
+                                <input type="text" id="email" name="email" class="custom-input"
                                     placeholder="Enter email address" value="{{ old('email', $admin->email) }}"
-                                    maxlength="255" required>
+                                    maxlength="255">
                             </div>
 
                             @error('email')
