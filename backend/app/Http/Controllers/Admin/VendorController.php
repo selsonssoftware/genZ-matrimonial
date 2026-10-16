@@ -181,7 +181,15 @@ public function assignments()
 {
     $assignments = DB::table('vendor_customer_assignments as a')
         ->join('vendor as v', 'v.id', '=', 'a.vendor_id')
-        ->leftJoin('profiles as p', 'p.profile_id', '=', 'a.profile_id')
+        ->leftJoin('profiles as p', function ($join) {
+            if (DB::connection()->getDriverName() === 'mysql') {
+                $join->whereRaw(
+                    'p.profile_id COLLATE utf8mb4_general_ci = a.profile_id COLLATE utf8mb4_general_ci'
+                );
+            } else {
+                $join->on('p.profile_id', '=', 'a.profile_id');
+            }
+        })
         ->select(
             'a.id',
             'a.vendor_id',

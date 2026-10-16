@@ -941,7 +941,7 @@
                                 </a>
 
                                 <!-- Settings -->
-                                <a href="{{ url('/admin/settings') }}" class="dropdown-item">
+                                <a href="{{ route('settings') }}" class="dropdown-item">
                                     <i class="ti ti-settings-2 me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Account Settings</span>
                                 </a>
@@ -972,7 +972,7 @@
         <!-- Topbar End -->
         <div class="sidenav-menu">
             <!-- Brand Logo -->
-            <a href="/dashboard" class="logo">
+            <a href="{{ route('dashboard') }}" class="logo">
                 <span class="logo logo-light">
                     <span class="logo-lg"><img src="{{ asset('dashboardassets/images/main-logo.png') }}"
                             alt="logo" /></span>
@@ -1030,7 +1030,7 @@
                                 </a>
 
                                 <!-- Settings -->
-                                <a href="{{ url('/admin/settings') }}" class="dropdown-item">
+                                <a href="{{ route('settings') }}" class="dropdown-item">
                                     <i class="ti ti-settings-2 me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Account Settings</span>
                                 </a>
@@ -1131,7 +1131,7 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/cms-communication') }}" class="side-nav-link">
+                            <a href="{{ route('admin.cms-communication') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-message-circle"></i>
                                 </span>
@@ -1158,7 +1158,7 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ url('/admin/settings') }}" class="side-nav-link">
+                            <a href="{{ route('settings') }}" class="side-nav-link">
                                 <span class="menu-icon">
                                     <i class="ti ti-settings"></i>
                                 </span>

@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProfileVerificationController;
 use App\Http\Controllers\Admin\VendorController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,102 +28,70 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->n
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
-
-    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-
-    Route::get('/change-password', [AdminAuthController::class, 'showChangePasswordForm'])->name('change.password');
-    Route::post('/change-password', [AdminAuthController::class, 'updatePassword'])->name('change.password.update');
-
-    // Admin Account Management
-    Route::get('/admins', [AdminController::class, 'index'])->name('admins.index');
-    Route::get('/admins/{id}/edit', [AdminController::class, 'edit'])->name('admins.edit');
-    Route::put('/admins/{id}', [AdminController::class, 'update'])->name('admins.update');
-    Route::delete('/admins/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
-
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
-
-    // User Management CRUD
-    Route::get('/management', [UserController::class, 'userindex'])->name('users.index');
-    Route::post('/management/store', [UserController::class, 'userstore'])->name('users.store');
-    Route::put('/management/update/{id}', [UserController::class, 'userupdate'])->name('users.update');
-    Route::delete('/management/delete/{id}', [UserController::class, 'userdestroy'])->name('users.destroy');
-    Route::get('/management/export', [UserController::class, 'userexport'])->name('users.export');
-
-    // Admin Group Routes
-    Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function () {
+    Route::prefix('admin')->group(function () {
+        Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         Route::get('/', function () {
+            return redirect()->route('dashboard');
+        });
+        Route::get('/dashboard', function () {
             return view('admin.dashboard');
         })->name('dashboard');
 
+        Route::get('/change-password', [AdminAuthController::class, 'showChangePasswordForm'])->name('change.password');
+        Route::post('/change-password', [AdminAuthController::class, 'updatePassword'])->name('change.password.update');
+
+        // Admin Account Management
+        Route::get('/admins', [AdminController::class, 'index'])->name('admins.index');
+        Route::get('/admins/{id}/edit', [AdminController::class, 'edit'])->name('admins.edit');
+        Route::put('/admins/{id}', [AdminController::class, 'update'])->name('admins.update');
+        Route::delete('/admins/{id}', [AdminController::class, 'destroy'])->name('admins.destroy');
+
         // User Management
-        Route::get('/management', [UserController::class, 'userindex'])->name('management');
+        Route::get('/management', [UserController::class, 'userindex'])->name('users.index');
+        Route::post('/management/store', [UserController::class, 'userstore'])->name('users.store');
+        Route::put('/management/update/{id}', [UserController::class, 'userupdate'])->name('users.update');
+        Route::delete('/management/delete/{id}', [UserController::class, 'userdestroy'])->name('users.destroy');
+        Route::get('/management/export', [UserController::class, 'userexport'])->name('users.export');
 
         // Profile Verification
-        Route::get('/profile', [ProfileVerificationController::class, 'index'])->name('profile-verification.index');
+        Route::get('/profile', [ProfileVerificationController::class, 'index'])->name('admin.profile-verification.index');
         Route::post('/profile/{id}/review', [ProfileVerificationController::class, 'review'])
             ->whereNumber('id')
-            ->name('profile-verification.review');
+            ->name('admin.profile-verification.review');
 
         // Vendor Management
-        Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
-        Route::post('/vendors', [VendorController::class, 'store'])->name('vendors.store');
-        Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('vendors.assign-profile');
-        Route::get('/vendor-assignments', [VendorController::class, 'assignments'])->name('vendor-assignments.index');
+        Route::get('/vendors', [VendorController::class, 'index'])->name('admin.vendors.index');
+        Route::post('/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
+        Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
+        Route::get('/vendor-assignments', [VendorController::class, 'assignments'])->name('admin.vendor-assignments.index');
 
-        // Other Admin Pages
         Route::get('/matches-interests', function () {
             return view('admin.matches-interests');
-        })->name('matches-interests');
+        })->name('admin.matches-interests');
 
         Route::get('/membership', function () {
             return view('admin.membership');
-        })->name('membership');
+        })->name('admin.membership');
 
         Route::get('/matrimonymasterdata', function () {
             return view('admin.matrimonymasterdata');
-        })->name('matrimonymasterdata');
+        })->name('admin.matrimonymasterdata');
 
         Route::get('/report', function () {
             return view('admin.report');
-        })->name('report');
+        })->name('admin.report');
 
         Route::get('/setting', function () {
             return view('admin.setting');
-        })->name('setting');
-
+        })->name('admin.setting');
         Route::get('/settings', function () {
             return view('admin.setting');
         })->name('settings');
 
         Route::get('/cms-communication', function () {
             return view('admin.cms-communication');
-        })->name('cms-communication');
+        })->name('admin.cms-communication');
     });
-
-    // Top-level aliases for direct navigation compatibility
-    Route::get('/profile', [ProfileVerificationController::class, 'index']);
-    Route::get('/vendors', [VendorController::class, 'index']);
-    Route::get('/matches-interests', function () {
-        return view('admin.matches-interests');
-    });
-    Route::get('/membership', function () {
-        return view('admin.membership');
-    });
-    Route::get('/matrimonymasterdata', function () {
-        return view('admin.matrimonymasterdata');
-    });
-    Route::get('/cms-communication', function () {
-        return view('admin.cms-communication');
-    });
-    Route::get('/report', function () {
-        return view('admin.report');
-    });
-    Route::get('/settings', function () {
-        return view('admin.setting');
-    })->name('settings');
 });

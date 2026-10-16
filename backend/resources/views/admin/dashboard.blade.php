@@ -203,7 +203,7 @@
                                 <p class="text-muted fs-12 mb-0">Latest profiles and their review status</p>
                             </div>
                             <div>
-                                <a href="{{ url('/management') }}"
+                                <a href="{{ route('users.index') }}"
                                     class="btn btn-sm btn-link text-decoration-none fw-semibold" style="color: #6A1B29;">
                                     View All <i class="ti ti-arrow-right ms-1"></i>
                                 </a>
