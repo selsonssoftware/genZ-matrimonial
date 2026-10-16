@@ -51,8 +51,6 @@ jobs:
           set mirror:parallel-transfer-count 4
           set mirror:use-pget-n 4
 
-          open $FTP_SERVER
-
           cd /public_html
 
           mirror -R \
@@ -86,4 +84,5 @@ jobs:
         working-directory: ./backend
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        run: lftp -f /tmp/deploy.lftp
+        run: |
+          lftp -e "open ${FTP_SERVER}; source /tmp/deploy.lftp"
