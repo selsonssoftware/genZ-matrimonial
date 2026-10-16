@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\MatchesInterestsController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\CmsController;
 use App\Http\Controllers\Admin\VendorAssignmentReportController;
+use App\Http\Controllers\Admin\MatrimonyMasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,9 +108,12 @@ Route::get('/membership/export', [
     'export'
 ])->name('admin.membership.export');
 
-        Route::get('/matrimonymasterdata', function () {
-            return view('admin.matrimonymasterdata');
-        })->name('admin.matrimonymasterdata');
+        Route::get('/matrimonymasterdata', [MatrimonyMasterController::class, 'index'])
+            ->name('admin.matrimonymasterdata');
+        Route::get('/matrimonymasterdata/export', [MatrimonyMasterController::class, 'export'])
+            ->name('admin.matrimonymasterdata.export');
+        Route::post('/matrimonymasterdata/bulk-review', [MatrimonyMasterController::class, 'bulkReview'])
+            ->name('admin.matrimonymasterdata.bulk-review');
 
         Route::get('/report', function () {
             return view('admin.report');
