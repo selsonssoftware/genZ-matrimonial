@@ -1092,32 +1092,13 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a data-bs-toggle="collapse" href="{{ url('/membership') }}" aria-expanded="false" aria-controls="invoice"
-                                class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-invoice"></i></span>
-                                <span class="menu-text" data-lang="invoice">Membership and Payments</span>
-                                <!-- <span class="menu-arrow"></span> -->
+                            <a href="{{ url('/membership') }}" class="side-nav-link">
+                                <span class="menu-icon">
+                                    <i class="ti ti-briefcase"></i>
+                                </span>
+                                <span class="menu-text">Membership & Payments</span>
                             </a>
-                            <!-- <div class="collapse" id="invoice">
-                                <ul class="sub-menu">
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-list.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-list">Invoices</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-details.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-details">Single
-                                                Invoice</span>
-                                        </a>
-                                    </li>
-                                    <li class="side-nav-item">
-                                        <a href="apps-invoice-create.html" class="side-nav-link">
-                                            <span class="menu-text" data-lang="apps-invoice-create">New Invoice</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div> -->
+                        </li>
                         </li>
                         <li class="side-nav-item">
                             <a data-bs-toggle="collapse" href="#crm" aria-expanded="false" aria-controls="crm"
