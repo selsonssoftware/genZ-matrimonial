@@ -32,3 +32,6 @@ Route::get('/matches-interests', function () {
 Route::get('/membership', function () {
     return view('membership');
 });
+Route::get('/matrimonymasterdata', function () {
+    return view('matrimonymasterdata');
+});
