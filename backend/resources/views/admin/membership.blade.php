@@ -974,7 +974,7 @@ body {
 
             <div class="membership-table-wrap">
 
-                <table class="membership-table">
+                <table class="membership-table js-data-table" data-paging="false">
 
                     <thead>
                         <tr>

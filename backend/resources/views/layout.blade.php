@@ -21,6 +21,7 @@
 
     <!-- Vendor css -->
     <link href="{{ asset('dashboardassets/css/vendors.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- App css -->
     <link id="app-style" href="{{ asset('dashboardassets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
@@ -1870,6 +1871,70 @@
 
     <!-- Custom table -->
     <script src="{{ asset('dashboardassets/js/pages/custom-table.js') }}"></script>
+
+    <!-- Datatables -->
+    <script src="{{ asset('dashboardassets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.jQuery || !jQuery.fn.DataTable) {
+                return;
+            }
+
+            jQuery('table.js-data-table').each(function () {
+                const table = jQuery(this);
+                const hasColspanPlaceholder = table.find('tbody tr').toArray().some(function (row) {
+                    return row.children.length === 1 && row.children[0].colSpan > 1;
+                });
+
+                if (hasColspanPlaceholder) {
+                    return;
+                }
+
+                const options = {
+                    responsive: true,
+                    autoWidth: false,
+                    order: [],
+                    pageLength: Number(table.data('page-length')) || 10,
+                    language: {
+                        emptyTable: table.data('empty-table') || 'No data available in table'
+                    }
+                };
+
+                if (table.data('paging') === false) {
+                    options.paging = false;
+                    options.info = false;
+                }
+
+                const dataTable = table.DataTable(options);
+
+                if (table.attr('id') === 'vendorDirectoryTable') {
+                    table.on('click', '.js-toggle-vendor-assignment', function () {
+                        const button = jQuery(this);
+                        const template = document.getElementById(button.data('template'));
+
+                        if (!template) {
+                            console.error('Vendor assignment form template was not found.');
+                            return;
+                        }
+
+                        const row = dataTable.row(button.closest('tr'));
+
+                        if (row.child.isShown()) {
+                            row.child.hide();
+                            button.attr('aria-expanded', 'false');
+                        } else {
+                            row.child(template.innerHTML).show();
+                            button.attr('aria-expanded', 'true');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 
     <!-- Dashboard js -->
     <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js"></script>

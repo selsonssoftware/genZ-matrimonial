@@ -178,7 +178,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover">
+                    <table id="usersTable" class="table align-middle mb-0 table-hover js-data-table" data-empty-table="No members found in database.">
                         <thead
                             style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <tr style="color: #561325;">
@@ -391,15 +391,22 @@
             }
 
             function renderRows(list) {
-                tbody.innerHTML = '';
+                const dataTable = window.jQuery
+                    && jQuery.fn.DataTable
+                    && jQuery.fn.DataTable.isDataTable('#usersTable')
+                    ? jQuery('#usersTable').DataTable()
+                    : null;
+
+                if (dataTable) {
+                    dataTable.clear();
+                } else {
+                    tbody.innerHTML = '';
+                }
 
                 if (!list || list.length === 0) {
-                    tbody.innerHTML = `
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    No members found in database.
-                                </td>
-                            </tr>`;
+                    if (dataTable) {
+                        dataTable.draw();
+                    }
                     paginationLabel.innerText = 'Showing 0 members';
                     return;
                 }
@@ -463,8 +470,16 @@
                             </td>
                         `;
 
-                    tbody.appendChild(tr);
+                    if (dataTable) {
+                        dataTable.row.add(tr);
+                    } else {
+                        tbody.appendChild(tr);
+                    }
                 });
+
+                if (dataTable) {
+                    dataTable.draw();
+                }
 
                 paginationLabel.innerText = `Showing ${list.length} member(s)`;
             }
@@ -506,6 +521,7 @@
             filterGender.addEventListener('change', filterList);
             filterStatus.addEventListener('change', filterList);
             filterPlan.addEventListener('change', filterList);
+            filterList();
 
             // Create User via AJAX
             document.getElementById('addUserForm').addEventListener('submit', async function (e) {

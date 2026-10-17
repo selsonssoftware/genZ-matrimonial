@@ -209,7 +209,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover">
+                    <table id="vendorDirectoryTable" class="table align-middle mb-0 table-hover js-data-table" data-paging="false">
                         <thead
                             style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <tr style="color: #561325;">
@@ -269,34 +269,31 @@
 
             <td class="text-center pe-4">
                 <button type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#assignVendor{{ $vendor->id }}">
+                        class="btn btn-sm btn-outline-secondary js-toggle-vendor-assignment"
+                        data-template="assignVendor{{ $vendor->id }}"
+                        aria-expanded="false">
                     Assign Profile
                 </button>
-            </td>
-        </tr>
+                <template id="assignVendor{{ $vendor->id }}">
+                    <form method="POST"
+                          action="{{ route('admin.vendors.assign-profile', $vendor->id) }}"
+                          class="d-flex flex-wrap gap-2 p-3">
+                        @csrf
 
-        <tr class="collapse" id="assignVendor{{ $vendor->id }}">
-            <td colspan="7" class="p-3">
-                <form method="POST"
-                      action="{{ route('admin.vendors.assign-profile', $vendor->id) }}"
-                      class="d-flex flex-wrap gap-2">
-                    @csrf
+                        <input type="text"
+                               name="profile_id"
+                               class="form-control form-control-sm"
+                               placeholder="Member Profile ID"
+                               required
+                               style="max-width:300px;">
 
-                    <input type="text"
-                           name="profile_id"
-                           class="form-control form-control-sm"
-                           placeholder="Member Profile ID"
-                           required
-                           style="max-width:300px;">
-
-                    <button type="submit"
-                            class="btn btn-sm text-white"
-                            style="background-color:#561325;">
-                        Assign Profile
-                    </button>
-                </form>
+                        <button type="submit"
+                                class="btn btn-sm text-white"
+                                style="background-color:#561325;">
+                            Assign Profile
+                        </button>
+                    </form>
+                </template>
             </td>
         </tr>
     @empty

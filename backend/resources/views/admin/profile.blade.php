@@ -15,6 +15,7 @@
                     <!-- Search Box -->
                     
 <form method="GET" action="{{ route('admin.profile-verification.index') }}">
+    <input type="hidden" name="status" value="{{ $status }}">
     <div class="input-group shadow-sm" style="width: 170px;">
         <span class="input-group-text bg-white border-end-0 text-muted ps-2 pe-1 py-1">
             <i class="ti ti-search fs-14"></i>
@@ -76,19 +77,22 @@
             </a>
 
             <a href="{{ route('admin.profile-verification.index', ['status' => 'approved']) }}"
-               class="btn btn-sm btn-light border-0 text-muted px-3 py-2 rounded-3">
+               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'approved' ? 'text-white' : 'btn-light text-muted' }}"
+               @if(($status ?? 'pending') === 'approved') style="background-color: #561325;" @endif>
                 Approved
                 <span class="ms-1">{{ $counts['approved'] ?? 0 }}</span>
             </a>
 
             <a href="{{ route('admin.profile-verification.index', ['status' => 'rejected']) }}"
-               class="btn btn-sm btn-light border-0 text-muted px-3 py-2 rounded-3">
+               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'rejected' ? 'text-white' : 'btn-light text-muted' }}"
+               @if(($status ?? 'pending') === 'rejected') style="background-color: #561325;" @endif>
                 Rejected
                 <span class="ms-1">{{ $counts['rejected'] ?? 0 }}</span>
             </a>
 
             <a href="{{ route('admin.profile-verification.index', ['status' => 'update_requested']) }}"
-               class="btn btn-sm btn-light border-0 text-muted px-3 py-2 rounded-3">
+               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'update_requested' ? 'text-white' : 'btn-light text-muted' }}"
+               @if(($status ?? 'pending') === 'update_requested') style="background-color: #561325;" @endif>
                 Update requested
                 <span class="ms-1">{{ $counts['update_requested'] ?? 0 }}</span>
             </a>
@@ -97,7 +101,74 @@
     </div>
 </div>
 
+@if(($status ?? 'pending') === 'all')
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white"
+         style="border: 1px solid #F3E5E8 !important;">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
+            <h5 class="fw-bold mb-1" style="color: #561325;">All Profile Names</h5>
+            <p class="text-muted fs-12 mb-0">Select a member to open their profile in its status tab.</p>
+        </div>
+        <div class="table-responsive px-3 pb-3">
+            <table class="table align-middle table-hover mb-0 js-data-table" data-page-length="10">
+                <thead style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase;">
+                    <tr style="color: #561325;">
+                        <th>Profile name</th>
+                        <th>Profile ID</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($profiles as $profile)
+                        <tr class="{{ $selectedProfile && (int) $selectedProfile->id === (int) $profile->id ? 'table-active' : '' }}">
+                            <td>
+                                <a class="fw-semibold text-dark text-decoration-none"
+                                   href="{{ route('admin.profile-verification.index', array_filter([
+                                        'status' => $profile->verification_status,
+                                        'search' => $search,
+                                        'id' => $profile->id,
+                                   ], fn ($value) => $value !== null && $value !== '')) }}">
+                                    {{ $profile->user_name ?: 'Member' }}
+                                </a>
+                            </td>
+                            <td>{{ $profile->profile_id ?: ('#' . $profile->id) }}</td>
+                            <td>
+                                @php
+                                    $profileStatusLabel = [
+                                        'approved' => 'Approved',
+                                        'rejected' => 'Rejected',
+                                        'update_requested' => 'Update requested',
+                                        'pending' => 'Pending review',
+                                    ][$profile->verification_status] ?? ucfirst($profile->verification_status);
+                                    $profileStatusClass = [
+                                        'approved' => 'bg-success-subtle text-success-emphasis',
+                                        'rejected' => 'bg-danger-subtle text-danger-emphasis',
+                                        'update_requested' => 'bg-warning-subtle text-warning-emphasis',
+                                        'pending' => 'bg-secondary-subtle text-secondary-emphasis',
+                                    ][$profile->verification_status] ?? 'bg-secondary-subtle text-secondary-emphasis';
+                                @endphp
+                                <span class="badge rounded-pill {{ $profileStatusClass }}">
+                                    {{ $profileStatusLabel }}
+                                </span>
+                            </td>
+                            <td>
+                                {{ $profile->created_at
+                                    ? \Carbon\Carbon::parse($profile->created_at)->format('d M Y')
+                                    : 'N/A' }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No profiles found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+@endif
 
+@if(($status ?? 'pending') !== 'all')
             <!-- Main Profile Review Container Card -->
             <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white" style="border: 1px solid #F3E5E8 !important;">
                 <div class="row g-4 align-items-start">
@@ -280,7 +351,7 @@
 
                         
 <!-- Admin Review & Notes and Actions -->
-@if($selectedProfile)
+@if($status === 'pending' && $selectedProfile && $selectedProfile->verification_status === 'pending')
     <form
         method="POST"
         action="{{ route('admin.profile-verification.review', $selectedProfile->id) }}"
@@ -341,6 +412,11 @@
             </button>
         </div>
     </form>
+@elseif($status !== 'all' && $selectedProfile)
+    <div class="alert alert-light border mb-0" role="status">
+        This profile is currently {{ str_replace('_', ' ', $selectedProfile->verification_status) }}.
+        Review actions are no longer available.
+    </div>
 @endif
                     </div>
                 </div>
@@ -348,4 +424,5 @@
 
         </div>
     </div>
+@endif
 @endsection

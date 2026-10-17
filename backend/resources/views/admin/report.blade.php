@@ -216,7 +216,7 @@
                                     </div>
 
                                     <div class="table-responsive mt-2">
-                                        <table class="table table-sm table-nowrap table-borderless table-centered mb-0">
+                                        <table class="table table-sm table-nowrap table-borderless table-centered mb-0 js-data-table">
                                             <thead class="bg-light bg-opacity-50 thead-sm">
                                                 <tr class="text-uppercase fs-xxs">
                                                     <th>Gender</th>
@@ -271,7 +271,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover">
+                    <table class="table align-middle mb-0 table-hover js-data-table">
                         <thead
                             style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <tr style="color: #561325;">

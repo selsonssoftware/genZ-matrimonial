@@ -211,7 +211,7 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
+                                <table class="table table-hover align-middle mb-0 js-data-table">
                                     <thead
                                         style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; color: #6A1B29;">
                                         <tr>

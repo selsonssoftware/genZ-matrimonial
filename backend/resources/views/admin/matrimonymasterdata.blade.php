@@ -428,7 +428,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table align-middle table-hover mb-0">
+                                <table class="table align-middle table-hover mb-0 js-data-table" data-paging="false">
                                     <thead style="background:#fcf8f8;">
                                         <tr class="text-uppercase text-muted" style="font-size:10px; letter-spacing:.04em;">
                                             <th class="ps-3" style="width:36px;"></th>
