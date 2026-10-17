@@ -147,7 +147,7 @@
     <div class="card-box">
         <div class="badge">🔒</div>
         <h2 class="title">Change Password</h2>
-        <p class="subtitle">Admin డాష్‌బోర్డ్ నుంచే డైరెక్ట్‌గా మీ పాస్‌వర్డ్ మార్చుకోండి.</p>
+        <p class="subtitle">Admin Dashboard</p>
 
         @if (session('success'))
             <div class="alert-success">
@@ -165,20 +165,15 @@
             @csrf
 
             <div class="form-group">
-                <label class="form-label">Current Password</label>
-                <input type="password" name="current_password" class="form-input"
-                    placeholder="ప్రస్తుత పాస్‌వర్డ్ (123)" required>
-            </div>
-
-            <div class="form-group">
                 <label class="form-label">New Password</label>
-                <input type="password" name="new_password" class="form-input" placeholder="కొత్త పాస్‌వర్డ్" required>
+                <input type="password" name="new_password" class="form-input" placeholder="Enter new password"
+                    autocomplete="new-password" required>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Confirm New Password</label>
                 <input type="password" name="new_password_confirmation" class="form-input"
-                    placeholder="కొత్త పాస్‌వర్డ్ మళ్లీ ఎంటర్ చేయండి" required>
+                    placeholder="Confirm new password" autocomplete="new-password" required>
             </div>
 
             <button type="submit" class="btn-submit">Update Password →</button>

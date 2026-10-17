@@ -49,9 +49,7 @@ if (in_array($status, ['Active', 'Pending', 'Suspended'], true)) {
 }
 
 
-        $vendors = $query->orderByDesc('v.id')
-            ->paginate(10)
-            ->appends($request->query());
+        $vendors = $query->orderByDesc('v.id')->get();
 
         // KPIs use all database records, not just filtered records
         $totalVendors = DB::table('vendor')->count();

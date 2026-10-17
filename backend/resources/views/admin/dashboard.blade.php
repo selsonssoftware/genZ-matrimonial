@@ -12,7 +12,7 @@
 
                 <div class="text-end d-flex align-items-center gap-2">
                     <ol class="breadcrumb m-0 py-0 d-none d-md-flex">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Thirumana</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">GenZ Matrimony</a></li>
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
                     <span class="badge rounded-pill px-3 py-2 text-dark border bg-white shadow-sm ms-2">
@@ -27,9 +27,7 @@
             <div class="mb-3">
                 <span class="text-muted fs-12 fw-medium">
                     <i class="ti ti-calendar me-1"></i>
-                    <script>
-                        document.write(new Date().toLocaleDateString("en-US", { weekday: 'long', day: "numeric", month: "long", year: "numeric" }))
-                    </script>
+                    {{ now()->format('l, j F Y') }}
                 </span>
             </div>
 
@@ -48,9 +46,15 @@
                                         style="background-color: #FAF5F5; color: #6A1B29;">+</span> Total Members
                                 </span>
                             </div>
-                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">12,840</h3>
-                            <span class="text-success fs-11 fw-semibold"><i class="ti ti-trending-up"></i> +12.8% vs last
-                                month</span>
+                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">{{ number_format($totalMembers) }}</h3>
+                            @if($memberGrowth !== null)
+                                <span class="{{ $memberGrowth >= 0 ? 'text-success' : 'text-danger' }} fs-11 fw-semibold">
+                                    <i class="ti {{ $memberGrowth >= 0 ? 'ti-trending-up' : 'ti-trending-down' }}"></i>
+                                    {{ $memberGrowth >= 0 ? '+' : '' }}{{ number_format($memberGrowth, 1) }}% new members vs last month
+                                </span>
+                            @else
+                                <span class="text-muted fs-11">No members registered last month</span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -67,7 +71,7 @@
                                     Reviews
                                 </span>
                             </div>
-                            <h3 class="fw-bold mb-1 text-dark">186</h3>
+                            <h3 class="fw-bold mb-1 text-dark">{{ number_format($pendingReviews) }}</h3>
                             <span class="text-muted fs-11">Needs admin attention</span>
                         </div>
                     </div>
@@ -85,9 +89,8 @@
                                     Vendors
                                 </span>
                             </div>
-                            <h3 class="fw-bold mb-1 text-dark">248</h3>
-                            <span class="text-success fs-11 fw-semibold"><i class="ti ti-trending-up"></i> +8.4% vs last
-                                month</span>
+                            <h3 class="fw-bold mb-1 text-dark">{{ number_format($activeVendors) }}</h3>
+                            <span class="text-muted fs-11">Currently active vendors</span>
                         </div>
                     </div>
                 </div>
@@ -105,9 +108,15 @@
                                         style="background-color: #FFF0F2; color: #AF384E;">+</span> Membership Revenue
                                 </span>
                             </div>
-                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">₹4.82L</h3>
-                            <span class="text-success fs-11 fw-semibold"><i class="ti ti-trending-up"></i> +15.2% vs last
-                                month</span>
+                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">₹{{ number_format($membershipRevenue, 2) }}</h3>
+                            @if($revenueGrowth !== null)
+                                <span class="{{ $revenueGrowth >= 0 ? 'text-success' : 'text-danger' }} fs-11 fw-semibold">
+                                    <i class="ti {{ $revenueGrowth >= 0 ? 'ti-trending-up' : 'ti-trending-down' }}"></i>
+                                    {{ $revenueGrowth >= 0 ? '+' : '' }}{{ number_format($revenueGrowth, 1) }}% vs last month
+                                </span>
+                            @else
+                                <span class="text-muted fs-11">Revenue this month</span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -129,14 +138,16 @@
                                     <i class="ti ti-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">Download Report</a></li>
-                                    <li><a class="dropdown-item" href="#">Refresh</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('admin.report', ['period' => 'last_90_days']) }}">Open Reports</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('dashboard') }}">Refresh</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="card-body pt-0">
                             <div dir="ltr">
-                                <div id="registration-overview-chart" class="apex-charts" style="min-height: 250px;"></div>
+                                <div id="registration-overview-chart" class="apex-charts" style="min-height: 250px;"
+                                    data-registration-values="{{ json_encode($registrationValues) }}"
+                                    data-registration-labels="{{ json_encode($registrationLabels) }}"></div>
                             </div>
                         </div>
                     </div>
@@ -159,8 +170,9 @@
                                     </span>
                                     <span class="fs-13 fw-medium text-dark">Photo verification</span>
                                 </div>
-                                <span class="badge px-3 py-2 rounded-pill fs-12 fw-bold"
-                                    style="background-color: #F8EBEF; color: #6A1B29;">82</span>
+                                <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
+                                class="badge px-3 py-2 rounded-pill fs-12 fw-bold text-decoration-none"
+                                style="background-color: #F8EBEF; color: #6A1B29;">{{ number_format($photoVerificationQueue) }}</a>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between p-3 rounded-2 mb-2"
@@ -170,9 +182,10 @@
                                         class="avatar-xs rounded-circle d-flex align-items-center justify-content-center bg-info-subtle text-info">
                                         <i class="ti ti-id"></i>
                                     </span>
-                                    <span class="fs-13 fw-medium text-dark">Identity documents</span>
+                                    <span class="fs-13 fw-medium text-dark">Pending profiles without photo</span>
                                 </div>
-                                <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill fs-12 fw-bold">64</span>
+                                <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
+                                    class="badge bg-info-subtle text-info px-3 py-2 rounded-pill fs-12 fw-bold text-decoration-none">{{ number_format($profilesWithoutPhoto) }}</a>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between p-3 rounded-2"
@@ -184,8 +197,8 @@
                                     </span>
                                     <span class="fs-13 fw-medium text-dark">Vendor applications</span>
                                 </div>
-                                <span
-                                    class="badge bg-warning-subtle text-warning px-3 py-2 rounded-pill fs-12 fw-bold">40</span>
+                                <a href="{{ route('admin.vendors.index', ['status' => 'Pending']) }}"
+                                    class="badge bg-warning-subtle text-warning px-3 py-2 rounded-pill fs-12 fw-bold text-decoration-none">{{ number_format($vendorApplications) }}</a>
                             </div>
                         </div>
                     </div>
@@ -223,42 +236,47 @@
                                         </tr>
                                     </thead>
                                     <tbody class="fs-13">
-                                        <tr>
-                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10482</td>
-                                            <td class="fw-medium text-dark">Priya S.</td>
-                                            <td class="text-muted">Female · Chennai</td>
-                                            <td><span
-                                                    class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 fs-11">Pending</span>
-                                            </td>
-                                            <td class="pe-4 text-muted">13 Oct 2026</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10481</td>
-                                            <td class="fw-medium text-dark">Arun K.</td>
-                                            <td class="text-muted">Male · Coimbatore</td>
-                                            <td><span
-                                                    class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-11">Approved</span>
-                                            </td>
-                                            <td class="pe-4 text-muted">13 Oct 2026</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10480</td>
-                                            <td class="fw-medium text-dark">Nivetha R.</td>
-                                            <td class="text-muted">Female · Madurai</td>
-                                            <td><span
-                                                    class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 fs-11">Pending</span>
-                                            </td>
-                                            <td class="pe-4 text-muted">12 Oct 2026</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="ps-4 fw-semibold" style="color: #6A1B29;">TM-10479</td>
-                                            <td class="fw-medium text-dark">Karthik M.</td>
-                                            <td class="text-muted">Male · Salem</td>
-                                            <td><span
-                                                    class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-2 py-1 fs-11">Review</span>
-                                            </td>
-                                            <td class="pe-4 text-muted">12 Oct 2026</td>
-                                        </tr>
+                                        @forelse($recentRegistrations as $profile)
+                                            @php
+                                                $verificationStatus = $profile->verification_status ?: 'pending';
+                                                $statusLabel = [
+                                                    'pending' => 'Pending',
+                                                    'approved' => 'Approved',
+                                                    'rejected' => 'Rejected',
+                                                    'update_requested' => 'Update requested',
+                                                ][$verificationStatus] ?? ucfirst(str_replace('_', ' ', $verificationStatus));
+                                                $statusClass = [
+                                                    'pending' => 'bg-warning-subtle text-warning border-warning-subtle',
+                                                    'approved' => 'bg-success-subtle text-success border-success-subtle',
+                                                    'rejected' => 'bg-danger-subtle text-danger border-danger-subtle',
+                                                    'update_requested' => 'bg-info-subtle text-info border-info-subtle',
+                                                ][$verificationStatus] ?? 'bg-secondary-subtle text-secondary border-secondary-subtle';
+                                            @endphp
+                                            <tr>
+                                                <td class="ps-4 fw-semibold" style="color: #6A1B29;">
+                                                    {{ $profile->member_id ?: ($profile->profile_id ?: ('#' . $profile->id)) }}
+                                                </td>
+                                                <td class="fw-medium text-dark">{{ $profile->member_name ?: 'Member' }}</td>
+                                                <td class="text-muted">
+                                                    {{ $profile->gender ?: 'Gender not set' }} · {{ $profile->city ?: 'Location not set' }}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('admin.profile-verification.index', [
+                                                        'status' => in_array($verificationStatus, ['pending', 'approved', 'rejected', 'update_requested'], true) ? $verificationStatus : 'pending',
+                                                        'id' => $profile->id,
+                                                    ]) }}" class="badge rounded-pill {{ $statusClass }} border px-2 py-1 fs-11 text-decoration-none">
+                                                        {{ $statusLabel }}
+                                                    </a>
+                                                </td>
+                                                <td class="pe-4 text-muted">
+                                                    {{ $profile->created_at ? \Carbon\Carbon::parse($profile->created_at)->format('d M Y') : 'N/A' }}
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted py-4">No profiles found.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -298,15 +316,20 @@
     <!-- ApexChart Script for Registration Overview -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const chartElement = document.querySelector('#registration-overview-chart');
+            if (!chartElement) return;
+
+            const registrationValues = JSON.parse(chartElement.dataset.registrationValues || '[]');
+            const registrationLabels = JSON.parse(chartElement.dataset.registrationLabels || '[]');
             const chartOptions = {
                 series: [{
                     name: 'Registrations',
                     type: 'column',
-                    data: [420, 560, 510, 680, 620, 890, 950]
+                    data: registrationValues
                 }, {
                     name: 'Trend Line',
                     type: 'line',
-                    data: [420, 560, 510, 680, 620, 890, 950]
+                    data: registrationValues
                 }],
                 chart: {
                     height: 250,
@@ -327,7 +350,7 @@
                 dataLabels: {
                     enabled: false
                 },
-                labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                labels: registrationLabels,
                 xaxis: {
                     axisBorder: { show: false },
                     axisTicks: { show: false },
@@ -347,10 +370,8 @@
                 }
             };
 
-            if (document.querySelector("#registration-overview-chart")) {
-                const chart = new ApexCharts(document.querySelector("#registration-overview-chart"), chartOptions);
-                chart.render();
-            }
+            const chart = new ApexCharts(chartElement, chartOptions);
+            chart.render();
         });
     </script>
 @endsection

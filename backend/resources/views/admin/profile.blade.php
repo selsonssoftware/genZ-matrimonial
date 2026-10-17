@@ -54,52 +54,35 @@
             </div>
 
             <!-- Filter Navigation Pills Card -->
-            
-<div class="card border-0 shadow-sm rounded-4 mb-4"
-     style="border: 1px solid #F3E5E8 !important;">
-    <div class="card-body p-2">
-        <div class="d-flex flex-wrap gap-2 fs-12 fw-semibold">
-
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'all']) }}"
-               class="btn btn-sm px-3 py-2 rounded-3 fw-bold {{ ($status ?? 'pending') === 'all' ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
-                    @if(($status ?? 'pending') === 'all') style="background-color: #561325;" @endif>
-                All profiles
-            </a>
-
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
-               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'pending' ? 'text-white' : 'btn-light text-muted' }}"
-                    @if(($status ?? 'pending') === 'pending') style="background-color: #561325;" @endif>
-                Pending
-                <span class="badge bg-white ms-1"
-                      style="color: #561325;">
-                    {{ $counts['pending'] ?? 0 }}
-                </span>
-            </a>
-
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'approved']) }}"
-               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'approved' ? 'text-white' : 'btn-light text-muted' }}"
-               @if(($status ?? 'pending') === 'approved') style="background-color: #561325;" @endif>
-                Approved
-                <span class="ms-1">{{ $counts['approved'] ?? 0 }}</span>
-            </a>
-
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'rejected']) }}"
-               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'rejected' ? 'text-white' : 'btn-light text-muted' }}"
-               @if(($status ?? 'pending') === 'rejected') style="background-color: #561325;" @endif>
-                Rejected
-                <span class="ms-1">{{ $counts['rejected'] ?? 0 }}</span>
-            </a>
-
-            <a href="{{ route('admin.profile-verification.index', ['status' => 'update_requested']) }}"
-               class="btn btn-sm px-3 py-2 rounded-3 {{ ($status ?? 'pending') === 'update_requested' ? 'text-white' : 'btn-light text-muted' }}"
-               @if(($status ?? 'pending') === 'update_requested') style="background-color: #561325;" @endif>
-                Update requested
-                <span class="ms-1">{{ $counts['update_requested'] ?? 0 }}</span>
-            </a>
-
-        </div>
-    </div>
-</div>
+            @php
+                $currentStatus = $status ?? 'pending';
+                $verificationTabs = [
+                    'all' => ['label' => 'All profiles'],
+                    'pending' => ['label' => 'Pending', 'count' => $counts['pending'] ?? 0],
+                    'approved' => ['label' => 'Approved', 'count' => $counts['approved'] ?? 0],
+                    'rejected' => ['label' => 'Rejected', 'count' => $counts['rejected'] ?? 0],
+                    'update_requested' => ['label' => 'Update requested', 'count' => $counts['update_requested'] ?? 0],
+                ];
+            @endphp
+            <div class="card border-0 shadow-sm rounded-4 mb-4"
+                 style="border: 1px solid #F3E5E8 !important;">
+                <div class="card-body p-2">
+                    <div class="d-flex flex-wrap gap-2 fs-12 fw-semibold">
+                        @foreach($verificationTabs as $tabStatus => $tab)
+                            <a href="{{ route('admin.profile-verification.index', ['status' => $tabStatus]) }}"
+                               class="btn btn-sm px-3 py-2 rounded-3 {{ $currentStatus === $tabStatus ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
+                               @if($currentStatus === $tabStatus) style="background-color: #561325; border-color: #561325;" @endif>
+                                {{ $tab['label'] }}
+                                @isset($tab['count'])
+                                    <span class="badge bg-white ms-1" style="color: #561325;">
+                                        {{ $tab['count'] }}
+                                    </span>
+                                @endisset
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
 
 @if(($status ?? 'pending') === 'all')
     <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white"

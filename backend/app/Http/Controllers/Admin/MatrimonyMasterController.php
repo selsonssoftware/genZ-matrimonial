@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -277,8 +278,7 @@ class MatrimonyMasterController extends Controller
     {
         $filters = $this->validatedFilters($request);
         $profiles = $this->profilesQuery($filters)
-            ->paginate(10)
-            ->appends($request->query());
+            ->get();
 
         $databaseReligions = DB::table('profiles')
             ->whereNotNull('religion')
@@ -425,7 +425,7 @@ class MatrimonyMasterController extends Controller
             ->whereIn('id', $validated['ids'])
             ->update([
                 'verification_status' => $validated['decision'],
-                'reviewed_by' => session('admin_id'),
+                'reviewed_by' => Auth::guard('admin')->id(),
                 'reviewed_at' => now(),
                 'updated_at' => now(),
             ]);

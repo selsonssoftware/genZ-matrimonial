@@ -974,7 +974,7 @@ body {
 
             <div class="membership-table-wrap">
 
-                <table class="membership-table js-data-table" data-paging="false">
+                <table class="membership-table js-data-table" data-page-length="10" data-empty-table="No transactions found.">
 
                     <thead>
                         <tr>
@@ -1071,19 +1071,6 @@ body {
                     </tbody>
 
                 </table>
-
-            </div>
-
-            {{-- Pagination --}}
-            <div class="membership-pagination">
-
-                <small class="text-muted">
-                    Showing
-                    {{ $transactions->firstItem() ?? 0 }}–{{ $transactions->lastItem() ?? 0 }}
-                    of {{ $transactions->total() }} transactions
-                </small>
-
-                {{ $transactions->withQueryString()->links() }}
 
             </div>
 

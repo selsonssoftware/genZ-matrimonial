@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\Admin;
 use Tests\TestCase;
 
 class MatrimonyMasterDataTest extends TestCase
 {
     public function test_master_data_page_loads_with_database_filters(): void
     {
-        $this->actingAs(User::factory()->make(['id' => 1]));
+        $this->actingAs((new Admin)->forceFill(['id' => 1, 'name' => 'Admin', 'email' => 'admin@example.test', 'role' => 'admin']), 'admin');
 
         $this->get(route('admin.matrimonymasterdata', [
             'religion' => 'Hindu',
@@ -29,7 +29,7 @@ class MatrimonyMasterDataTest extends TestCase
 
     public function test_master_data_export_returns_csv(): void
     {
-        $this->actingAs(User::factory()->make(['id' => 1]));
+        $this->actingAs((new Admin)->forceFill(['id' => 1, 'name' => 'Admin', 'email' => 'admin@example.test', 'role' => 'admin']), 'admin');
 
         $this->get(route('admin.matrimonymasterdata.export', [
             'status' => 'approved',

@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
+use Illuminate\Validation\Rules\Password;
 
 class AdminAuthController extends Controller
 {
@@ -32,24 +36,48 @@ class AdminAuthController extends Controller
         ]);
 
         $loginInput = trim($request->input('login'));
+        $limiterKey = Str::transliterate(Str::lower($loginInput.'|'.$request->ip()));
+        $maxAttempts = (int) $this->securitySetting('max_login_attempts', 5);
+        $lockoutSeconds = (int) $this->securitySetting('lockout_duration_minutes', 15) * 60;
 
-        $admin = Admin::where('email', $loginInput)
+        if (RateLimiter::tooManyAttempts($limiterKey, $maxAttempts)) {
+            return back()->withErrors([
+                'login' => 'Too many login attempts. Try again in '.RateLimiter::availableIn($limiterKey).' seconds.',
+            ])->onlyInput('login');
+        }
+
+        $admin = Admin::whereRaw('LOWER(mailid) = ?', [mb_strtolower($loginInput)])
             ->orWhere('name', $loginInput)
             ->first();
 
-        if (
-            $admin &&
-            Hash::check($request->input('password'), $admin->password)
-        ) {
+        $submittedPassword = $request->input('password');
+        $storedPassword = $admin ? (string) $admin->getAuthPassword() : '';
+        $passwordInfo = $admin ? password_get_info($storedPassword) : ['algo' => null];
+        $storedPasswordIsHashed = ! in_array($passwordInfo['algo'] ?? null, [null, 0], true);
+        $passwordMatches = $admin && (
+            $storedPasswordIsHashed
+                ? password_verify($submittedPassword, $storedPassword)
+                : hash_equals($storedPassword, $submittedPassword)
+        );
+
+        if ($passwordMatches) {
+            if (! $storedPasswordIsHashed) {
+                $admin->password = Hash::make($submittedPassword);
+                $admin->save();
+            }
+
             Auth::guard('admin')->login(
                 $admin,
-                $request->boolean('remember')
+                $request->boolean('remember') && Schema::hasColumn('admin', 'remember_token')
             );
+            RateLimiter::clear($limiterKey);
 
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard'));
+            return redirect()->to(route('dashboard', [], false));
         }
+
+        RateLimiter::hit($limiterKey, $lockoutSeconds);
 
         return back()
             ->withErrors([
@@ -89,9 +117,9 @@ class AdminAuthController extends Controller
         try {
             Mail::raw(
                 "Hello {$admin->name},\n\n"
-                . "Click the link below to reset your password:\n\n"
-                . $resetLink
-                . "\n\nIf you did not request this, ignore this email.",
+                ."Click the link below to reset your password:\n\n"
+                .$resetLink
+                ."\n\nIf you did not request this, ignore this email.",
                 function ($message) use ($admin) {
                     $message->to($admin->email)
                         ->subject('Admin Password Reset');
@@ -126,22 +154,22 @@ class AdminAuthController extends Controller
         $request->validate([
             'token' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'confirmed', $this->passwordRule()],
         ]);
 
         $admin = Admin::where('email', $request->email)->first();
 
         if (
-            !$admin ||
-            !$admin->reset_token ||
-            !Hash::check($request->token, $admin->reset_token)
+            ! $admin instanceof Admin ||
+            ! $admin->reset_token ||
+            ! Hash::check($request->token, $admin->reset_token)
         ) {
             return back()->withErrors([
                 'email' => 'Invalid or expired token!',
             ]);
         }
 
-        if (!$admin->reset_token_created_at) {
+        if (! $admin->reset_token_created_at) {
             return back()->withErrors([
                 'email' => 'Reset link expired. Please request a new link.',
             ]);
@@ -171,8 +199,6 @@ class AdminAuthController extends Controller
     // 7. Show Change Password Form
     public function showChangePasswordForm()
     {
-        abort_unless(Auth::guard('admin')->check(), 403);
-
         return view('admin.change-password');
     }
 
@@ -180,29 +206,22 @@ class AdminAuthController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'current_password' => 'required|string',
-            'new_password' => 'required|string|min:8|different:current_password',
-            'new_password_confirmation' => 'required|same:new_password',
+            'new_password' => ['required', 'confirmed'],
         ], [
-            'current_password.required' => 'Current password is required.',
             'new_password.required' => 'New password is required.',
-            'new_password.different' => 'New password must be different from the current password.',
-            'new_password_confirmation.same' => 'The confirmation password does not match.',
+            'new_password.confirmed' => 'The confirmation password does not match.',
         ]);
 
         $admin = Auth::guard('admin')->user();
 
-        if (
-            !$admin ||
-            !Hash::check($request->current_password, $admin->password)
-        ) {
-            return back()->withErrors([
-                'current_password' => 'The password you entered is incorrect.',
-            ]);
-        }
+        abort_unless($admin instanceof Admin, 403);
 
-        $admin->password = Hash::make($request->new_password);
-        $admin->save();
+        DB::table('admin')
+            ->where('id', $admin->getAuthIdentifier())
+            ->update([
+                'password' => Hash::make($request->new_password),
+                'updated_date' => now(),
+            ]);
 
         return back()->with(
             'success',
@@ -221,5 +240,40 @@ class AdminAuthController extends Controller
         return redirect()
             ->route('login')
             ->with('success', 'Logged out successfully.');
+    }
+
+    private function securitySetting(string $key, mixed $default): mixed
+    {
+        if (! Schema::hasTable('app_settings')) {
+            return $default;
+        }
+
+        $value = DB::table('app_settings')->where('setting_key', $key)->value('setting_value');
+
+        return $value === null ? $default : json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    private function passwordRule(): Password
+    {
+        $rule = Password::min((int) $this->securitySetting('minimum_password_length', 8));
+        $extraRules = [];
+
+        if ($this->securitySetting('require_uppercase', true)) {
+            $extraRules[] = 'regex:/[A-Z]/';
+        }
+        if ($this->securitySetting('require_lowercase', true)) {
+            $extraRules[] = 'regex:/[a-z]/';
+        }
+        if ($this->securitySetting('require_number', true)) {
+            $rule->numbers();
+        }
+        if ($this->securitySetting('require_special_character', false)) {
+            $rule->symbols();
+        }
+        if ($extraRules !== []) {
+            $rule->rules($extraRules);
+        }
+
+        return $rule;
     }
 }

@@ -384,7 +384,7 @@
                     <div class="members-card overflow-hidden">
                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-bottom">
                             <span class="text-muted fs-12">
-                                Showing {{ $profiles->firstItem() ?? 0 }}–{{ $profiles->lastItem() ?? 0 }} of {{ $profiles->total() }} members
+                                Showing all {{ number_format($profiles->count()) }} matching members
                             </span>
                             <form method="GET" action="{{ route('admin.matrimonymasterdata') }}" class="d-flex align-items-center gap-2">
                                 @foreach(request()->except(['sort', 'page']) as $name => $value)
@@ -411,24 +411,23 @@
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 px-3 py-2 border-bottom">
                                 <div class="d-flex align-items-center gap-2">
                                     <label class="visually-hidden" for="bulk-decision">Bulk action</label>
-                                    <select class="form-select form-select-sm" id="bulk-decision" name="decision" style="width:auto;">
+                                    <select class="form-select form-select-sm" id="bulk-decision" name="decision" required style="width:auto;">
                                         <option value="">Bulk actions</option>
                                         <option value="approved">Mark verified</option>
                                         <option value="pending">Mark pending</option>
                                         <option value="rejected">Suspend</option>
                                         <option value="update_requested">Request review</option>
                                     </select>
-                                    <button class="btn btn-maroon btn-sm" type="submit"
-                                            onclick="return confirm('Apply this action to the selected profiles?');">Apply</button>
+                                    <button class="btn btn-maroon btn-sm" type="submit">Apply</button>
                                 </div>
                                 <label class="d-flex align-items-center gap-2 text-muted fs-12 mb-0">
                                     <input class="form-check-input m-0" type="checkbox" id="select-all-profiles">
-                                    Select all on this page
+                                    Select all matching profiles
                                 </label>
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table align-middle table-hover mb-0 js-data-table" data-paging="false">
+                                <table id="matrimonyMasterProfiles" class="table align-middle table-hover mb-0 js-data-table" data-page-length="10" data-empty-table="No members match the selected filters.">
                                     <thead style="background:#fcf8f8;">
                                         <tr class="text-uppercase text-muted" style="font-size:10px; letter-spacing:.04em;">
                                             <th class="ps-3" style="width:36px;"></th>
@@ -483,7 +482,7 @@
                                                 <td>{{ $profile->vendor_name ?: 'Direct' }}</td>
                                                 <td class="text-end pe-3">
                                                     <a class="text-maroon fw-semibold text-decoration-none"
-                                                       href="{{ route('admin.profile-verification.index', ['status' => 'all', 'id' => $profile->id]) }}">View</a>
+                                                       href="{{ route('admin.profile-verification.index', ['status' => $profile->verification_status, 'id' => $profile->id]) }}">View</a>
                                                 </td>
                                             </tr>
                                         @empty
@@ -499,12 +498,6 @@
                             </div>
                         </form>
 
-                        @if($profiles->hasPages())
-                            <div class="d-flex justify-content-between align-items-center gap-2 p-3 border-top">
-                                <span class="text-muted fs-12">Page {{ $profiles->currentPage() }} of {{ $profiles->lastPage() }}</span>
-                                {{ $profiles->links() }}
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -512,10 +505,61 @@
     </div>
 
     <script>
-        document.getElementById('select-all-profiles')?.addEventListener('change', function () {
-            document.querySelectorAll('.profile-select').forEach(function (checkbox) {
-                checkbox.checked = this.checked;
-            }, this);
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAll = document.getElementById('select-all-profiles');
+            const bulkForm = document.getElementById('bulk-review-form');
+            const profilesTable = document.getElementById('matrimonyMasterProfiles');
+            const getDataTable = function () {
+                return window.jQuery
+                    && jQuery.fn.DataTable
+                    && profilesTable
+                    && jQuery.fn.DataTable.isDataTable(profilesTable)
+                    ? jQuery(profilesTable).DataTable()
+                    : null;
+            };
+
+            selectAll?.addEventListener('change', function () {
+                const dataTable = getDataTable();
+                const checkboxes = dataTable
+                    ? dataTable.$('.profile-select').toArray()
+                    : Array.from(document.querySelectorAll('.profile-select'));
+
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+
+            bulkForm?.addEventListener('submit', function (event) {
+                bulkForm.querySelectorAll('.datatable-selected-profile').forEach(function (input) {
+                    input.remove();
+                });
+
+                const dataTable = getDataTable();
+                const selectedProfiles = dataTable
+                    ? dataTable.$('.profile-select:checked').toArray()
+                    : Array.from(bulkForm.querySelectorAll('.profile-select:checked'));
+
+                if (selectedProfiles.length === 0) {
+                    event.preventDefault();
+                    alert('Select at least one profile before applying a bulk action.');
+                    return;
+                }
+
+                selectedProfiles.forEach(function (checkbox) {
+                    if (!bulkForm.contains(checkbox)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'ids[]';
+                        input.value = checkbox.value;
+                        input.className = 'datatable-selected-profile';
+                        bulkForm.appendChild(input);
+                    }
+                });
+
+                if (!confirm('Apply this action to the selected profiles?')) {
+                    event.preventDefault();
+                }
+            });
         });
     </script>
 @endsection

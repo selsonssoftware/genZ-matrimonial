@@ -80,9 +80,8 @@ $query = DB::table('interests')
         }
 
         $activities = $query
-            ->orderByDesc('created_at')
-            ->paginate(10)
-            ->appends($request->query());
+            ->orderByDesc('interests.created_at')
+            ->get();
 
         return view('admin.matches-interests', compact(
             'activities',
