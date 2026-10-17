@@ -137,7 +137,7 @@ return view('admin.vendors', compact(
     }
 
     // Assign one existing member profile to a vendor
-    public function assignProfile(Request $request, $vendorId)
+    public function assignProfile(Request $request, int $vendorId)
     {
         $vendorExists = DB::table('vendor')
             ->where('id', $vendorId)
@@ -206,5 +206,4 @@ public function assignments()
 
     return view('admin.vendor-assignments', compact('assignments'));
 }
-
 }
