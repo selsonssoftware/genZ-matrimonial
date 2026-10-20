@@ -48,6 +48,32 @@
     background-position: center;
     background-size: cover;
 }
+
+.dt-buttons .buttons-excel {
+    background-color: #561325 !important;
+    border-color: #561325 !important;
+    color: #fff !important;
+}
+
+.dt-buttons .buttons-excel:hover,
+.dt-buttons .buttons-excel:focus {
+    background-color: #6A1B29 !important;
+    border-color: #6A1B29 !important;
+    color: #fff !important;
+}
+
+.dt-buttons .buttons-csv {
+    background-color: #F8EBEF !important;
+    border-color: #E8C7CE !important;
+    color: #561325 !important;
+}
+
+.dt-buttons .buttons-csv:hover,
+.dt-buttons .buttons-csv:focus {
+    background-color: #F3D3D9 !important;
+    border-color: #D58B9A !important;
+    color: #561325 !important;
+}
 </style>
 
 <body>
@@ -1784,12 +1810,12 @@
                         {
                             extend: 'excelHtml5',
                             text: 'Excel',
-                            className: 'btn btn-sm btn-outline-success'
+                            className: 'btn btn-sm buttons-excel'
                         },
                         {
                             extend: 'csvHtml5',
                             text: 'CSV',
-                            className: 'btn btn-sm btn-outline-primary'
+                            className: 'btn btn-sm buttons-csv'
                         }
                     ],
                     language: {

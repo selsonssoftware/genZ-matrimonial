@@ -235,6 +235,64 @@
             </div>
         </div>
 
+        {{-- Family Details --}}
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Father's Name</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->{"father's name"} ?? 'Not provided' }}
+    </div>
+</div>
+
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Father's Occupation</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->{"father's occupation"} ?? 'Not provided' }}
+    </div>
+</div>
+
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Mother's Name</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->{"mother'name"} ?? 'Not provided' }}
+    </div>
+</div>
+
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Mother's Occupation</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->{"mother's occupation"} ?? 'Not provided' }}
+    </div>
+</div>
+
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Siblings Count</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->{"siblings count"} ?? 'Not provided' }}
+    </div>
+</div>
+
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Sibling's Name</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->{"sibling's name"} ?? 'Not provided' }}
+    </div>
+</div>
+
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Sibling's Status</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->{"siblings status"} ?? 'Not provided' }}
+    </div>
+</div>
+
+<div class="row py-2 border-bottom">
+    <div class="col-4 text-muted">Marital Status</div>
+    <div class="col-8 fw-semibold text-dark">
+        {{ $selectedProfile->marital_status ?? 'Not provided' }}
+    </div>
+</div>
+
+
         <div class="row py-2 border-bottom">
             <div class="col-4 text-muted">Education</div>
             <div class="col-8 fw-semibold text-dark">
