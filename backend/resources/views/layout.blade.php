@@ -22,6 +22,7 @@
     <!-- Vendor css -->
     <link href="{{ asset('dashboardassets/css/vendors.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('dashboardassets/plugins/datatables/buttons.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- App css -->
     <link id="app-style" href="{{ asset('dashboardassets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
@@ -1750,6 +1751,10 @@
     <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/buttons.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/jszip.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/buttons.html5.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (!window.jQuery || !jQuery.fn.DataTable) {
@@ -1758,21 +1763,37 @@
 
             jQuery('table.js-data-table').each(function () {
                 const table = jQuery(this);
-                const hasColspanPlaceholder = table.find('tbody tr').toArray().some(function (row) {
-                    return row.children.length === 1 && row.children[0].colSpan > 1;
+                const placeholderRows = table.find('tbody > tr').filter(function () {
+                    return this.children.length === 1 && this.children[0].colSpan > 1;
                 });
-
-                if (hasColspanPlaceholder) {
-                    return;
-                }
+                const placeholderMessage = placeholderRows.first().text().trim().replace(/\s+/g, ' ');
+                placeholderRows.remove();
 
                 const options = {
                     responsive: true,
                     autoWidth: false,
                     order: [],
                     pageLength: Number(table.data('page-length')) || 10,
+                    layout: {
+                        topStart: ['buttons', 'pageLength'],
+                        topEnd: 'search',
+                        bottomStart: 'info',
+                        bottomEnd: 'paging'
+                    },
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: 'Excel',
+                            className: 'btn btn-sm btn-outline-success'
+                        },
+                        {
+                            extend: 'csvHtml5',
+                            text: 'CSV',
+                            className: 'btn btn-sm btn-outline-primary'
+                        }
+                    ],
                     language: {
-                        emptyTable: table.data('empty-table') || 'No data available in table'
+                        emptyTable: table.data('empty-table') || placeholderMessage || 'No data available in table'
                     }
                 };
 
