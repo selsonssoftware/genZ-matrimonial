@@ -6,13 +6,13 @@ use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SettingController;
 
 /*
 |--------------------------------------------------------------------------
-| Public / Authentication Routes
+| Guest / Auth Routes
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
 
@@ -27,7 +27,6 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->n
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
@@ -83,15 +82,26 @@ Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function (
             return view('admin.report');
         })->name('admin.report');
 
-        Route::get('/setting', function () {
-            return view('admin.setting');
-        })->name('admin.setting');
-        Route::get('/settings', function () {
-            return view('admin.setting');
-        })->name('settings');
-
         Route::get('/cms-communication', function () {
             return view('admin.cms-communication');
         })->name('admin.cms-communication');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Settings Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('settings')->name('admin.settings.')->group(function () {
+            Route::get('/', [SettingController::class, 'index'])->name('index');
+            Route::post('/update', [SettingController::class, 'update'])->name('update');
+            Route::post('/users/store', [SettingController::class, 'storeUser'])->name('users.store');
+            Route::delete('/users/{id}', [SettingController::class, 'deleteUser'])->name('users.delete');
+            Route::post('/permissions/update', [SettingController::class, 'updatePermissions'])->name('permissions.update');
+        });
+
+        // Redirects for sidebar compatibility (/admin/setting or /admin/settings)
+        Route::get('/setting', function () {
+            return redirect()->route('admin.settings.index');
+        })->name('admin.setting');
     });
 });
