@@ -56,8 +56,11 @@
                                     class="badge rounded-pill bg-success-subtle text-success fs-10 border border-success-subtle">+11.2%</span>
                             </div>
                             <div class="text-muted fs-12 mb-1">Interest requests</div>
-                            <h3 class="fw-bold mb-0" style="color: #561325;" id="metricInterests">2,486</h3>
-                        </div>
+<h3 class="fw-bold mb-0"
+    style="color: #561325;"
+    id="metricInterests">
+    {{ number_format($totalInterests) }}
+</h3>                        </div>
                     </div>
                 </div>
 
@@ -72,8 +75,9 @@
                                 <span class="text-muted fs-11">Awaiting</span>
                             </div>
                             <div class="text-muted fs-12 mb-1">Awaiting response</div>
-                            <h3 class="fw-bold mb-0 text-dark" id="metricAwaiting">318</h3>
-                        </div>
+<h3 class="fw-bold mb-0 text-dark" id="metricAwaiting">
+    {{ number_format($awaitingCount) }}
+</h3>                        </div>
                     </div>
                 </div>
 
@@ -89,8 +93,9 @@
                                     class="badge rounded-pill bg-success-subtle text-success fs-10 border border-success-subtle">+5.8%</span>
                             </div>
                             <div class="text-muted fs-12 mb-1">Mutual interests</div>
-                            <h3 class="fw-bold mb-0 text-dark" id="metricMutual">746</h3>
-                        </div>
+<h3 class="fw-bold mb-0 text-dark" id="metricMutual">
+    {{ number_format($mutualCount) }}
+</h3>                        </div>
                     </div>
                 </div>
 
@@ -105,8 +110,9 @@
                                 <span class="text-danger fs-11 fw-semibold">Requires review</span>
                             </div>
                             <div class="text-muted fs-12 mb-1">Reported profiles</div>
-                            <h3 class="fw-bold mb-0 text-dark" id="metricReported">14</h3>
-                        </div>
+<h3 class="fw-bold mb-0 text-dark" id="metricReported">
+    {{ number_format($reportedCount) }}
+</h3>                        </div>
                     </div>
                 </div>
             </div>
@@ -114,34 +120,56 @@
             <!-- Filter & Search Bar -->
             <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white" style="border: 1px solid #F3E5E8 !important;">
                 <div class="card-body p-3">
-                    <div class="row g-2 align-items-center justify-content-between">
-                        <div class="col-xl-4 col-md-5 col-sm-12">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 text-muted ps-3">
-                                    <i class="ti ti-search fs-14"></i>
-                                </span>
-                                <input type="text" id="interestSearchInput" class="form-control border-start-0 ps-1 fs-13"
-                                    placeholder="Search Request ID or Member ID">
-                            </div>
-                        </div>
+                    
+<form method="GET" action="{{ route('admin.matches-interests') }}">
+    <div class="row g-2 align-items-center justify-content-between">
 
-                        <div class="col-xl-3 col-md-4 col-sm-6">
-                            <select id="interestStatusFilter" class="form-select fs-13 text-secondary border">
-                                <option value="">All statuses</option>
-                                <option value="Awaiting">Awaiting</option>
-                                <option value="Accepted">Accepted</option>
-                                <option value="Rejected">Rejected</option>
-                                <option value="Reported">Reported</option>
-                            </select>
-                        </div>
+        <!-- Search -->
+        <div class="col-xl-4 col-md-5 col-sm-12">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted ps-3">
+                    <i class="ti ti-search fs-14"></i>
+                </span>
 
-                        <div class="col-xl-3 col-md-3 col-sm-6 text-sm-end text-start">
-                            <button class="btn btn-sm text-nowrap text-white fw-semibold px-3 py-2 rounded-3 shadow-sm"
-                                style="background-color: #561325;">
-                                Export Logs <i class="ti ti-download ms-1 fs-12"></i>
-                            </button>
-                        </div>
-                    </div>
+                <input
+                    type="text"
+                    name="search"
+                    id="interestSearchInput"
+                    value="{{ $search }}"
+                    class="form-control border-start-0 ps-1 fs-13"
+                    placeholder="Search Request ID or Member ID">
+            </div>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="col-xl-3 col-md-4 col-sm-6">
+            <select
+                name="status"
+                id="interestStatusFilter"
+                class="form-select fs-13 text-secondary border"
+                onchange="this.form.submit()">
+
+                <option value="" {{ $status === '' ? 'selected' : '' }}>All statuses</option>
+                <option value="Awaiting" {{ $status === 'Awaiting' ? 'selected' : '' }}>Awaiting</option>
+                <option value="Accepted" {{ $status === 'Accepted' ? 'selected' : '' }}>Accepted</option>
+                <option value="Rejected" {{ $status === 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                <option value="Reported" {{ $status === 'Reported' ? 'selected' : '' }}>Reported</option>
+            </select>
+        </div>
+
+        <!-- Search Button -->
+        <div class="col-xl-3 col-md-3 col-sm-6 text-sm-end text-start">
+            <button
+                type="submit"
+                class="btn btn-sm text-nowrap text-white fw-semibold px-3 py-2 rounded-3 shadow-sm"
+                style="background-color: #561325;">
+                Search <i class="ti ti-search ms-1 fs-12"></i>
+            </button>
+        </div>
+
+    </div>
+</form>
+
                 </div>
             </div>
 
@@ -166,11 +194,94 @@
                                 <th class="text-center pe-4 py-3">ACTION</th>
                             </tr>
                         </thead>
-                        <tbody id="activityTableBody" class="fs-13">
-                            <!-- Populated by JavaScript -->
-                        </tbody>
+                        
+<tbody id="activityTableBody" class="fs-13">
+    @forelse($activities as $item)
+        @php
+            $displayStatus = $item->status === 'Pending'
+                ? 'Awaiting'
+                : $item->status;
+
+            $badgeClass = match($displayStatus) {
+                'Awaiting' => 'bg-warning-subtle text-warning border border-warning-subtle',
+                'Accepted' => 'bg-success-subtle text-success border border-success-subtle',
+                'Rejected' => 'bg-secondary-subtle text-secondary border border-secondary-subtle',
+                default => 'bg-danger-subtle text-danger border border-danger-subtle',
+            };
+        @endphp
+
+        <tr>
+            <td class="ps-4 fw-semibold text-dark">
+                IN-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}
+            </td>
+
+           
+
+<td>
+    <div class="fw-semibold text-dark">
+        {{ $item->sender_name ?? 'Unknown Member' }}
+        <span class="text-muted mx-1">&rarr;</span>
+        {{ $item->receiver_name ?? 'Unknown Member' }}
+    </div>
+
+    <div class="small text-muted mt-1">
+        Member IDs:
+        {{ $item->sender_id ?? '-' }}
+        &rarr;
+        {{ $item->receiver_id ?? '-' }}
+    </div>
+
+    <div class="small text-secondary mt-1">
+        Sender Profile:
+        {{ $item->sender_profile_id ?? 'Not linked' }}
+    </div>
+
+    <div class="small text-secondary">
+        Receiver Profile:
+        {{ $item->receiver_profile_id ?? 'Not linked' }}
+    </div>
+</td>
+
+
+
+            <td class="text-muted">
+                {{ $item->created_at
+                    ? \Carbon\Carbon::parse($item->created_at)->format('d M Y')
+                    : '-' }}
+            </td>
+
+            <td>
+                <span class="badge rounded-pill px-2 py-1 fs-11 {{ $badgeClass }}">
+                    {{ $displayStatus }}
+                </span>
+            </td>
+
+            <td class="text-center pe-4">
+                <button type="button"
+                    class="btn btn-sm btn-link text-dark fw-medium p-0 text-decoration-none"
+                    onclick="alert(this.dataset.details)"
+                    data-details="{{ 'Request ID: IN-' . str_pad($item->id, 5, '0', STR_PAD_LEFT) . "\nProfile ID: " . $item->profile_id . "\nSender ID: " . $item->sender_id . "\nReceiver ID: " . $item->receiver_id . "\nStatus: " . $displayStatus }}">
+                    View
+                </button>
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="5" class="text-center py-4 text-muted">
+                No activity records found.
+            </td>
+        </tr>
+    @endforelse
+</tbody>
+
                     </table>
                 </div>
+
+                <!-- Pagination: table-ku veliya, privacy note-ku munnaadi -->
+<div class="p-3">
+    {{ $activities->links() }}
+</div> 
+
 
                 <!-- Privacy Note Footer Box -->
                 <div class="p-3 m-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
@@ -186,75 +297,6 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const activityData = [
-                { id: "IN-00842", pair: "TM-10482 → TM-10210", date: "13 Oct 2026", status: "Awaiting", actionText: "View", actionType: "view" },
-                { id: "IN-00841", pair: "TM-10332 → TM-10194", date: "13 Oct 2026", status: "Accepted", actionText: "View", actionType: "view" },
-                { id: "IN-00840", pair: "TM-10421 → TM-10083", date: "12 Oct 2026", status: "Rejected", actionText: "View", actionType: "view" },
-                { id: "IN-00839", pair: "TM-10209 → TM-10121", date: "12 Oct 2026", status: "Reported", actionText: "Investigate", actionType: "danger" },
-                { id: "IN-00838", pair: "TM-10398 → TM-10074", date: "11 Oct 2026", status: "Accepted", actionText: "View", actionType: "view" }
-            ];
-
-            const statusBadges = {
-                'Awaiting': 'bg-warning-subtle text-warning border border-warning-subtle',
-                'Accepted': 'bg-success-subtle text-success border border-success-subtle',
-                'Rejected': 'bg-secondary-subtle text-secondary border border-secondary-subtle',
-                'Reported': 'bg-danger-subtle text-danger border border-danger-subtle'
-            };
-
-            const tbody = document.getElementById('activityTableBody');
-            const searchInput = document.getElementById('interestSearchInput');
-            const statusFilter = document.getElementById('interestStatusFilter');
-
-            function renderActivities(list) {
-                tbody.innerHTML = '';
-                if (list.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No activity records match your criteria.</td></tr>`;
-                    return;
-                }
-
-                list.forEach(item => {
-                    const tr = document.createElement('tr');
-                    const actionButton = item.actionType === 'danger'
-                        ? `<button class="btn btn-sm btn-link text-danger fw-semibold p-0 text-decoration-none">Investigate</button>`
-                        : `<button class="btn btn-sm btn-link text-dark fw-medium p-0 text-decoration-none">View</button>`;
-
-                    tr.innerHTML = `
-                        <td class="ps-4 fw-semibold text-dark">${item.id}</td>
-                        <td class="fw-medium text-dark">${item.pair}</td>
-                        <td class="text-muted">${item.date}</td>
-                        <td>
-                            <span class="badge rounded-pill px-2 py-1 fs-11 ${statusBadges[item.status]}">
-                                ${item.status}
-                            </span>
-                        </td>
-                        <td class="text-center pe-4">
-                            ${actionButton}
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            function filterList() {
-                const query = searchInput.value.toLowerCase().trim();
-                const status = statusFilter.value;
-
-                const filtered = activityData.filter(item => {
-                    const matchesQuery = item.id.toLowerCase().includes(query) ||
-                        item.pair.toLowerCase().includes(query);
-                    const matchesStatus = !status || item.status === status;
-                    return matchesQuery && matchesStatus;
-                });
-
-                renderActivities(filtered);
-            }
-
-            searchInput.addEventListener('input', filterList);
-            statusFilter.addEventListener('change', filterList);
-
-            // Initial render
-            renderActivities(activityData);
-        });
+       
     </script>
 @endsection
