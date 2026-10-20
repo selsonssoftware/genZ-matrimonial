@@ -7,6 +7,11 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\MatchesInterestsController;
+use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\Admin\CmsController;
+use App\Http\Controllers\Admin\VendorAssignmentReportController;
+use App\Http\Controllers\Admin\MatrimonyMasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,19 +69,26 @@ Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function (
         Route::get('/vendors', [VendorController::class, 'index'])->name('admin.vendors.index');
         Route::post('/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
         Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
-        Route::get('/vendor-assignments', [VendorController::class, 'assignments'])->name('admin.vendor-assignments.index');
 
-        Route::get('/matches-interests', function () {
-            return view('admin.matches-interests');
-        })->name('admin.matches-interests');
+        Route::get('/matches-interests', [MatchesInterestsController::class, 'index'])
+            ->name('admin.matches-interests');
+        Route::get('/vendor-assignment-report', [VendorAssignmentReportController::class, 'index'])
+            ->name('admin.vendor-assignments.index');
+        Route::get('/membership', [MembershipController::class, 'index'])
+            ->name('admin.membership');
+        Route::post('/membership/plans', [MembershipController::class, 'storePlan'])
+            ->name('admin.membership.plans.store');
+        Route::put('/membership/plans/{id}', [MembershipController::class, 'updatePlan'])
+            ->name('admin.membership.plans.update');
+        Route::get('/membership/export', [MembershipController::class, 'export'])
+            ->name('admin.membership.export');
 
-        Route::get('/membership', function () {
-            return view('admin.membership');
-        })->name('admin.membership');
-
-        Route::get('/matrimonymasterdata', function () {
-            return view('admin.matrimonymasterdata');
-        })->name('admin.matrimonymasterdata');
+        Route::get('/matrimonymasterdata', [MatrimonyMasterController::class, 'index'])
+            ->name('admin.matrimonymasterdata');
+        Route::get('/matrimonymasterdata/export', [MatrimonyMasterController::class, 'export'])
+            ->name('admin.matrimonymasterdata.export');
+        Route::post('/matrimonymasterdata/bulk-review', [MatrimonyMasterController::class, 'bulkReview'])
+            ->name('admin.matrimonymasterdata.bulk-review');
 
         Route::get('/report', function () {
             return view('admin.report');
@@ -103,5 +115,11 @@ Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function (
         Route::get('/setting', function () {
             return redirect()->route('admin.settings.index');
         })->name('admin.setting');
+        Route::get('/settings', function () {
+            return view('admin.setting');
+        })->name('settings');
+
+        Route::post('/cms-communication/banner', [CmsController::class, 'updateBanner'])
+            ->name('cms.banner.update');
     });
 });
