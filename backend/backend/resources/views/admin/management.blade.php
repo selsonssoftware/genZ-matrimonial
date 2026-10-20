@@ -2,7 +2,9 @@
 
 @section('content')
     <div class="content-page">
-        <div class="container-fluid py-4 px-4" style="background-color: #FAF5F5; min-height: 100vh;">
+        <div id="managementPage" class="container-fluid py-4 px-4"
+            data-members="{{ json_encode($usersData ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"
+            style="background-color: #FAF5F5; min-height: 100vh;">
 
             <!-- Header Section -->
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
@@ -12,14 +14,6 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <div class="input-group shadow-sm" style="width: 170px; max-width: 100%;">
-                        <span class="input-group-text bg-white border-end-0 text-muted ps-2 pe-1 py-1">
-                            <i class="ti ti-search fs-14"></i>
-                        </span>
-                        <input type="text" class="form-control form-control-sm border-start-0 ps-1 py-1 fs-12 bg-white"
-                            placeholder="Search" />
-                    </div>
-
                     <button type="button"
                         class="btn btn-sm btn-white border rounded-circle d-flex align-items-center justify-content-center shadow-sm"
                         style="width: 34px; height: 34px; background-color: #fff;">
@@ -51,7 +45,7 @@
                                     <i class="ti ti-search fs-14"></i>
                                 </span>
                                 <input type="text" id="userSearchInput" class="form-control border-start-0 ps-1 fs-13"
-                                    placeholder="Search name, ID or city">
+                                    placeholder="Search name, email, ID or city">
                             </div>
                         </div>
 
@@ -178,7 +172,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover">
+                    <table id="usersTable" class="table align-middle mb-0 table-hover js-data-table" data-empty-table="No members found in database.">
                         <thead
                             style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <tr style="color: #561325;">
@@ -192,7 +186,59 @@
                             </tr>
                         </thead>
                         <tbody id="usersTableBody" class="fs-13">
-                            <!-- Populated by JS -->
+                            @if ($usersData->isEmpty())
+                                <tr>
+                                    <td colspan="7" class="py-4 text-center text-muted">
+                                        No members found in database.
+                                    </td>
+                                </tr>
+                            @else
+                                @foreach ($usersData as $member)
+                                    <tr>
+                                        <td class="ps-4 fw-semibold text-dark">{{ $member['id'] }}</td>
+                                        <td class="text-dark fw-medium">
+                                            {{ $member['name'] }}
+                                            <small class="d-block text-muted fw-normal">{{ $member['email'] ?? '' }}</small>
+                                        </td>
+                                        <td class="text-muted">
+                                            {{ $member['gender'] ?? '-' }} · {{ $member['age'] ?? '-' }}
+                                        </td>
+                                        <td class="text-dark">{{ $member['city'] ?? '-' }}</td>
+                                        <td>
+                                            <span class="fw-semibold {{ ['Active' => 'text-success', 'Suspended' => 'text-danger', 'Pending' => 'text-warning'][$member['status'] ?? ''] ?? 'text-muted' }}">
+                                                {{ $member['status'] ?? '-' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="{{ ($member['plan'] ?? '') === 'Premium' ? 'fw-bold text-dark' : 'text-muted' }}">
+                                                {{ $member['plan'] ?? '-' }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center pe-4">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light border-0 text-muted px-2 py-1"
+                                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    •••
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 fs-13">
+                                                    <li>
+                                                        <a class="dropdown-item py-2 text-dark js-edit-member"
+                                                            href="javascript:void(0)" data-member-id="{{ $member['db_id'] }}">
+                                                            <i class="ti ti-edit me-2 text-primary"></i> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item py-2 text-danger js-delete-member"
+                                                            href="javascript:void(0)" data-member-id="{{ $member['db_id'] }}">
+                                                            <i class="ti ti-trash me-2"></i> Delete
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -221,11 +267,18 @@
                     @csrf
 
                     <div class="modal-body px-4">
+                        <div id="addUserErrors" class="alert alert-danger d-none" role="alert"></div>
 
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Full Name</label>
                             <input type="text" name="name" class="form-control fs-13" id="newUserName"
                                 placeholder="e.g. Priyan S." required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fs-13 fw-semibold">Email</label>
+                            <input type="email" name="email" class="form-control fs-13" id="newUserEmail"
+                                placeholder="e.g. priyan@example.com" maxlength="191" required />
                         </div>
 
                         <div class="row g-2 mb-3">
@@ -296,10 +349,17 @@
                     <input type="hidden" id="editDbId">
 
                     <div class="modal-body px-4">
+                        <div id="editUserErrors" class="alert alert-danger d-none" role="alert"></div>
 
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Full Name</label>
                             <input type="text" name="name" class="form-control fs-13" id="editUserName" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fs-13 fw-semibold">Email</label>
+                            <input type="email" name="email" class="form-control fs-13" id="editUserEmail"
+                                maxlength="191" required />
                         </div>
 
                         <div class="row g-2 mb-3">
@@ -355,9 +415,9 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        function initializeManagementPage() {
 
-            let membersData = @json($usersData ?? []);
+            let membersData = JSON.parse(document.getElementById('managementPage').dataset.members);
 
             const statusColorMap = {
                 'Active': 'color: #28a745;',
@@ -373,6 +433,8 @@
             const filterPlan = document.getElementById('filterPlan');
             const paginationLabel = document.getElementById('paginationLabel');
             const exportBtn = document.getElementById('exportBtn');
+            const updateUrlTemplate = "{{ route('users.update', ['id' => '__USER_ID__']) }}";
+            const deleteUrlTemplate = "{{ route('users.destroy', ['id' => '__USER_ID__']) }}";
 
             function safeText(value) {
                 return String(value ?? '');
@@ -390,16 +452,74 @@
                 });
             }
 
+            function clearErrors(containerId) {
+                const container = document.getElementById(containerId);
+                container.replaceChildren();
+                container.classList.add('d-none');
+            }
+
+            function showErrors(containerId, result, status) {
+                const container = document.getElementById(containerId);
+                const messages = Object.values(result.errors || {}).flat();
+                container.replaceChildren();
+
+                if (messages.length > 0) {
+                    const list = document.createElement('ul');
+                    list.className = 'mb-0 ps-3';
+                    messages.forEach(message => {
+                        const item = document.createElement('li');
+                        item.textContent = message;
+                        list.appendChild(item);
+                    });
+                    container.appendChild(list);
+                } else {
+                    container.textContent = result.message || `Request failed (${status}). Please try again.`;
+                }
+
+                container.classList.remove('d-none');
+            }
+
+            function updateCounts(counts) {
+                if (!counts) return;
+
+                Object.entries({
+                    all: 'countAll',
+                    active: 'countActive',
+                    pending: 'countPending',
+                    suspended: 'countSuspended'
+                }).forEach(([key, elementId]) => {
+                    const element = document.getElementById(elementId);
+                    if (element && counts[key] !== undefined) {
+                        element.innerText = Number(counts[key]).toLocaleString();
+                    }
+                });
+            }
+
+            async function responseJson(response) {
+                try {
+                    return await response.json();
+                } catch (error) {
+                    return {};
+                }
+            }
+
             function renderRows(list) {
-                tbody.innerHTML = '';
+                const dataTable = window.jQuery
+                    && jQuery.fn.DataTable
+                    && jQuery.fn.DataTable.isDataTable('#usersTable')
+                    ? jQuery('#usersTable').DataTable()
+                    : null;
+
+                if (dataTable) {
+                    dataTable.clear();
+                } else {
+                    tbody.innerHTML = '';
+                }
 
                 if (!list || list.length === 0) {
-                    tbody.innerHTML = `
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    No members found in database.
-                                </td>
-                            </tr>`;
+                    if (dataTable) {
+                        dataTable.draw();
+                    }
                     paginationLabel.innerText = 'Showing 0 members';
                     return;
                 }
@@ -414,6 +534,7 @@
 
                             <td class="text-dark fw-medium">
                                 ${escapeHtml(item.name)}
+                                <small class="d-block text-muted fw-normal">${escapeHtml(item.email || '')}</small>
                             </td>
 
                             <td class="text-muted">
@@ -463,8 +584,16 @@
                             </td>
                         `;
 
-                    tbody.appendChild(tr);
+                    if (dataTable) {
+                        dataTable.row.add(tr);
+                    } else {
+                        tbody.appendChild(tr);
+                    }
                 });
+
+                if (dataTable) {
+                    dataTable.draw();
+                }
 
                 paginationLabel.innerText = `Showing ${list.length} member(s)`;
             }
@@ -479,6 +608,7 @@
                     const matchesQuery =
                         safeText(item.name).toLowerCase().includes(query) ||
                         safeText(item.id).toLowerCase().includes(query) ||
+                        safeText(item.email).toLowerCase().includes(query) ||
                         safeText(item.city).toLowerCase().includes(query);
 
                     const matchesGender = !gender || item.gender === gender;
@@ -494,6 +624,7 @@
 
             function updateExportUrl() {
                 const params = new URLSearchParams({
+                    search: searchInput.value.trim(),
                     gender: filterGender.value,
                     status: filterStatus.value,
                     plan: filterPlan.value
@@ -506,12 +637,14 @@
             filterGender.addEventListener('change', filterList);
             filterStatus.addEventListener('change', filterList);
             filterPlan.addEventListener('change', filterList);
+            filterList();
 
             // Create User via AJAX
             document.getElementById('addUserForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
 
                 const saveBtn = document.getElementById('saveUserBtn');
+                clearErrors('addUserErrors');
                 saveBtn.disabled = true;
                 saveBtn.innerText = 'Saving...';
 
@@ -528,13 +661,14 @@
                         body: formData
                     });
 
-                    const result = await response.json();
+                    const result = await responseJson(response);
 
                     if (response.ok && result.success) {
                         const newMember = {
                             db_id: result.data.db_id,
                             id: result.data.member_id,
                             name: result.data.name,
+                            email: result.data.email,
                             gender: result.data.gender,
                             age: result.data.age,
                             city: result.data.city,
@@ -544,26 +678,21 @@
 
                         membersData.unshift(newMember);
                         filterList();
-
-                        const allCountElem = document.getElementById('countAll');
-
-                        if (allCountElem) {
-                            allCountElem.innerText =
-                                parseInt(allCountElem.innerText.replace(/,/g, ''), 10) + 1;
-                        }
+                        updateCounts(result.counts);
 
                         const modalEl = document.getElementById('addUserModal');
                         const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
                         modal.hide();
 
                         this.reset();
+                        clearErrors('addUserErrors');
                     } else {
-                        alert(result.message || 'Error occurred while saving.');
+                        showErrors('addUserErrors', result, response.status);
                     }
 
                 } catch (error) {
                     console.error('Save failed:', error);
-                    alert('Save error occurred. Check browser console.');
+                    showErrors('addUserErrors', { message: 'Unable to save the member. Check your connection and try again.' }, 0);
                 } finally {
                     saveBtn.disabled = false;
                     saveBtn.innerText = 'Create User';
@@ -578,11 +707,13 @@
 
                 document.getElementById('editDbId').value = user.db_id;
                 document.getElementById('editUserName').value = user.name || '';
+                document.getElementById('editUserEmail').value = user.email || '';
                 document.getElementById('editUserGender').value = user.gender || 'Female';
                 document.getElementById('editUserAge').value = user.age || '';
                 document.getElementById('editUserCity').value = user.city || '';
                 document.getElementById('editUserStatus').value = user.status || 'Active';
                 document.getElementById('editUserPlan').value = user.plan || 'Free';
+                clearErrors('editUserErrors');
 
                 const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
                 editModal.show();
@@ -595,6 +726,7 @@
                 const updateBtn = document.getElementById('updateUserBtn');
                 const dbId = document.getElementById('editDbId').value;
 
+                clearErrors('editUserErrors');
                 updateBtn.disabled = true;
                 updateBtn.innerText = 'Updating...';
 
@@ -602,7 +734,7 @@
                 formData.append('_method', 'PUT');
 
                 try {
-                    const response = await fetch(`/management/update/${encodeURIComponent(dbId)}`, {
+                    const response = await fetch(updateUrlTemplate.replace('__USER_ID__', encodeURIComponent(dbId)), {
                         method: 'POST',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
@@ -612,13 +744,14 @@
                         body: formData
                     });
 
-                    const result = await response.json();
+                    const result = await responseJson(response);
 
                     if (response.ok && result.success) {
                         const idx = membersData.findIndex(u => u.db_id == dbId);
 
                         if (idx !== -1) {
                             membersData[idx].name = result.data.name;
+                            membersData[idx].email = result.data.email;
                             membersData[idx].gender = result.data.gender;
                             membersData[idx].age = result.data.age;
                             membersData[idx].city = result.data.city;
@@ -627,6 +760,7 @@
                         }
 
                         filterList();
+                        updateCounts(result.counts);
 
                         const editModalEl = document.getElementById('editUserModal');
                         const modal = bootstrap.Modal.getInstance(editModalEl);
@@ -635,12 +769,12 @@
                             modal.hide();
                         }
                     } else {
-                        alert(result.message || 'Update failed.');
+                        showErrors('editUserErrors', result, response.status);
                     }
 
                 } catch (error) {
                     console.error('Update error:', error);
-                    alert('Failed to connect to server.');
+                    showErrors('editUserErrors', { message: 'Unable to update the member. Check your connection and try again.' }, 0);
                 } finally {
                     updateBtn.disabled = false;
                     updateBtn.innerText = 'Update Member';
@@ -652,7 +786,7 @@
                 if (!confirm('Are you sure you want to delete this user?')) return;
 
                 try {
-                    const response = await fetch(`/management/delete/${encodeURIComponent(dbId)}`, {
+                    const response = await fetch(deleteUrlTemplate.replace('__USER_ID__', encodeURIComponent(dbId)), {
                         method: 'DELETE',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
@@ -661,20 +795,12 @@
                         }
                     });
 
-                    const result = await response.json();
+                    const result = await responseJson(response);
 
                     if (response.ok && result.success) {
                         membersData = membersData.filter(u => u.db_id != dbId);
                         filterList();
-
-                        const allCountElem = document.getElementById('countAll');
-
-                        if (allCountElem) {
-                            allCountElem.innerText = Math.max(
-                                0,
-                                parseInt(allCountElem.innerText.replace(/,/g, ''), 10) - 1
-                            );
-                        }
+                        updateCounts(result.counts);
                     } else {
                         alert(result.message || 'Failed to delete user.');
                     }
@@ -685,10 +811,26 @@
                 }
             };
 
-            // Initial render
-            renderRows(membersData);
-            updateExportUrl();
+            tbody.addEventListener('click', function (event) {
+                const action = event.target.closest('[data-member-id]');
+                if (!action) return;
 
-        });
+                const dbId = Number(action.dataset.memberId);
+                if (!Number.isInteger(dbId) || dbId < 1) return;
+
+                if (action.classList.contains('js-edit-member')) {
+                    window.openEditModal(dbId);
+                } else if (action.classList.contains('js-delete-member')) {
+                    window.deleteUser(dbId);
+                }
+            });
+
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeManagementPage);
+        } else {
+            initializeManagementPage();
+        }
     </script>
 @endsection

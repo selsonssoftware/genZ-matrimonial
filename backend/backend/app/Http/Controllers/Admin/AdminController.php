@@ -7,7 +7,6 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -18,8 +17,8 @@ class AdminController extends Controller
         }
 
         abort_unless(
-            Auth::check() &&
-            strtolower(trim((string) Auth::user()->role)) === 'admin',
+            Auth::guard('admin')->check() &&
+            strtolower(trim((string) Auth::guard('admin')->user()->role)) === 'admin',
             403,
             'Only admins can access this page.'
         );
@@ -85,8 +84,8 @@ class AdminController extends Controller
         $admin = $this->findAdmin($id);
 
         if (
-            Auth::check() &&
-            strtolower((string) Auth::user()->email) ===
+            Auth::guard('admin')->check() &&
+            strtolower((string) Auth::guard('admin')->user()->email) ===
             strtolower((string) $admin->email)
         ) {
             return redirect()

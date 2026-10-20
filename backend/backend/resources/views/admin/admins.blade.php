@@ -206,7 +206,7 @@
             <div class="tm-card">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table tm-table mb-0 align-middle">
+                        <table class="table tm-table mb-0 align-middle js-data-table">
                             <thead>
                                 <tr>
                                     <th width="70" class="text-center">S.No</th>

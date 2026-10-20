@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login - Thirumana</title>
+    <title>Admin Login - GenZ Matrimony</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
@@ -236,7 +237,7 @@
         <div class="left-panel">
             <div>
                 <div class="gold-badge">❤</div>
-                <div class="brand-subtitle">THIRUMANA</div>
+                <div class="brand-subtitle">GenZ Matrimony</div>
                 <h1 class="brand-title">Thoughtful matches.<br>Trusted profiles.</h1>
                 <p class="brand-desc">A secure workspace for managing members, vendors and matrimonial services.</p>
             </div>
@@ -259,7 +260,7 @@
                 <div class="alert-success">{{ session('success') }}</div>
             @endif
 
-            <form method="POST" action="{{ route('login.submit') }}">
+            <form method="POST" action="{{ route('login.submit', [], false) }}">
                 @csrf
                 <div class="form-group">
                     <label class="form-label">Enter Name or Email</label>

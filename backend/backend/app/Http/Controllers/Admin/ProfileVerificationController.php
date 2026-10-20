@@ -59,23 +59,25 @@ class ProfileVerificationController extends Controller
             });
         }
 
-        $profiles = $query
+        $query
             ->orderByRaw("
                 CASE
                     WHEN p.verification_status = 'pending' THEN 0
                     ELSE 1
                 END
             ")
-            ->orderByDesc('p.id')
-            ->paginate(10)
-            ->appends($request->query());
+            ->orderByDesc('p.id');
+
+        $profiles = $status === 'all'
+            ? $query->get()
+            : $query->paginate(10)->appends($request->query());
 
         $selectedProfile = null;
         $education = collect();
         $occupation = null;
         $photos = collect();
 
-        if ($request->filled('id')) {
+        if ($status !== 'all' && $request->filled('id')) {
             $selectedProfile = DB::table('profiles as p')
                 ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
                 ->select(
@@ -88,7 +90,7 @@ class ProfileVerificationController extends Controller
                 ->first();
         }
 
-        if (!$selectedProfile) {
+        if (!$selectedProfile && $status !== 'all') {
             $selectedProfile = DB::table('profiles as p')
                 ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
                 ->select(

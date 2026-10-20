@@ -1,822 +1,565 @@
 @extends('layout')
 
 @section('content')
-    <div class="content-page">
-        <div class="container-fluid py-4 px-4" style="background-color: #FAF5F5; min-height: 100vh;">
-
-            <!-- Header Section -->
-            <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
-                <div>
-                    <h3 class="fw-bold mb-1" style="color: #561325;">Matrimony Master Data</h3>
-                    <p class="text-muted mb-0 fs-13">Configure profile options and search filters used across the platform.
-                    </p>
-                </div>
-
-                <div class="d-flex align-items-center gap-3">
-                    <!-- Search Input -->
-                    <div class="input-group shadow-sm" style="width: 170px;">
-                        <span class="input-group-text bg-white border-end-0 text-muted ps-2 pe-1 py-1">
-                            <i class="ti ti-search fs-14"></i>
-                        </span>
-                        <input type="text" class="form-control form-control-sm border-start-0 ps-1 py-1 fs-12 bg-white"
-                            placeholder="Search" />
-                    </div>
-
-                    <!-- Notification Bell Icon -->
-                    <button
-                        class="btn btn-sm btn-white border rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                        style="width: 34px; height: 34px; background-color: #fff;">
-                        <i class="ti ti-bell fs-16 text-muted"></i>
-                    </button>
-
-                    <!-- Admin Profile Badge -->
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold fs-12 shadow-sm"
-                            style="background-color: #561325; width: 34px; height: 34px;">
-                            AJ
-                        </div>
-                        <div class="d-none d-sm-block text-start lh-1">
-                            <span class="fw-bold d-block text-dark fs-13">Admin</span>
-                            <small class="text-muted fs-11">Super Admin</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Configuration Outer Wrapper Card -->
-            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 mb-4" style="border: 1px solid #F3E5E8 !important;">
-
-                <span class="text-muted fs-12 fw-medium mb-2 d-block">Profile configuration</span>
-
-                <!-- Navigation Tabs Pills -->
-                <div class="card border-0 rounded-4 mb-4"
-                    style="background-color: #FAF5F5; border: 1px solid #F3E5E8 !important;">
-                    <div class="card-body p-2">
-                        <ul class="nav nav-pills nav-justified fs-13 fw-semibold flex-nowrap overflow-auto"
-                            id="masterDataTabs" role="tablist">
-                            <li class="nav-item text-nowrap" role="presentation">
-                                <button class="nav-link active rounded-3 py-2 px-3 fw-bold tab-pill-btn" id="religion-tab"
-                                    data-bs-toggle="pill" data-bs-target="#religion-pane" type="button" role="tab">
-                                    Religion
-                                </button>
-                            </li>
-                            <li class="nav-item text-nowrap" role="presentation">
-                                <button class="nav-link text-muted rounded-3 py-2 px-3 tab-pill-btn" id="community-tab"
-                                    data-bs-toggle="pill" data-bs-target="#community-pane" type="button" role="tab">
-                                    Community
-                                </button>
-                            </li>
-                            <li class="nav-item text-nowrap" role="presentation">
-                                <button class="nav-link text-muted rounded-3 py-2 px-3 tab-pill-btn" id="language-tab"
-                                    data-bs-toggle="pill" data-bs-target="#language-pane" type="button" role="tab">
-                                    Mother Tongue
-                                </button>
-                            </li>
-                            <li class="nav-item text-nowrap" role="presentation">
-                                <button class="nav-link text-muted rounded-3 py-2 px-3 tab-pill-btn" id="education-tab"
-                                    data-bs-toggle="pill" data-bs-target="#education-pane" type="button" role="tab">
-                                    Education
-                                </button>
-                            </li>
-                            <li class="nav-item text-nowrap" role="presentation">
-                                <button class="nav-link text-muted rounded-3 py-2 px-3 tab-pill-btn" id="occupation-tab"
-                                    data-bs-toggle="pill" data-bs-target="#occupation-pane" type="button" role="tab">
-                                    Occupation
-                                </button>
-                            </li>
-                            <li class="nav-item text-nowrap" role="presentation">
-                                <button class="nav-link text-muted rounded-3 py-2 px-3 tab-pill-btn" id="location-tab"
-                                    data-bs-toggle="pill" data-bs-target="#location-pane" type="button" role="tab">
-                                    Location
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Tab Content Area -->
-                <div class="tab-content" id="masterDataTabContent">
-
-                    <!-- 1. Religion Tab Pane -->
-                    <div class="tab-pane fade show active" id="religion-pane" role="tabpanel">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <h5 class="fw-bold mb-1" style="color: #561325;">Religion Options</h5>
-                                <p class="text-muted fs-12 mb-0">Database-backed values used in member profiles and partner
-                                    preferences.</p>
-                            </div>
-                            <button type="button" class="btn btn-sm text-white fw-semibold px-4 py-2 rounded-3 shadow-sm"
-                                style="background-color: #6A1B29;" data-bs-toggle="modal" data-bs-target="#addOptionModal">
-                                + Add option
-                            </button>
-                        </div>
-
-                        <div class="table-responsive rounded-3 mb-4" style="border: 1px solid #F3E5E8;">
-                            <table class="table align-middle mb-0 table-hover">
-                                <thead
-                                    style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <tr style="color: #561325;">
-                                        <th class="ps-4 py-3">CODE</th>
-                                        <th class="py-3">DISPLAY LABEL</th>
-                                        <th class="py-3">STATUS</th>
-                                        <th class="py-3">PROFILES USING</th>
-                                        <th class="pe-4 py-3">ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-13">
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">REL-001</td>
-                                        <td class="text-dark">Hindu</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">8,240</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">REL-002</td>
-                                        <td class="text-dark">Christian</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,920</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">REL-003</td>
-                                        <td class="text-dark">Muslim</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,780</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">REL-004</td>
-                                        <td class="text-dark">Jain</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">420</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">REL-005</td>
-                                        <td class="text-dark">Other / Prefer not to say</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">480</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Admin Tip Box -->
-                        <div class="p-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
-                            <h6 class="fw-bold mb-1 fs-12" style="color: #8D6718;">Admin tip</h6>
-                            <p class="fs-12 mb-0" style="color: #9C7524;">
-                                Use configurable lookup tables instead of hard-coding profile choices in templates.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- 2. Community Tab Pane -->
-                    <div class="tab-pane fade" id="community-pane" role="tabpanel">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <h5 class="fw-bold mb-1" style="color: #561325;">Community & Caste Options</h5>
-                                <p class="text-muted fs-12 mb-0">Manage community lists, sub-castes, and gothram lookup
-                                    configurations.</p>
-                            </div>
-                            <button type="button" class="btn btn-sm text-white fw-semibold px-4 py-2 rounded-3 shadow-sm"
-                                style="background-color: #6A1B29;" data-bs-toggle="modal" data-bs-target="#addOptionModal">
-                                + Add option
-                            </button>
-                        </div>
-
-                        <div class="table-responsive rounded-3 mb-4" style="border: 1px solid #F3E5E8;">
-                            <table class="table align-middle mb-0 table-hover">
-                                <thead
-                                    style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <tr style="color: #561325;">
-                                        <th class="ps-4 py-3">CODE</th>
-                                        <th class="py-3">DISPLAY LABEL</th>
-                                        <th class="py-3">STATUS</th>
-                                        <th class="py-3">PROFILES USING</th>
-                                        <th class="pe-4 py-3">ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-13">
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">COM-001</td>
-                                        <td class="text-dark">Reddy</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,840</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">COM-002</td>
-                                        <td class="text-dark">Vanniyar</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,410</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">COM-003</td>
-                                        <td class="text-dark">Mudaliar</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,950</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">COM-004</td>
-                                        <td class="text-dark">Brahmin</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,120</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">COM-005</td>
-                                        <td class="text-dark">Nadar</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,480</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="p-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
-                            <h6 class="fw-bold mb-1 fs-12" style="color: #8D6718;">Admin tip</h6>
-                            <p class="fs-12 mb-0" style="color: #9C7524;">
-                                Community codes can be linked to sub-sect selections to streamline candidate profile
-                                registration.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- 3. Mother Tongue Tab Pane -->
-                    <div class="tab-pane fade" id="language-pane" role="tabpanel">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <h5 class="fw-bold mb-1" style="color: #561325;">Mother Tongue Options</h5>
-                                <p class="text-muted fs-12 mb-0">Languages used to match linguistic compatibility and search
-                                    filters.</p>
-                            </div>
-                            <button type="button" class="btn btn-sm text-white fw-semibold px-4 py-2 rounded-3 shadow-sm"
-                                style="background-color: #6A1B29;" data-bs-toggle="modal" data-bs-target="#addOptionModal">
-                                + Add option
-                            </button>
-                        </div>
-
-                        <div class="table-responsive rounded-3 mb-4" style="border: 1px solid #F3E5E8;">
-                            <table class="table align-middle mb-0 table-hover">
-                                <thead
-                                    style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <tr style="color: #561325;">
-                                        <th class="ps-4 py-3">CODE</th>
-                                        <th class="py-3">DISPLAY LABEL</th>
-                                        <th class="py-3">STATUS</th>
-                                        <th class="py-3">PROFILES USING</th>
-                                        <th class="pe-4 py-3">ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-13">
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LNG-001</td>
-                                        <td class="text-dark">Tamil</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">7,620</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LNG-002</td>
-                                        <td class="text-dark">Telugu</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,310</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LNG-003</td>
-                                        <td class="text-dark">Malayalam</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,450</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LNG-004</td>
-                                        <td class="text-dark">Kannada</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">980</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LNG-005</td>
-                                        <td class="text-dark">Hindi</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">480</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="p-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
-                            <h6 class="fw-bold mb-1 fs-12" style="color: #8D6718;">Admin tip</h6>
-                            <p class="fs-12 mb-0" style="color: #9C7524;">
-                                You can configure primary mother tongue alongside secondary spoken languages in the
-                                candidate preference engine.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- 4. Education Tab Pane -->
-                    <div class="tab-pane fade" id="education-pane" role="tabpanel">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <h5 class="fw-bold mb-1" style="color: #561325;">Education Qualifications</h5>
-                                <p class="text-muted fs-12 mb-0">Highest degree and qualification levels selectable by
-                                    matrimony candidates.</p>
-                            </div>
-                            <button type="button" class="btn btn-sm text-white fw-semibold px-4 py-2 rounded-3 shadow-sm"
-                                style="background-color: #6A1B29;" data-bs-toggle="modal" data-bs-target="#addOptionModal">
-                                + Add option
-                            </button>
-                        </div>
-
-                        <div class="table-responsive rounded-3 mb-4" style="border: 1px solid #F3E5E8;">
-                            <table class="table align-middle mb-0 table-hover">
-                                <thead
-                                    style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <tr style="color: #561325;">
-                                        <th class="ps-4 py-3">CODE</th>
-                                        <th class="py-3">DISPLAY LABEL</th>
-                                        <th class="py-3">STATUS</th>
-                                        <th class="py-3">PROFILES USING</th>
-                                        <th class="pe-4 py-3">ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-13">
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">EDU-001</td>
-                                        <td class="text-dark">B.E. / B.Tech (Engineering)</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">4,520</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">EDU-002</td>
-                                        <td class="text-dark">M.S. / M.Tech / Post Graduate</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,890</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">EDU-003</td>
-                                        <td class="text-dark">MBBS / MD / Medical</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">870</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">EDU-004</td>
-                                        <td class="text-dark">MBA / PGDM (Management)</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,140</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">EDU-005</td>
-                                        <td class="text-dark">B.Com / B.Sc / Arts & Science</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,420</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="p-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
-                            <h6 class="fw-bold mb-1 fs-12" style="color: #8D6718;">Admin tip</h6>
-                            <p class="fs-12 mb-0" style="color: #9C7524;">
-                                Degree streams can be grouped into broad education filters (e.g., Engineering, Medicine,
-                                Management) for search efficiency.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- 5. Occupation Tab Pane -->
-                    <div class="tab-pane fade" id="occupation-pane" role="tabpanel">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <h5 class="fw-bold mb-1" style="color: #561325;">Occupation Options</h5>
-                                <p class="text-muted fs-12 mb-0">Professional sectors, roles, and job domain
-                                    classifications.</p>
-                            </div>
-                            <button type="button" class="btn btn-sm text-white fw-semibold px-4 py-2 rounded-3 shadow-sm"
-                                style="background-color: #6A1B29;" data-bs-toggle="modal" data-bs-target="#addOptionModal">
-                                + Add option
-                            </button>
-                        </div>
-
-                        <div class="table-responsive rounded-3 mb-4" style="border: 1px solid #F3E5E8;">
-                            <table class="table align-middle mb-0 table-hover">
-                                <thead
-                                    style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <tr style="color: #561325;">
-                                        <th class="ps-4 py-3">CODE</th>
-                                        <th class="py-3">DISPLAY LABEL</th>
-                                        <th class="py-3">STATUS</th>
-                                        <th class="py-3">PROFILES USING</th>
-                                        <th class="pe-4 py-3">ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-13">
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">OCC-001</td>
-                                        <td class="text-dark">Software Engineer / IT Professional</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">5,140</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">OCC-002</td>
-                                        <td class="text-dark">Doctor / Healthcare Professional</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">940</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">OCC-003</td>
-                                        <td class="text-dark">Chartered Accountant / Finance</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,260</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">OCC-004</td>
-                                        <td class="text-dark">Civil Services / Govt. Officer</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">680</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">OCC-005</td>
-                                        <td class="text-dark">Business / Entrepreneur</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,320</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="p-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
-                            <h6 class="fw-bold mb-1 fs-12" style="color: #8D6718;">Admin tip</h6>
-                            <p class="fs-12 mb-0" style="color: #9C7524;">
-                                Ensure occupation choices align with annual income bracket filtering for accurate matrimony
-                                matching.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- 6. Location Tab Pane -->
-                    <div class="tab-pane fade" id="location-pane" role="tabpanel">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <h5 class="fw-bold mb-1" style="color: #561325;">Location & City Options</h5>
-                                <p class="text-muted fs-12 mb-0">Predefined districts, major cities, and international
-                                    regional hubs.</p>
-                            </div>
-                            <button type="button" class="btn btn-sm text-white fw-semibold px-4 py-2 rounded-3 shadow-sm"
-                                style="background-color: #6A1B29;" data-bs-toggle="modal" data-bs-target="#addOptionModal">
-                                + Add option
-                            </button>
-                        </div>
-
-                        <div class="table-responsive rounded-3 mb-4" style="border: 1px solid #F3E5E8;">
-                            <table class="table align-middle mb-0 table-hover">
-                                <thead
-                                    style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <tr style="color: #561325;">
-                                        <th class="ps-4 py-3">CODE</th>
-                                        <th class="py-3">DISPLAY LABEL</th>
-                                        <th class="py-3">STATUS</th>
-                                        <th class="py-3">PROFILES USING</th>
-                                        <th class="pe-4 py-3">ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-13">
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LOC-001</td>
-                                        <td class="text-dark">Chennai, Tamil Nadu</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">5,620</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LOC-002</td>
-                                        <td class="text-dark">Coimbatore, Tamil Nadu</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">2,840</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LOC-003</td>
-                                        <td class="text-dark">Bengaluru, Karnataka</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">3,120</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LOC-004</td>
-                                        <td class="text-dark">Madurai, Tamil Nadu</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">1,780</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="ps-4 fw-semibold text-dark">LOC-005</td>
-                                        <td class="text-dark">USA / International NRI</td>
-                                        <td>Active</td>
-                                        <td class="text-dark">940</td>
-                                        <td class="pe-4">
-                                            <a href="javascript:void(0);"
-                                                class="text-dark fw-medium text-decoration-none me-2">Edit</a>
-                                            <span class="text-muted">·</span>
-                                            <a href="javascript:void(0);"
-                                                class="text-muted text-decoration-none ms-2">Disable</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="p-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
-                            <h6 class="fw-bold mb-1 fs-12" style="color: #8D6718;">Admin tip</h6>
-                            <p class="fs-12 mb-0" style="color: #9C7524;">
-                                You can configure NRI/Overseas flags on specific locations to highlight international member
-                                profiles.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-            <!-- end card wrapper -->
-
-            <!-- Add Option Modal -->
-            <div class="modal fade" id="addOptionModal" tabindex="-1" aria-labelledby="addOptionModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0 rounded-4 shadow">
-                        <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
-                            <h5 class="modal-title fw-bold" id="addOptionModalLabel" style="color: #561325;">Add Lookup
-                                Option</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form id="addOptionForm">
-                            <div class="modal-body px-4">
-                                <div class="mb-3">
-                                    <label class="form-label fs-13 fw-semibold">Target Category</label>
-                                    <select class="form-select fs-13" id="optionCategory" required>
-                                        <option value="Religion">Religion</option>
-                                        <option value="Community">Community</option>
-                                        <option value="Language">Mother Tongue</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Occupation">Occupation</option>
-                                        <option value="Location">Location</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fs-13 fw-semibold">Option Code</label>
-                                    <input type="text" class="form-control fs-13" placeholder="e.g. REL-006 or COM-006"
-                                        required />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fs-13 fw-semibold">Display Label</label>
-                                    <input type="text" class="form-control fs-13"
-                                        placeholder="e.g. Sikh or Electronics Engineer" required />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fs-13 fw-semibold">Status</label>
-                                    <select class="form-select fs-13" required>
-                                        <option value="Active" selected>Active</option>
-                                        <option value="Disabled">Disabled</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer border-top-0 px-4 pb-4">
-                                <button type="button" class="btn btn-light fs-13" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn fs-13 text-white fw-semibold"
-                                    style="background-color: #6A1B29;">Save Option</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <!-- container-fluid -->
-
-        <!-- Footer -->
-        <footer class="footer py-3 bg-white border-top">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-md-6 text-center text-md-start fs-12 text-muted">
-                        ©
-                        <script>document.write(new Date().getFullYear())</script> Thirumana Admin Console
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-none d-md-flex justify-content-end gap-3 fs-12">
-                            <a href="javascript:void(0);" class="text-muted text-decoration-none">Privacy Policy</a>
-                            <a href="javascript:void(0);" class="text-muted text-decoration-none">Terms of Service</a>
-                            <a href="javascript:void(0);" class="text-muted text-decoration-none">Support</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Script to handle Tab highlighting style -->
     <style>
-        .tab-pill-btn.active {
-            background-color: #FCECEE !important;
-            color: #561325 !important;
-            font-weight: 700 !important;
+        .master-data-page {
+            min-height: 100vh;
+            background: #fdf9f6;
+            color: #34232a;
         }
 
-        .tab-pill-btn:not(.active) {
-            background-color: transparent !important;
-            color: #6c757d !important;
+        .master-data-page .text-maroon {
+            color: #581629;
+        }
+
+        .master-data-page .btn-maroon {
+            background: #581629;
+            border-color: #581629;
+            color: #fff;
+        }
+
+        .master-data-page .btn-maroon:hover {
+            background: #42101f;
+            border-color: #42101f;
+            color: #fff;
+        }
+
+        .master-data-page .filter-card,
+        .master-data-page .members-card,
+        .master-data-page .religion-card {
+            border: 1px solid #eee3e5;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .master-data-page .filter-card {
+            position: sticky;
+            top: 1rem;
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-width: thin;
+            scrollbar-color: #c9aeb5 transparent;
+        }
+
+        .master-data-page .filter-card::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .master-data-page .filter-card::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: #c9aeb5;
+        }
+
+        .master-data-page .form-label {
+            color: #49383d;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .master-data-page .form-control,
+        .master-data-page .form-select {
+            min-height: 36px;
+            border-color: #e9dfe1;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .master-data-page .form-check-input:checked {
+            background-color: #581629;
+            border-color: #581629;
+        }
+
+        .master-data-page .religion-pill {
+            border: 1px solid #e7dadd;
+            border-radius: 999px;
+            color: #34232a;
+            background: #fff;
+            font-size: 12px;
+            padding: 7px 14px;
+            white-space: nowrap;
+        }
+
+        .master-data-page .religion-pill.active {
+            background: #581629;
+            border-color: #581629;
+            color: #fff;
+        }
+
+        .master-data-page .active-filter {
+            border-radius: 999px;
+            background: #f8e8ec;
+            color: #581629;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 9px;
+            font-size: 11px;
+        }
+
+        .master-data-page .member-avatar {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #f5e8eb;
+            color: #581629;
+        }
+
+        .master-data-page .status-pill {
+            border-radius: 999px;
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 8px;
+            white-space: nowrap;
+        }
+
+        .master-data-page .status-approved {
+            background: #e3f3e9;
+            color: #277044;
+        }
+
+        .master-data-page .status-pending {
+            background: #fff3dc;
+            color: #8b6415;
+        }
+
+        .master-data-page .status-rejected {
+            background: #fde8e8;
+            color: #a52f35;
+        }
+
+        .master-data-page .status-update_requested {
+            background: #e7f0fb;
+            color: #325c8a;
+        }
+
+        @media (max-width: 767.98px) {
+            .master-data-page .filter-card {
+                position: static;
+            }
         }
     </style>
+
+    <div class="content-page master-data-page">
+        <div class="container-fluid px-3 px-lg-4 py-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <div>
+                    <h3 class="fw-bold text-maroon mb-1">Matrimony Master Data</h3>
+                    <p class="text-muted fs-13 mb-0">Browse and filter registered member profiles.</p>
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <form method="GET" action="{{ route('admin.matrimonymasterdata') }}" class="d-flex gap-2">
+                        @foreach(request()->except(['search', 'page']) as $name => $value)
+                            @if(is_array($value))
+                                @foreach($value as $item)
+                                    <input type="hidden" name="{{ $name }}[]" value="{{ $item }}">
+                                @endforeach
+                            @else
+                                <input type="hidden" name="{{ $name }}" value="{{ $value }}">
+                            @endif
+                        @endforeach
+                        <input
+                            type="search"
+                            name="search"
+                            class="form-control"
+                            value="{{ $filters['search'] ?? '' }}"
+                            placeholder="Search by ID, name or phone"
+                            aria-label="Search members"
+                        >
+                        <button class="btn btn-outline-secondary btn-sm px-3" type="submit">Search</button>
+                    </form>
+                    <a class="btn btn-outline-secondary btn-sm px-3"
+                       href="{{ route('admin.matrimonymasterdata.export', request()->query()) }}">
+                        <i class="ti ti-download me-1"></i>Export
+                    </a>
+                </div>
+            </div>
+
+            @if(session('success'))
+                <div class="alert alert-success py-2">{{ session('success') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="alert alert-danger py-2">{{ $errors->first() }}</div>
+            @endif
+
+            <div class="religion-card p-2 mb-3">
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="religion-pill {{ empty($filters['religion']) ? 'active' : '' }}"
+                       href="{{ route('admin.matrimonymasterdata', request()->except(['religion', 'page'])) }}">All</a>
+                    @foreach($religions as $religion)
+                        <a class="religion-pill {{ ($filters['religion'] ?? '') === $religion ? 'active' : '' }}"
+                           href="{{ route('admin.matrimonymasterdata', array_merge(request()->except('page'), ['religion' => $religion])) }}">
+                            {{ $religion }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            @php
+                $activeFilters = [];
+                foreach ([
+                    'religion' => 'Religion',
+                    'community' => 'Community',
+                    'rasi' => 'Rasi',
+                    'nakshatra' => 'Nakshatra',
+                    'gothram' => 'Gothram',
+                    'education' => 'Education',
+                    'city' => 'City',
+                    'status' => 'Status',
+                    'vendor_id' => 'Vendor',
+                ] as $filterKey => $filterLabel) {
+                    if (!empty($filters[$filterKey])) {
+                        $filterValue = $filters[$filterKey];
+                        if ($filterKey === 'vendor_id') {
+                            $filterValue = optional($vendors->firstWhere('id', $filterValue))->agent_name ?? $filterValue;
+                        }
+                        $activeFilters[] = $filterLabel . ': ' . str_replace('_', ' ', ucfirst($filterValue));
+                    }
+                }
+                foreach (['age_from' => 'Age from', 'age_to' => 'Age to', 'height_from' => 'Height from', 'height_to' => 'Height to'] as $filterKey => $filterLabel) {
+                    if (!empty($filters[$filterKey])) {
+                        $activeFilters[] = $filterLabel . ': ' . $filters[$filterKey];
+                    }
+                }
+                if (!empty($filters['marital_status'])) {
+                    $activeFilters[] = 'Marital status: ' . implode(', ', $filters['marital_status']);
+                }
+                if (!empty($filters['photo_only'])) {
+                    $activeFilters[] = 'Photo available';
+                }
+            @endphp
+
+            @if(count($activeFilters))
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="text-muted fs-12">Active filters:</span>
+                    @foreach($activeFilters as $activeFilter)
+                        <span class="active-filter">{{ $activeFilter }}</span>
+                    @endforeach
+                    <a class="text-maroon fs-12 ms-1"
+                       href="{{ route('admin.matrimonymasterdata', array_intersect_key(request()->query(), ['search' => true])) }}">Clear all</a>
+                </div>
+            @endif
+
+            <div class="row g-3 align-items-start">
+                <div class="col-xl-3 col-lg-4">
+                    <form method="GET" action="{{ route('admin.matrimonymasterdata') }}" class="filter-card p-3">
+                        <h6 class="fw-bold text-maroon mb-3">Filters</h6>
+                        @if(!empty($filters['search']))
+                            <input type="hidden" name="search" value="{{ $filters['search'] }}">
+                        @endif
+                        @if(!empty($filters['religion']))
+                            <input type="hidden" name="religion" value="{{ $filters['religion'] }}">
+                        @endif
+
+                        <div class="rounded-3 p-2 mb-3" style="background:#fbf2f4;">
+                            <div class="small fw-bold text-uppercase text-maroon mb-2">Details</div>
+                            <div class="mb-2">
+                                <label class="form-label" for="filter-rasi">Rasi</label>
+                                <select class="form-select" id="filter-rasi" name="rasi">
+                                    <option value="">Any</option>
+                                    @foreach($horoscopeOptions['rasis'] as $rasi)
+                                        <option value="{{ $rasi }}" @selected(($filters['rasi'] ?? '') === $rasi)>{{ $rasi }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="filter-nakshatra">Nakshatra</label>
+                                <select class="form-select" id="filter-nakshatra" name="nakshatra">
+                                    <option value="">Any</option>
+                                    @foreach($horoscopeOptions['nakshatras'] as $nakshatra)
+                                        <option value="{{ $nakshatra }}" @selected(($filters['nakshatra'] ?? '') === $nakshatra)>{{ $nakshatra }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="filter-gothram">Gothram</label>
+                                <select class="form-select" id="filter-gothram" name="gothram">
+                                    <option value="">Any</option>
+                                    @foreach($horoscopeOptions['gothrams'] as $gothram)
+                                        <option value="{{ $gothram }}" @selected(($filters['gothram'] ?? '') === $gothram)>{{ $gothram }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label" for="filter-community">Community</label>
+                                <select class="form-select" id="filter-community" name="community">
+                                    <option value="">Any</option>
+                                    @foreach($communities as $community)
+                                        <option value="{{ $community }}" @selected(($filters['community'] ?? '') === $community)>{{ $community }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Age</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input class="form-control" type="number" min="18" max="100" name="age_from" value="{{ $filters['age_from'] ?? '' }}" placeholder="From">
+                                <span class="text-muted">to</span>
+                                <input class="form-control" type="number" min="18" max="100" name="age_to" value="{{ $filters['age_to'] ?? '' }}" placeholder="To">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Height (cm)</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input class="form-control" type="number" min="50" max="250" step="0.1" name="height_from" value="{{ $filters['height_from'] ?? '' }}" placeholder="From">
+                                <span class="text-muted">to</span>
+                                <input class="form-control" type="number" min="50" max="250" step="0.1" name="height_to" value="{{ $filters['height_to'] ?? '' }}" placeholder="To">
+                            </div>
+                        </div>
+
+                        @if($maritalStatuses->isNotEmpty())
+                            <div class="mb-3">
+                                <label class="form-label d-block">Marital status</label>
+                                @foreach($maritalStatuses as $maritalStatus)
+                                    <label class="form-check form-check-sm mb-1">
+                                        <input class="form-check-input" type="checkbox" name="marital_status[]" value="{{ $maritalStatus }}" @checked(in_array($maritalStatus, $filters['marital_status'] ?? [], true))>
+                                        <span class="form-check-label fs-12">{{ $maritalStatus }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        <div class="mb-3">
+                            <label class="form-label" for="filter-education">Education</label>
+                            <select class="form-select" id="filter-education" name="education">
+                                <option value="">Any</option>
+                                @foreach($educations as $education)
+                                    <option value="{{ $education }}" @selected(($filters['education'] ?? '') === $education)>{{ $education }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="filter-city">City</label>
+                            <select class="form-select" id="filter-city" name="city">
+                                <option value="">Any</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city }}" @selected(($filters['city'] ?? '') === $city)>{{ $city }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="filter-vendor">Vendor (agent)</label>
+                            <select class="form-select" id="filter-vendor" name="vendor_id">
+                                <option value="">All</option>
+                                @foreach($vendors as $vendor)
+                                    <option value="{{ $vendor->id }}" @selected((string) ($filters['vendor_id'] ?? '') === (string) $vendor->id)>{{ $vendor->agent_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="filter-status">Profile status</label>
+                            <select class="form-select" id="filter-status" name="status">
+                                <option value="">All</option>
+                                <option value="pending" @selected(($filters['status'] ?? '') === 'pending')>Pending</option>
+                                <option value="approved" @selected(($filters['status'] ?? '') === 'approved')>Verified</option>
+                                <option value="rejected" @selected(($filters['status'] ?? '') === 'rejected')>Suspended</option>
+                                <option value="update_requested" @selected(($filters['status'] ?? '') === 'update_requested')>Review requested</option>
+                            </select>
+                        </div>
+
+                        <label class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="photo_only" value="1" @checked(!empty($filters['photo_only']))>
+                            <span class="form-check-label fs-12">Photo available only</span>
+                        </label>
+
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-secondary btn-sm flex-fill"
+                               href="{{ route('admin.matrimonymasterdata', array_intersect_key(request()->query(), ['search' => true, 'religion' => true])) }}">Clear</a>
+                            <button class="btn btn-maroon btn-sm flex-fill" type="submit">Apply filters</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-xl-9 col-lg-8">
+                    <div class="members-card overflow-hidden">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-bottom">
+                            <span class="text-muted fs-12">
+                                Showing all {{ number_format($profiles->count()) }} matching members
+                            </span>
+                            <form method="GET" action="{{ route('admin.matrimonymasterdata') }}" class="d-flex align-items-center gap-2">
+                                @foreach(request()->except(['sort', 'page']) as $name => $value)
+                                    @if(is_array($value))
+                                        @foreach($value as $item)
+                                            <input type="hidden" name="{{ $name }}[]" value="{{ $item }}">
+                                        @endforeach
+                                    @else
+                                        <input type="hidden" name="{{ $name }}" value="{{ $value }}">
+                                    @endif
+                                @endforeach
+                                <label class="text-muted fs-12 mb-0" for="sort-profiles">Sort by</label>
+                                <select class="form-select form-select-sm" id="sort-profiles" name="sort" onchange="this.form.submit()" style="width:auto;">
+                                    <option value="newest" @selected(($filters['sort'] ?? 'newest') === 'newest')>Newest</option>
+                                    <option value="oldest" @selected(($filters['sort'] ?? '') === 'oldest')>Oldest</option>
+                                    <option value="age_asc" @selected(($filters['sort'] ?? '') === 'age_asc')>Age: low to high</option>
+                                    <option value="age_desc" @selected(($filters['sort'] ?? '') === 'age_desc')>Age: high to low</option>
+                                </select>
+                            </form>
+                        </div>
+
+                        <form method="POST" action="{{ route('admin.matrimonymasterdata.bulk-review', request()->query()) }}" id="bulk-review-form">
+                            @csrf
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 px-3 py-2 border-bottom">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="visually-hidden" for="bulk-decision">Bulk action</label>
+                                    <select class="form-select form-select-sm" id="bulk-decision" name="decision" required style="width:auto;">
+                                        <option value="">Bulk actions</option>
+                                        <option value="approved">Mark verified</option>
+                                        <option value="pending">Mark pending</option>
+                                        <option value="rejected">Suspend</option>
+                                        <option value="update_requested">Request review</option>
+                                    </select>
+                                    <button class="btn btn-maroon btn-sm" type="submit">Apply</button>
+                                </div>
+                                <label class="d-flex align-items-center gap-2 text-muted fs-12 mb-0">
+                                    <input class="form-check-input m-0" type="checkbox" id="select-all-profiles">
+                                    Select all matching profiles
+                                </label>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table id="matrimonyMasterProfiles" class="table align-middle table-hover mb-0 js-data-table" data-page-length="10" data-empty-table="No members match the selected filters.">
+                                    <thead style="background:#fcf8f8;">
+                                        <tr class="text-uppercase text-muted" style="font-size:10px; letter-spacing:.04em;">
+                                            <th class="ps-3" style="width:36px;"></th>
+                                            <th>Member</th>
+                                            <th>Age / Height</th>
+                                            <th>Religion / Community</th>
+                                            <th>Rasi</th>
+                                            <th>City</th>
+                                            <th>Status</th>
+                                            <th>Vendor</th>
+                                            <th class="text-end pe-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($profiles as $profile)
+                                            @php
+                                                $statusLabel = [
+                                                    'approved' => 'Verified',
+                                                    'pending' => 'Pending',
+                                                    'rejected' => 'Suspended',
+                                                    'update_requested' => 'Review',
+                                                ][$profile->verification_status] ?? ucfirst($profile->verification_status);
+                                            @endphp
+                                            <tr>
+                                                <td class="ps-3">
+                                                    <input class="form-check-input profile-select" type="checkbox" name="ids[]" value="{{ $profile->id }}" aria-label="Select {{ $profile->member_name ?: $profile->profile_id }}">
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        @if($profile->profile_image)
+                                                            <img class="member-avatar" src="{{ asset('storage/' . ltrim($profile->profile_image, '/')) }}" alt="">
+                                                        @else
+                                                            <span class="member-avatar d-inline-flex align-items-center justify-content-center fw-bold">{{ strtoupper(substr($profile->member_name ?: 'M', 0, 1)) }}</span>
+                                                        @endif
+                                                        <div class="lh-sm">
+                                                            <div class="fw-semibold text-dark">{{ $profile->member_name ?: 'Member' }}</div>
+                                                            <small class="text-muted">{{ $profile->member_id ?: $profile->profile_id ?: ('#' . $profile->id) }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-nowrap">
+                                                    <div>{{ $profile->age ? $profile->age . ' yrs' : '—' }}</div>
+                                                    <small class="text-muted">{{ $profile->height ? $profile->height . ' cm' : '—' }}</small>
+                                                </td>
+                                                <td>
+                                                    <div>{{ $profile->religion ?: '—' }}</div>
+                                                    <small class="text-muted">{{ $profile->community ?: $profile->caste ?: '—' }}</small>
+                                                </td>
+                                                <td>{{ $profile->rasi ?: '—' }}</td>
+                                                <td>{{ $profile->city ?: '—' }}</td>
+                                                <td><span class="status-pill status-{{ $profile->verification_status }}">{{ $statusLabel }}</span></td>
+                                                <td>{{ $profile->vendor_name ?: 'Direct' }}</td>
+                                                <td class="text-end pe-3">
+                                                    <a class="text-maroon fw-semibold text-decoration-none"
+                                                       href="{{ route('admin.profile-verification.index', ['status' => $profile->verification_status, 'id' => $profile->id]) }}">View</a>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="9" class="text-center text-muted py-5">
+                                                    <i class="ti ti-users fs-3 d-block mb-2"></i>
+                                                    No members match the selected filters.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAll = document.getElementById('select-all-profiles');
+            const bulkForm = document.getElementById('bulk-review-form');
+            const profilesTable = document.getElementById('matrimonyMasterProfiles');
+            const getDataTable = function () {
+                return window.jQuery
+                    && jQuery.fn.DataTable
+                    && profilesTable
+                    && jQuery.fn.DataTable.isDataTable(profilesTable)
+                    ? jQuery(profilesTable).DataTable()
+                    : null;
+            };
+
+            selectAll?.addEventListener('change', function () {
+                const dataTable = getDataTable();
+                const checkboxes = dataTable
+                    ? dataTable.$('.profile-select').toArray()
+                    : Array.from(document.querySelectorAll('.profile-select'));
+
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+
+            bulkForm?.addEventListener('submit', function (event) {
+                bulkForm.querySelectorAll('.datatable-selected-profile').forEach(function (input) {
+                    input.remove();
+                });
+
+                const dataTable = getDataTable();
+                const selectedProfiles = dataTable
+                    ? dataTable.$('.profile-select:checked').toArray()
+                    : Array.from(bulkForm.querySelectorAll('.profile-select:checked'));
+
+                if (selectedProfiles.length === 0) {
+                    event.preventDefault();
+                    alert('Select at least one profile before applying a bulk action.');
+                    return;
+                }
+
+                selectedProfiles.forEach(function (checkbox) {
+                    if (!bulkForm.contains(checkbox)) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'ids[]';
+                        input.value = checkbox.value;
+                        input.className = 'datatable-selected-profile';
+                        bulkForm.appendChild(input);
+                    }
+                });
+
+                if (!confirm('Apply this action to the selected profiles?')) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 @endsection
