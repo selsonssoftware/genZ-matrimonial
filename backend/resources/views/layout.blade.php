@@ -21,13 +21,13 @@
 
     <!-- Vendor css -->
     <link href="{{ asset('dashboardassets/css/vendors.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- App css -->
     <link id="app-style" href="{{ asset('dashboardassets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
 
 </head>
 <style>
-
     #user-profile-settings {
     background-image: url("/dashboardassets/images/user-bg-pattern.svg");
     background-repeat: no-repeat;
@@ -60,7 +60,7 @@
                         <!-- Logo light -->
                         <a href="{{ route('dashboard') }}" class="logo-light">
                             <span class="logo-lg">
-                                <img src="{{ asset('dashboardassets/images/main-logo.png') }}" alt="logo" />
+                                <img src="{{ asset('dashboardassets/images/Frame.png') }}" alt="logo" />
                             </span>
                             <span class="logo-sm">
                                 <img src="{{ asset('dashboardassets/images/logo-sm.png') }}" alt="small logo" />
@@ -619,7 +619,11 @@
                             <button class="topbar-link dropdown-toggle drop-arrow-none" data-bs-toggle="dropdown"
                                 type="button" data-bs-auto-close="outside" aria-haspopup="false" aria-expanded="false">
                                 <i class="ti ti-bell topbar-link-icon animate-ring"></i>
-                                <span class="badge text-bg-danger badge-circle topbar-badge">5</span>
+                                @if ($adminNotificationCount > 0)
+                                    <span class="badge text-bg-danger badge-circle topbar-badge">
+                                        {{ $adminNotificationCount > 99 ? '99+' : $adminNotificationCount }}
+                                    </span>
+                                @endif
                             </button>
 
                             <div class="dropdown-menu p-0 dropdown-menu-end dropdown-menu-lg">
@@ -629,208 +633,52 @@
                                             <h6 class="m-0 fs-md fw-semibold">Notifications</h6>
                                         </div>
                                         <div class="col text-end">
-                                            <a href="#!" class="badge badge-soft-success badge-label py-1">07
-                                                Notifications</a>
+                                            <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
+                                                class="badge badge-soft-success badge-label py-1">
+                                                {{ $adminNotificationCount }} pending
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div style="max-height: 300px" data-simplebar="">
-                                    <!-- Notification 1 -->
-                                    <div class="dropdown-item notification-item py-2 text-wrap" id="message-1">
-                                        <span class="d-flex align-items-center gap-3">
-                                            <span class="flex-shrink-0 position-relative">
-                                                <img src="{{ asset('dashboardassets/images/users/user-4.jpg') }}"
-                                                    class="avatar-md rounded-circle" alt="User Avatar" />
-                                                <span
-                                                    class="position-absolute rounded-pill bg-success notification-badge">
-                                                    <i class="ti ti-bell align-middle"></i>
-                                                    <span class="visually-hidden">unread notification</span>
+                                    @forelse ($adminNotifications as $notification)
+                                        <a href="{{ route('admin.profile-verification.index', ['status' => 'pending', 'id' => $notification->id]) }}"
+                                            class="dropdown-item notification-item py-2 text-wrap">
+                                            <span class="d-flex align-items-center gap-3">
+                                                <span class="flex-shrink-0 position-relative">
+                                                    <span
+                                                        class="avatar-md rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center">
+                                                        <i class="ti ti-user-plus fs-4"></i>
+                                                    </span>
+                                                    <span
+                                                        class="position-absolute rounded-pill bg-warning notification-badge">
+                                                        <i class="ti ti-clock align-middle"></i>
+                                                        <span class="visually-hidden">pending profile</span>
+                                                    </span>
+                                                </span>
+                                                <span class="flex-grow-1 text-muted">
+                                                    <span class="fw-medium text-body">
+                                                        {{ $notification->member_name ?: ($notification->profile_id ?: 'Profile #'.$notification->id) }}
+                                                    </span>
+                                                    has a profile waiting for verification.
+                                                    <br />
+                                                    <span class="fs-xs">
+                                                        {{ $notification->created_at ? \Carbon\Carbon::parse($notification->created_at)->diffForHumans() : 'Recently' }}
+                                                    </span>
                                                 </span>
                                             </span>
-                                            <span class="flex-grow-1 text-muted">
-                                                <span class="fw-medium text-body">Emily Johnson</span>
-                                                commented on a task in
-                                                <span class="fw-medium text-body">Design Sprint</span>
-                                                <br />
-                                                <span class="fs-xs">12 minutes ago</span>
-                                            </span>
-                                            <button type="button"
-                                                class="flex-shrink-0 text-muted btn btn-link p-0 position-absolute end-0 me-2 d-none noti-close-btn"
-                                                data-dismissible="#message-1">
-                                                <i class="ti ti-square-rounded-x fs-xxl"></i>
-                                            </button>
-                                        </span>
-                                    </div>
-
-                                    <!-- Notification 2 -->
-                                    <div class="dropdown-item notification-item py-2 text-wrap" id="message-2">
-                                        <span class="d-flex align-items-center gap-3">
-                                            <span class="flex-shrink-0 position-relative">
-                                                <img src="{{ asset('dashboardassets/images/users/user-5.jpg') }}"
-                                                    class="avatar-md rounded-circle" alt="User Avatar" />
-                                                <span class="position-absolute rounded-pill bg-info notification-badge">
-                                                    <i class="ti ti-cloud-upload align-middle"></i>
-                                                    <span class="visually-hidden">upload notification</span>
-                                                </span>
-                                            </span>
-                                            <span class="flex-grow-1 text-muted">
-                                                <span class="fw-medium text-body">Michael Lee</span>
-                                                uploaded files to
-                                                <span class="fw-medium text-body">Marketing </span>
-                                                <br />
-                                                <span class="fs-xs">25 minutes ago</span>
-                                            </span>
-                                            <button type="button"
-                                                class="flex-shrink-0 text-muted btn btn-link p-0 position-absolute end-0 me-2 d-none noti-close-btn"
-                                                data-dismissible="#message-2">
-                                                <i class="ti ti-square-rounded-x fs-xxl"></i>
-                                            </button>
-                                        </span>
-                                    </div>
-
-                                    <!-- Notification 3 - Server CPU Alert -->
-                                    <div class="dropdown-item notification-item py-2 text-wrap" id="message-6">
-                                        <span class="d-flex align-items-center gap-3">
-                                            <span class="flex-shrink-0 position-relative">
-                                                <span
-                                                    class="avatar-md rounded-circle bg-light d-flex align-items-center justify-content-center">
-                                                    <i class="ti ti-database fs-4"></i>
-                                                </span>
-                                                <span
-                                                    class="position-absolute rounded-pill bg-danger notification-badge">
-                                                    <i class="ti ti-alert-circle align-middle"></i>
-                                                    <span class="visually-hidden">server alert</span>
-                                                </span>
-                                            </span>
-                                            <span class="flex-grow-1 text-muted">
-                                                <span class="fw-medium text-body">Server #3</span>
-                                                CPU usage exceeded 90%
-                                                <br />
-                                                <span class="fs-xs">Just now</span>
-                                            </span>
-                                            <button type="button"
-                                                class="flex-shrink-0 text-muted btn btn-link p-0 position-absolute end-0 me-2 d-none noti-close-btn"
-                                                data-dismissible="#message-6">
-                                                <i class="ti ti-square-rounded-x fs-xxl"></i>
-                                            </button>
-                                        </span>
-                                    </div>
-
-                                    <!-- Notification 4 -->
-                                    <div class="dropdown-item notification-item py-2 text-wrap" id="message-3">
-                                        <span class="d-flex align-items-center gap-3">
-                                            <span class="flex-shrink-0 position-relative">
-                                                <img src="{{ asset('dashboardassets/images/users/user-6.jpg') }}"
-                                                    class="avatar-md rounded-circle" alt="User Avatar" />
-                                                <span
-                                                    class="position-absolute rounded-pill bg-warning notification-badge">
-                                                    <i class="ti ti-alert-triangle align-middle"></i>
-                                                    <span class="visually-hidden">alert</span>
-                                                </span>
-                                            </span>
-                                            <span class="flex-grow-1 text-muted">
-                                                <span class="fw-medium text-body">Sophia Ray</span>
-                                                flagged an issue in
-                                                <span class="fw-medium text-body">Bug Tracker</span>
-                                                <br />
-                                                <span class="fs-xs">40 minutes ago</span>
-                                            </span>
-                                            <button type="button"
-                                                class="flex-shrink-0 text-muted btn btn-link p-0 position-absolute end-0 me-2 d-none noti-close-btn"
-                                                data-dismissible="#message-3">
-                                                <i class="ti ti-square-rounded-x fs-xxl"></i>
-                                            </button>
-                                        </span>
-                                    </div>
-
-                                    <!-- Notification 5 -->
-                                    <div class="dropdown-item notification-item py-2 text-wrap" id="message-4">
-                                        <span class="d-flex align-items-center gap-3">
-                                            <span class="flex-shrink-0 position-relative">
-                                                <img src="{{ asset('dashboardassets/images/users/user-7.jpg') }}"
-                                                    class="avatar-md rounded-circle" alt="User Avatar" />
-                                                <span
-                                                    class="position-absolute rounded-pill bg-primary notification-badge">
-                                                    <i class="ti ti-calendar-event align-middle"></i>
-                                                    <span class="visually-hidden">event notification</span>
-                                                </span>
-                                            </span>
-                                            <span class="flex-grow-1 text-muted">
-                                                <span class="fw-medium text-body">David Kim</span>
-                                                scheduled a meeting for
-                                                <span class="fw-medium text-body">UX Review</span>
-                                                <br />
-                                                <span class="fs-xs">1 hour ago</span>
-                                            </span>
-                                            <button type="button"
-                                                class="flex-shrink-0 text-muted btn btn-link p-0 position-absolute end-0 me-2 d-none noti-close-btn"
-                                                data-dismissible="#message-4">
-                                                <i class="ti ti-square-rounded-x fs-xxl"></i>
-                                            </button>
-                                        </span>
-                                    </div>
-
-                                    <!-- Notification 6 -->
-                                    <div class="dropdown-item notification-item py-2 text-wrap" id="message-5">
-                                        <span class="d-flex align-items-center gap-3">
-                                            <span class="flex-shrink-0 position-relative">
-                                                <img src="{{ asset('dashboardassets/images/users/user-8.jpg') }}"
-                                                    class="avatar-md rounded-circle" alt="User Avatar" />
-                                                <span
-                                                    class="position-absolute rounded-pill bg-secondary notification-badge">
-                                                    <i class="ti ti-edit align-middle"></i>
-                                                    <span class="visually-hidden">edit</span>
-                                                </span>
-                                            </span>
-                                            <span class="flex-grow-1 text-muted">
-                                                <span class="fw-medium text-body">Isabella White</span>
-                                                updated the document in
-                                                <span class="fw-medium text-body">Product Specs</span>
-                                                <br />
-                                                <span class="fs-xs">2 hours ago</span>
-                                            </span>
-                                            <button type="button"
-                                                class="flex-shrink-0 text-muted btn btn-link p-0 position-absolute end-0 me-2 d-none noti-close-btn"
-                                                data-dismissible="#message-5">
-                                                <i class="ti ti-square-rounded-x fs-xxl"></i>
-                                            </button>
-                                        </span>
-                                    </div>
-
-                                    <!-- Notification 7 - Deployment Success -->
-                                    <div class="dropdown-item notification-item py-2 text-wrap" id="message-7">
-                                        <span class="d-flex align-items-center gap-3">
-                                            <span class="flex-shrink-0 position-relative">
-                                                <span
-                                                    class="avatar-md rounded-circle bg-light d-flex align-items-center justify-content-center">
-                                                    <i class="ti ti-rocket fs-4"></i>
-                                                </span>
-                                                <span
-                                                    class="position-absolute rounded-pill bg-success notification-badge">
-                                                    <i class="ti ti-check align-middle"></i>
-                                                    <span class="visually-hidden">deployment</span>
-                                                </span>
-                                            </span>
-                                            <span class="flex-grow-1 text-muted">
-                                                <span class="fw-medium text-body">Production Server</span>
-                                                deployment completed successfully
-                                                <br />
-                                                <span class="fs-xs">30 minutes ago</span>
-                                            </span>
-                                            <button type="button"
-                                                class="flex-shrink-0 text-muted btn btn-link p-0 position-absolute end-0 me-2 d-none noti-close-btn"
-                                                data-dismissible="#message-7">
-                                                <i class="ti ti-square-rounded-x fs-xxl"></i>
-                                            </button>
-                                        </span>
-                                    </div>
+                                        </a>
+                                    @empty
+                                        <div class="dropdown-item text-muted py-3 text-center">
+                                            No profiles are waiting for verification.
+                                        </div>
+                                    @endforelse
                                 </div>
 
-                                <!-- All-->
-                                <a href="javascript:void(0);"
+                                <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
                                     class="dropdown-item text-center text-reset text-decoration-underline link-offset-2 fw-bold notify-item border-top border-light py-2">Read
-                                    All Messages</a>
+                                    All Pending Profiles</a>
                             </div>
                             <!-- End dropdown-menu -->
                         </div>
@@ -922,8 +770,8 @@
                                     class="rounded-circle me-lg-2 d-flex" alt="user-image" />
                                 <div class="d-lg-flex align-items-center gap-1 d-none">
                                     <span>
-                                        <h5 class="my-0 lh-1 pro-username">{{ Auth::user()->name ?? 'Admin' }}</h5>
-                                        <span class="fs-xs lh-1">{{ ucfirst(Auth::user()->role ?? 'Admin') }}</span>
+                                        <h5 class="my-0 lh-1 pro-username">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</h5>
+                                        <span class="fs-xs lh-1">{{ ucfirst(Auth::guard('admin')->user()->role ?? 'Admin') }}</span>
                                     </span>
                                     <i class="ti ti-chevron-down align-middle"></i>
                                 </div>
@@ -974,16 +822,16 @@
             <!-- Brand Logo -->
             <a href="{{ route('dashboard') }}" class="logo">
                 <span class="logo logo-light">
-                    <span class="logo-lg"><img src="{{ asset('dashboardassets/images/main-logo.png') }}"
+                    <span class="logo-lg"><img src="{{ asset('dashboardassets/images/Frame.png') }}"
                             alt="logo" /></span>
-                    <span class="logo-sm"><img src="{{ asset('dashboardassets/images/logo-sm.png') }}"
+                    <span class="logo-sm"><img src="{{ asset('dashboardassets/images/Frame.png') }}"
                             alt="small logo" /></span>
                 </span>
 
                 <span class="logo logo-dark">
                     <span class="logo-lg"><img src="{{ asset('dashboardassets/images/logo-black.png') }}"
                             alt="dark logo" /></span>
-                    <span class="logo-sm"><img src="{{ asset('dashboardassets/images/logo-sm.png') }}"
+                    <span class="logo-sm"><img src="{{ asset('dashboardassets/images/Frame.png') }}"
                             alt="small logo" /></span>
                 </span>
             </a>
@@ -1006,8 +854,8 @@
                             <a href="#!" class="link-reset">
                                 <img src="{{ asset('dashboardassets/images/users/user-1.jpg') }}" alt="user-image"
                                     class="rounded-circle mb-2 avatar-md" />
-                                <span class="sidenav-user-name fw-bold">{{ Auth::user()->name ?? 'Admin' }}</span>
-                                <span class="fs-12 fw-semibold" data-lang="user-role">{{ ucfirst(Auth::user()->role ?? 'Super Admin') }}</span>
+                                <span class="sidenav-user-name fw-bold">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span>
+                                <span class="fs-12 fw-semibold" data-lang="user-role">{{ ucfirst(Auth::guard('admin')->user()->role ?? 'Super Admin') }}</span>
                             </a>
                         </div>
                         <div>
@@ -1060,7 +908,7 @@
                 <div id="sidenav-menu">
                     <ul class="side-nav">
 
-                        <li class="side-nav-title mt-2">Main</li>
+                        <!-- <li class="side-nav-title mt-2">Main</li> -->
 
                         <li class="side-nav-item">
                             <a href="{{ route('dashboard') }}" class="side-nav-link">
@@ -1081,11 +929,36 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ route('admin.profile-verification.index') }}" class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-message"></i></span>
-                                <span class="menu-text" data-lang="apps-chat">Profile Verification</span>
-                            </a>
-                        </li>
+    <a data-bs-toggle="collapse"
+       href="#profileDropdown"
+       aria-expanded="false"
+       aria-controls="profileDropdown"
+       class="side-nav-link">
+        <span class="menu-icon">
+            <i class="ti ti-users"></i>
+        </span>
+        <span class="menu-text">Profiles</span>
+        <span class="menu-arrow"></span>
+    </a>
+
+    <div class="collapse" id="profileDropdown">
+        <ul class="sub-menu">
+            <li class="side-nav-item">
+                <a href="{{ route('admin.profile-verification.index', ['type' => 'groom']) }}"
+                   class="side-nav-link">
+                    <span class="menu-text">Groom</span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('admin.profile-verification.index', ['type' => 'bride']) }}"
+                   class="side-nav-link">
+                    <span class="menu-text">Bride</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</li>
 
                         <li class="side-nav-item">
                             <a href="{{ route('admin.vendors.index') }}" class="side-nav-link">
@@ -1870,6 +1743,70 @@
 
     <!-- Custom table -->
     <script src="{{ asset('dashboardassets/js/pages/custom-table.js') }}"></script>
+
+    <!-- Datatables -->
+    <script src="{{ asset('dashboardassets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.jQuery || !jQuery.fn.DataTable) {
+                return;
+            }
+
+            jQuery('table.js-data-table').each(function () {
+                const table = jQuery(this);
+                const hasColspanPlaceholder = table.find('tbody tr').toArray().some(function (row) {
+                    return row.children.length === 1 && row.children[0].colSpan > 1;
+                });
+
+                if (hasColspanPlaceholder) {
+                    return;
+                }
+
+                const options = {
+                    responsive: true,
+                    autoWidth: false,
+                    order: [],
+                    pageLength: Number(table.data('page-length')) || 10,
+                    language: {
+                        emptyTable: table.data('empty-table') || 'No data available in table'
+                    }
+                };
+
+                if (table.data('paging') === false) {
+                    options.paging = false;
+                    options.info = false;
+                }
+
+                const dataTable = table.DataTable(options);
+
+                if (table.attr('id') === 'vendorDirectoryTable') {
+                    table.on('click', '.js-toggle-vendor-assignment', function () {
+                        const button = jQuery(this);
+                        const template = document.getElementById(button.data('template'));
+
+                        if (!template) {
+                            console.error('Vendor assignment form template was not found.');
+                            return;
+                        }
+
+                        const row = dataTable.row(button.closest('tr'));
+
+                        if (row.child.isShown()) {
+                            row.child.hide();
+                            button.attr('aria-expanded', 'false');
+                        } else {
+                            row.child(template.innerHTML).show();
+                            button.attr('aria-expanded', 'true');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 
     <!-- Dashboard js -->
     <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js"></script>

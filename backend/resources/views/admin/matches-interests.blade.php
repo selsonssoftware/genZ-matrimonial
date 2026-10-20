@@ -183,7 +183,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover">
+                    <table class="table align-middle mb-0 table-hover js-data-table" data-page-length="10" data-empty-table="No activity records found.">
                         <thead
                             style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <tr style="color: #561325;">
@@ -276,12 +276,6 @@
 
                     </table>
                 </div>
-
-                <!-- Pagination: table-ku veliya, privacy note-ku munnaadi -->
-<div class="p-3">
-    {{ $activities->links() }}
-</div> 
-
 
                 <!-- Privacy Note Footer Box -->
                 <div class="p-3 m-3 rounded-3" style="background-color: #FFF9EE; border: 1px solid #F5E6CC;">
