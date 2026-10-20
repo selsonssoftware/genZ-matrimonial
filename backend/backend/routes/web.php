@@ -6,8 +6,8 @@ use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\MatchesInterestsController;
-
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\CmsController;
 use App\Http\Controllers\Admin\VendorAssignmentReportController;
@@ -18,10 +18,9 @@ use App\Http\Controllers\Admin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
-| Public / Authentication Routes
+| Guest / Auth Routes
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
 
@@ -36,8 +35,12 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->n
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
+<<<<<<< HEAD
 
 Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
+=======
+Route::middleware(app()->environment('local') ? [] : ['auth'])->group(function () {
+>>>>>>> 45f35ee470bc43b55461c0987bf5fae8e0097038
     Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
@@ -75,6 +78,7 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
         Route::post('/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
         Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
 
+<<<<<<< HEAD
 Route::get('/matches-interests', [
     MatchesInterestsController::class,
     'index'
@@ -110,6 +114,20 @@ Route::get('/membership/export', [
     MembershipController::class,
     'export'
 ])->name('admin.membership.export');
+=======
+        Route::get('/matches-interests', [MatchesInterestsController::class, 'index'])
+            ->name('admin.matches-interests');
+        Route::get('/vendor-assignment-report', [VendorAssignmentReportController::class, 'index'])
+            ->name('admin.vendor-assignments.index');
+        Route::get('/membership', [MembershipController::class, 'index'])
+            ->name('admin.membership');
+        Route::post('/membership/plans', [MembershipController::class, 'storePlan'])
+            ->name('admin.membership.plans.store');
+        Route::put('/membership/plans/{id}', [MembershipController::class, 'updatePlan'])
+            ->name('admin.membership.plans.update');
+        Route::get('/membership/export', [MembershipController::class, 'export'])
+            ->name('admin.membership.export');
+>>>>>>> 45f35ee470bc43b55461c0987bf5fae8e0097038
 
         Route::get('/matrimonymasterdata', [MatrimonyMasterController::class, 'index'])
             ->name('admin.matrimonymasterdata');
@@ -120,6 +138,7 @@ Route::get('/membership/export', [
 
         Route::get('/report', [ReportController::class, 'index'])->name('admin.report');
 
+<<<<<<< HEAD
         Route::get('/setting', [SettingsController::class, 'index'])->name('admin.setting');
         Route::post('/setting', [SettingsController::class, 'update'])->name('admin.setting.update');
         Route::post('/setting/backup', [SettingsController::class, 'backup'])->name('admin.setting.backup');
@@ -131,16 +150,34 @@ Route::get('/membership/export', [
             ->whereIn('type', ['logo', 'favicon'])
             ->name('admin.setting.asset');
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+=======
+        Route::get('/cms-communication', function () {
+            return view('admin.cms-communication');
+        })->name('admin.cms-communication');
 
-       // CMS & Communication - Homepage Banner
-Route::get('/cms-communication', [
-    CmsController::class,
-    'index'
-])->name('admin.cms-communication');
+        /*
+        |--------------------------------------------------------------------------
+        | Settings Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('settings')->name('admin.settings.')->group(function () {
+            Route::get('/', [SettingController::class, 'index'])->name('index');
+            Route::post('/update', [SettingController::class, 'update'])->name('update');
+            Route::post('/users/store', [SettingController::class, 'storeUser'])->name('users.store');
+            Route::delete('/users/{id}', [SettingController::class, 'deleteUser'])->name('users.delete');
+            Route::post('/permissions/update', [SettingController::class, 'updatePermissions'])->name('permissions.update');
+        });
 
-Route::post('/cms-communication/banner', [
-    CmsController::class,
-    'updateBanner'
-])->name('cms.banner.update');
+        // Redirects for sidebar compatibility (/admin/setting or /admin/settings)
+        Route::get('/setting', function () {
+            return redirect()->route('admin.settings.index');
+        })->name('admin.setting');
+        Route::get('/settings', function () {
+            return view('admin.setting');
+        })->name('settings');
+>>>>>>> 45f35ee470bc43b55461c0987bf5fae8e0097038
+
+        Route::post('/cms-communication/banner', [CmsController::class, 'updateBanner'])
+            ->name('cms.banner.update');
     });
 });
