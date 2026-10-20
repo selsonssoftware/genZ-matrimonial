@@ -59,19 +59,19 @@ class SettingController extends Controller
 
         // 4. In-Memory Search & Filters (Collation సమస్యలు పూర్తిగా రావు)
         if ($request->filled('search')) {
-            $search = strtolower($request->search);
+            $search = strtolower($request->input('search'));
             $allRecords = $allRecords->filter(function ($item) use ($search) {
                 return str_contains(strtolower($item->name ?? ''), $search)
                     || str_contains(strtolower($item->email ?? ''), $search);
             });
         }
 
-        if ($request->filled('role') && $request->role !== 'All Roles') {
-            $allRecords = $allRecords->where('role', $request->role);
+        if ($request->filled('role') && $request->input('role') !== 'All Roles') {
+            $allRecords = $allRecords->where('role', $request->input('role'));
         }
 
-        if ($request->filled('status') && $request->status !== 'All Status') {
-            $statusFilter = strtolower($request->status);
+        if ($request->filled('status') && $request->input('status') !== 'All Status') {
+            $statusFilter = strtolower($request->input('status'));
             $allRecords = $allRecords->filter(function ($item) use ($statusFilter) {
                 return strtolower($item->status ?? '') === $statusFilter;
             });
@@ -122,16 +122,16 @@ class SettingController extends Controller
         if (Schema::hasTable('audit_logs')) {
             $auditQuery = DB::table('audit_logs');
             if ($request->filled('from_date')) {
-                $auditQuery->whereDate('created_at', '>=', Carbon::parse($request->from_date));
+                $auditQuery->whereDate('created_at', '>=', Carbon::parse($request->input('from_date')));
             }
             if ($request->filled('to_date')) {
-                $auditQuery->whereDate('created_at', '<=', Carbon::parse($request->to_date));
+                $auditQuery->whereDate('created_at', '<=', Carbon::parse($request->input('to_date')));
             }
-            if ($request->filled('log_user') && $request->log_user !== 'All Users') {
-                $auditQuery->where('admin_user', $request->log_user);
+            if ($request->filled('log_user') && $request->input('log_user') !== 'All Users') {
+                $auditQuery->where('admin_user', $request->input('log_user'));
             }
-            if ($request->filled('log_action') && $request->log_action !== 'All Actions') {
-                $auditQuery->where('action', $request->log_action);
+            if ($request->filled('log_action') && $request->input('log_action') !== 'All Actions') {
+                $auditQuery->where('action', $request->input('log_action'));
             }
             $auditLogs = $auditQuery->orderBy('id', 'desc')->paginate(5, ['*'], 'audit_page');
         }
@@ -192,7 +192,7 @@ class SettingController extends Controller
                 DB::table('settings')->updateOrInsert(
                     ['key' => $key],
                     [
-                        'value' => is_array($value) ? json_encode($value) : $value,
+                        'value' => \is_array($value) ? json_encode($value) : $value,
                         'updated_at' => now(),
                     ]
                 );
