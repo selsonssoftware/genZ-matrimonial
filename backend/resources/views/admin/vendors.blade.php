@@ -215,6 +215,7 @@
                             <tr style="color: #561325;">
                                 <th class="ps-4 py-3">VENDOR ID</th>
                                 <th class="py-3">AGENT NAME</th>
+                                <th class="py-3">MOBILE NUMBER</th>
                                 <th class="py-3">CITY</th>
                                 <th class="py-3">CUSTOMERS</th>
                                 <th class="py-3">STATUS</th>
@@ -233,6 +234,10 @@
             <td class="fw-medium text-dark">
                 {{ $vendor->agent_name }}
             </td>
+
+            <td class="fw-medium text-dark">
+    {{ $vendor->vendor_mobile }}
+</td>
 
             <td class="text-muted">
                 {{ $vendor->city }}
@@ -298,7 +303,7 @@
         </tr>
     @empty
         <tr>
-            <td colspan="7" class="text-center py-4 text-muted">
+            <td colspan="8" class="text-center py-4 text-muted">
                 No vendors found.
             </td>
         </tr>
@@ -373,6 +378,25 @@
                                    value="{{ old('agent_name') }}"
                                    required>
                         </div>
+
+                        {{-- Vendor Mobile Number --}}
+<div class="col-md-6">
+    <label for="vendor_mobile" class="form-label fw-semibold">
+        Mobile Number <span class="text-danger">*</span>
+    </label>
+
+    <input
+        type="tel"
+        id="vendor_mobile"
+        name="vendor_mobile"
+        class="form-control"
+        placeholder="Enter mobile number"
+        value="{{ old('vendor_mobile') }}"
+        maxlength="20"
+        pattern="[0-9+\- ()]{7,20}"
+        title="Enter a valid mobile number"
+        required>
+</div>
 
                         {{-- City --}}
                         <div class="col-md-6">

@@ -908,7 +908,7 @@
                 <div id="sidenav-menu">
                     <ul class="side-nav">
 
-                        <li class="side-nav-title mt-2">Main</li>
+                        <!-- <li class="side-nav-title mt-2">Main</li> -->
 
                         <li class="side-nav-item">
                             <a href="{{ route('dashboard') }}" class="side-nav-link">
@@ -929,11 +929,36 @@
                         </li>
 
                         <li class="side-nav-item">
-                            <a href="{{ route('admin.profile-verification.index') }}" class="side-nav-link">
-                                <span class="menu-icon"><i class="ti ti-message"></i></span>
-                                <span class="menu-text" data-lang="apps-chat">Profile Verification</span>
-                            </a>
-                        </li>
+    <a data-bs-toggle="collapse"
+       href="#profileDropdown"
+       aria-expanded="false"
+       aria-controls="profileDropdown"
+       class="side-nav-link">
+        <span class="menu-icon">
+            <i class="ti ti-users"></i>
+        </span>
+        <span class="menu-text">Profiles</span>
+        <span class="menu-arrow"></span>
+    </a>
+
+    <div class="collapse" id="profileDropdown">
+        <ul class="sub-menu">
+            <li class="side-nav-item">
+                <a href="{{ route('admin.profile-verification.index', ['type' => 'groom']) }}"
+                   class="side-nav-link">
+                    <span class="menu-text">Groom</span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ route('admin.profile-verification.index', ['type' => 'bride']) }}"
+                   class="side-nav-link">
+                    <span class="menu-text">Bride</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</li>
 
                         <li class="side-nav-item">
                             <a href="{{ route('admin.vendors.index') }}" class="side-nav-link">

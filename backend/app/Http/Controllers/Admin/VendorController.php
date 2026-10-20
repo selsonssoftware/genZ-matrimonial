@@ -20,6 +20,7 @@ class VendorController extends Controller
             ->select(
                 'v.id',
                 'v.agent_name',
+                'v.vendor_mobile',
                 'v.city',
                 'v.status',
                 'v.commission',
@@ -38,6 +39,7 @@ class VendorController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('v.agent_name', 'like', "%{$search}%")
                   ->orWhere('v.city', 'like', "%{$search}%")
+                  ->orWhere('v.vendor_mobile', 'like', "%{$search}%")
                   ->orWhere('vl.email', 'like', "%{$search}%")
                   ->orWhere('v.id', 'like', "%{$search}%");
             });
@@ -88,6 +90,12 @@ return view('admin.vendors', compact(
     {
         $validated = $request->validate([
             'agent_name' => ['required', 'string', 'max:255'],
+            'vendor_mobile' => [
+    'required',
+    'string',
+    'max:20',
+    'regex:/^[0-9+\-\s()]{7,20}$/',
+],
             'city' => ['required', 'string', 'max:255'],
             
 'status' => [
@@ -113,6 +121,7 @@ return view('admin.vendors', compact(
                 // Confirm vector_id/action meaning before production use.
                 'vector_id' => 0,
                 'agent_name' => $validated['agent_name'],
+                'vendor_mobile' => $validated['vendor_mobile'],
                 'city' => $validated['city'],
                 'status' => $validated['status'],
                 'commission' => $validated['commission'],
