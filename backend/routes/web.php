@@ -6,8 +6,8 @@ use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\MatchesInterestsController;
-
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\CmsController;
 use App\Http\Controllers\Admin\VendorAssignmentReportController;
@@ -18,10 +18,9 @@ use App\Http\Controllers\Admin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
-| Public / Authentication Routes
+| Guest / Auth Routes
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
 
@@ -36,7 +35,6 @@ Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->n
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
@@ -75,41 +73,20 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
         Route::post('/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
         Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
 
-Route::get('/matches-interests', [
-    MatchesInterestsController::class,
-    'index'
-])->name('admin.matches-interests');
-        
-Route::get('/vendor-assignment-report', [
-    VendorAssignmentReportController::class,
-    'index'
-])->name('admin.vendor-assignments.index');
-
-
-Route::get('/matches-interests', [
-    MatchesInterestsController::class,
-    'index'
-])->name('admin.matches-interests');
-
-Route::get('/membership', [
-    MembershipController::class,
-    'index'
-])->name('admin.membership');
-
-Route::post('/membership/plans', [
-    MembershipController::class,
-    'storePlan'
-])->name('admin.membership.plans.store');
-
-Route::put('/membership/plans/{id}', [
-    MembershipController::class,
-    'updatePlan'
-])->name('admin.membership.plans.update');
-
-Route::get('/membership/export', [
-    MembershipController::class,
-    'export'
-])->name('admin.membership.export');
+        Route::get('/matches-interests', [MatchesInterestsController::class, 'index'])
+            ->name('admin.matches-interests');
+        Route::get('/vendor-assignment-report', [VendorAssignmentReportController::class, 'index'])
+            ->name('admin.vendor-assignments.index');
+        Route::get('/vendor-assignments', [VendorController::class, 'assignments'])
+            ->name('admin.vendor-assignments.list');
+        Route::get('/membership', [MembershipController::class, 'index'])
+            ->name('admin.membership');
+        Route::post('/membership/plans', [MembershipController::class, 'storePlan'])
+            ->name('admin.membership.plans.store');
+        Route::put('/membership/plans/{id}', [MembershipController::class, 'updatePlan'])
+            ->name('admin.membership.plans.update');
+        Route::get('/membership/export', [MembershipController::class, 'export'])
+            ->name('admin.membership.export');
 
         Route::get('/matrimonymasterdata', [MatrimonyMasterController::class, 'index'])
             ->name('admin.matrimonymasterdata');
@@ -117,7 +94,7 @@ Route::get('/membership/export', [
             ->name('admin.matrimonymasterdata.export');
         Route::post('/matrimonymasterdata/bulk-review', [MatrimonyMasterController::class, 'bulkReview'])
             ->name('admin.matrimonymasterdata.bulk-review');
-
+        Route::get('/report', [ReportController::class, 'index'])->name('admin.report');
         Route::get('/report', [ReportController::class, 'index'])->name('admin.report');
 
         Route::get('/setting', [SettingsController::class, 'index'])->name('admin.setting');
@@ -130,17 +107,20 @@ Route::get('/membership/export', [
         Route::get('/setting/assets/{type}', [SettingsController::class, 'asset'])
             ->whereIn('type', ['logo', 'favicon'])
             ->name('admin.setting.asset');
-        Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 
-       // CMS & Communication - Homepage Banner
-Route::get('/cms-communication', [
-    CmsController::class,
-    'index'
-])->name('admin.cms-communication');
+        Route::get('/cms-communication', function () {
+            return view('admin.cms-communication');
+        })->name('admin.cms-communication');
 
-Route::post('/cms-communication/banner', [
-    CmsController::class,
-    'updateBanner'
-])->name('cms.banner.update');
+        Route::prefix('settings')->name('admin.settings.')->group(function () {
+            Route::get('/', [SettingController::class, 'index'])->name('index');
+            Route::post('/update', [SettingController::class, 'update'])->name('update');
+            Route::post('/users/store', [SettingController::class, 'storeUser'])->name('users.store');
+            Route::delete('/users/{id}', [SettingController::class, 'deleteUser'])->name('users.delete');
+            Route::post('/permissions/update', [SettingController::class, 'updatePermissions'])->name('permissions.update');
+        });
+
+        Route::post('/cms-communication/banner', [CmsController::class, 'updateBanner'])
+            ->name('cms.banner.update');
     });
 });
