@@ -241,8 +241,16 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Mobile Number <span
                                         class="text-danger">*</span></label>
-                                <input type="tel" name="vendor_mobile" class="form-control"
-                                    value="{{ old('vendor_mobile') }}" required>
+                                <input type="tel" id="vendor_mobile" name="vendor_mobile"
+                                    class="form-control @error('vendor_mobile') is-invalid @enderror"
+                                    value="{{ old('vendor_mobile') }}" maxlength="20"
+                                    pattern="^[0-9+\-\s()]{7,20}$" required autocomplete="tel">
+                                @error('vendor_mobile')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                <div class="invalid-feedback" id="vendorMobileJsError" style="display: none;">
+                                    Enter a valid mobile number.
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">City <span class="text-danger">*</span></label>
@@ -364,4 +372,89 @@
             </div>
         </div>
     @endforeach
+    <div id="vendorPageConfig"
+        data-reopen-modal="{{ $errors->any() && old('_method') !== 'PUT' ? '1' : '0' }}"></div>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mobileInput = document.getElementById('vendor_mobile');
+    const mobileError = document.getElementById('vendorMobileJsError');
+    const addVendorModalEl = document.getElementById('addVendorModal');
+    const addVendorForm = addVendorModalEl
+        ? addVendorModalEl.querySelector('form')
+        : null;
+
+    // Auto reopen modal if validation failed
+    const vendorPageConfig = document.getElementById('vendorPageConfig');
+    const reopenAddVendorModal =
+        vendorPageConfig &&
+        vendorPageConfig.dataset.reopenModal === '1';
+
+    if (reopenAddVendorModal && addVendorModalEl) {
+        const modalInstance = new bootstrap.Modal(addVendorModalEl);
+        modalInstance.show();
+    }
+
+    if (mobileInput) {
+        const mobileRegex = /^[0-9+\-\s()]{7,20}$/;
+
+        // Restrict input characters to numbers, +, -, and spaces
+        mobileInput.addEventListener('keypress', function (e) {
+            const char = String.fromCharCode(e.which || e.keyCode);
+
+            if (!/[\d+\-\s()]/.test(char)) {
+                e.preventDefault();
+            }
+        });
+
+        function validateMobile() {
+            const rawVal = mobileInput.value.trim();
+
+            if (!rawVal) {
+                mobileInput.classList.remove('is-valid', 'is-invalid');
+
+                if (mobileError) {
+                    mobileError.style.display = 'none';
+                }
+
+                return false;
+            }
+
+            if (mobileRegex.test(rawVal)) {
+                mobileInput.classList.remove('is-invalid');
+                mobileInput.classList.add('is-valid');
+
+                if (mobileError) {
+                    mobileError.style.display = 'none';
+                }
+
+                return true;
+            } else {
+                mobileInput.classList.remove('is-valid');
+                mobileInput.classList.add('is-invalid');
+
+                if (mobileError) {
+                    mobileError.style.display = 'block';
+                    mobileError.textContent =
+                        'Enter a valid mobile number.';
+                }
+
+                return false;
+            }
+        }
+
+        mobileInput.addEventListener('input', validateMobile);
+        mobileInput.addEventListener('blur', validateMobile);
+
+        if (addVendorForm) {
+            addVendorForm.addEventListener('submit', function (e) {
+                if (!validateMobile()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mobileInput.focus();
+                }
+            });
+        }
+    }
+});
+    </script>
 @endsection

@@ -41,7 +41,7 @@
 
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
+                            <th>SNo.</th>
                             <th>Vendor ID</th>
                             <th>Vendor Name</th>
                             <th>Vendor City</th>

@@ -98,7 +98,7 @@ class VendorController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'vendor_mobile.required' => 'Mobile number is required.',
-            'vendor_mobile.regex' => 'Please enter a valid 10-digit mobile number (e.g., 9876543210 or +91 9876543210).',
+            'vendor_mobile.regex' => 'Please enter a valid mobile number using digits and common phone formatting.',
             'vendor_mobile.unique' => 'This mobile number is already registered with another vendor.',
         ]);
 
