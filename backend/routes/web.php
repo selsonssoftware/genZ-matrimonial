@@ -113,7 +113,7 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
         })->name('admin.cms-communication');
 
         Route::prefix('settings')->name('admin.settings.')->group(function () {
-            Route::get('/', [SettingController::class, 'index'])->name('index');
+            Route::get('/', [SettingsController::class, 'index'])->name('index');
             Route::post('/update', [SettingController::class, 'update'])->name('update');
             Route::post('/users/store', [SettingController::class, 'storeUser'])->name('users.store');
             Route::delete('/users/{id}', [SettingController::class, 'deleteUser'])->name('users.delete');
