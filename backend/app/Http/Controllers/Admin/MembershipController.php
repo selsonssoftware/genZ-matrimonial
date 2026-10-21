@@ -121,8 +121,7 @@ class MembershipController extends Controller
 
         $transactions = $query
             ->orderByDesc('us.id')
-            ->paginate(10)
-            ->appends(request()->query());
+            ->get();
 
         // Refund table is not present in the supplied schema.
         $refundRequests = null;
