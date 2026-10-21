@@ -9,23 +9,17 @@ use Illuminate\Validation\Rule;
 
 class ProfileVerificationController extends Controller
 {
-    /**
-     * Profile Verification page.
-     * Groom and Bride profiles are filtered separately.
-     */
     public function index(Request $request)
     {
-        // Profile type: groom or bride
         $type = strtolower($request->query('type', 'groom'));
 
         if (!in_array($type, ['groom', 'bride'], true)) {
             abort(404, 'Invalid profile type.');
         }
 
-        // Support multiple database gender formats ('male'/'female' or 'groom'/'bride')
         $genderValues = $type === 'groom' ? ['male', 'groom'] : ['female', 'bride'];
 
-        $status = $request->query('status', 'pending');
+        $status = $request->query('status', 'all');
         $search = trim($request->query('search', ''));
 
         $allowedStatuses = [
@@ -37,12 +31,9 @@ class ProfileVerificationController extends Controller
         ];
 
         if (!in_array($status, $allowedStatuses, true)) {
-            $status = 'pending';
+            $status = 'all';
         }
 
-        /*
-         * Reusable profile query with robust gender filtering.
-         */
         $baseQuery = function () use ($genderValues) {
             return DB::table('profiles as p')
                 ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
@@ -53,9 +44,8 @@ class ProfileVerificationController extends Controller
                 });
         };
 
-        /*
-         * Profile list query for the current status tab.
-         */
+        $isMysql = DB::connection()->getDriverName() === 'mysql';
+
         $query = $baseQuery()
             ->select(
                 'p.*',
@@ -66,9 +56,33 @@ class ProfileVerificationController extends Controller
             ->addSelect([
                 'profile_image' => DB::table('profile_photos as pp')
                     ->select('pp.image')
-                    ->whereColumn('pp.profile_id', 'p.profile_id')
+                    ->when($isMysql, function ($sub) {
+                        return $sub->whereRaw('pp.profile_id COLLATE utf8mb4_general_ci = p.profile_id COLLATE utf8mb4_general_ci');
+                    }, function ($sub) {
+                        return $sub->whereColumn('pp.profile_id', 'p.profile_id');
+                    })
                     ->orderByDesc('pp.is_primary')
                     ->orderByDesc('pp.id')
+                    ->limit(1),
+
+                'education' => DB::table('education_details as ed')
+                    ->select('ed.qualification')
+                    ->when($isMysql, function ($sub) {
+                        return $sub->whereRaw('ed.profile_id COLLATE utf8mb4_general_ci = p.profile_id COLLATE utf8mb4_general_ci');
+                    }, function ($sub) {
+                        return $sub->whereColumn('ed.profile_id', 'p.profile_id');
+                    })
+                    ->orderByDesc('ed.id')
+                    ->limit(1),
+
+                'vendor_name' => DB::table('vendor_customer_assignments as vca')
+                    ->join('vendor as v', 'v.id', '=', 'vca.vendor_id')
+                    ->select('v.agent_name')
+                    ->when($isMysql, function ($sub) {
+                        return $sub->whereRaw('vca.profile_id COLLATE utf8mb4_general_ci = p.profile_id COLLATE utf8mb4_general_ci');
+                    }, function ($sub) {
+                        return $sub->whereColumn('vca.profile_id', 'p.profile_id');
+                    })
                     ->limit(1),
             ]);
 
@@ -94,14 +108,10 @@ class ProfileVerificationController extends Controller
             ")
             ->orderByDesc('p.id');
 
-        // Fetch paginated profiles for all tabs so the table always displays!
         $profiles = $query->paginate(10)->appends($request->query());
 
-        /*
-         * Selected profile and related details.
-         */
         $selectedProfile = null;
-        $education = collect();
+        $educationList = collect();
         $occupation = null;
         $photos = collect();
 
@@ -117,9 +127,6 @@ class ProfileVerificationController extends Controller
                 ->first();
         }
 
-        /*
-         * If no profile was explicitly selected, default to the first profile in the list.
-         */
         if (!$selectedProfile && $profiles->isNotEmpty()) {
             $firstItem = $profiles->items()[0];
             $selectedProfile = $baseQuery()
@@ -133,32 +140,40 @@ class ProfileVerificationController extends Controller
                 ->first();
         }
 
-        /*
-         * Education, occupation and photos for the selected profile.
-         */
+        // Fetching full details for the selected profile safely (Fixed collation error here)
         if ($selectedProfile) {
-            $education = DB::table('education_details')
-                ->where('profile_id', $selectedProfile->profile_id)
+            $safeProfileId = addslashes($selectedProfile->profile_id);
+
+            $educationList = DB::table('education_details')
+                ->when($isMysql, function ($sub) use ($safeProfileId) {
+                    return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
+                }, function ($sub) use ($selectedProfile) {
+                    return $sub->where('profile_id', $selectedProfile->profile_id);
+                })
                 ->orderByDesc('id')
                 ->get();
 
             $occupation = DB::table('occupation_details')
-                ->where('profile_id', $selectedProfile->profile_id)
+                ->when($isMysql, function ($sub) use ($safeProfileId) {
+                    return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
+                }, function ($sub) use ($selectedProfile) {
+                    return $sub->where('profile_id', $selectedProfile->profile_id);
+                })
                 ->orderByDesc('id')
                 ->first();
 
             $photos = DB::table('profile_photos')
-                ->where('profile_id', $selectedProfile->profile_id)
+                ->when($isMysql, function ($sub) use ($safeProfileId) {
+                    return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
+                }, function ($sub) use ($selectedProfile) {
+                    return $sub->where('profile_id', $selectedProfile->profile_id);
+                })
                 ->orderByDesc('is_primary')
                 ->orderByDesc('id')
                 ->get();
         }
 
-        /*
-         * Verification counts for the current gender/type only.
-         */
         $counts = [];
-
         foreach ([
             'pending',
             'approved',
@@ -169,11 +184,12 @@ class ProfileVerificationController extends Controller
                 ->where('p.verification_status', $verificationStatus)
                 ->count();
         }
+        $counts['all'] = $baseQuery()->count();
 
         return view('admin.profile', compact(
             'profiles',
             'selectedProfile',
-            'education',
+            'educationList',
             'occupation',
             'photos',
             'status',
@@ -183,78 +199,64 @@ class ProfileVerificationController extends Controller
         ));
     }
 
-    /**
-     * Approve, reject, or request profile updates.
-     */
     public function review(Request $request, $id)
     {
         $validated = $request->validate([
             'decision' => [
                 'required',
-                Rule::in([
-                    'approved',
-                    'rejected',
-                    'update_requested',
-                ]),
+                Rule::in(['approved', 'rejected', 'update_requested']),
             ],
-
-            'review_notes' => [
-                Rule::requiredIf(
-                    in_array(
-                        $request->input('decision'),
-                        ['rejected', 'update_requested'],
-                        true
-                    )
-                ),
-                'nullable',
-                'string',
-                'max:5000',
-            ],
-
-            'type' => [
-                'required',
-                Rule::in(['groom', 'bride']),
-            ],
+            'review_notes' => ['nullable', 'string', 'max:5000'],
+            'type' => ['required', Rule::in(['groom', 'bride'])],
         ]);
 
-        $type = $validated['type'];
-        $genderValues = $type === 'groom' ? ['male', 'groom'] : ['female', 'bride'];
-
-        $profileQuery = DB::table('profiles')
-            ->where('id', $id)
-            ->where(function ($q) use ($genderValues) {
-                foreach ($genderValues as $gender) {
-                    $q->orWhereRaw('LOWER(TRIM(gender)) = ?', [strtolower($gender)]);
-                }
-            });
-
-        $profile = $profileQuery->first();
-
-        if (!$profile) {
-            return redirect()
-                ->route('admin.profile-verification.index', [
-                    'type' => $type,
-                ])
-                ->with('error', 'Profile not found in this section.');
-        }
-
-        $profileQuery->update([
+        DB::table('profiles')->where('id', $id)->update([
             'verification_status' => $validated['decision'],
             'review_notes' => $validated['review_notes'] ?? null,
-            'reviewed_by' => session('admin_id'),
             'reviewed_at' => now(),
             'updated_at' => now(),
         ]);
 
+        return redirect()->route('admin.profile-verification.index', [
+            'type' => $validated['type'],
+            'status' => $validated['decision'],
+            'id' => $id,
+        ])->with('success', 'Profile verification decision saved successfully.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'city' => ['required', 'string', 'max:100'],
+            'state' => ['required', 'string', 'max:100'],
+            'marital_status' => ['required', 'string', 'max:50'],
+            'religion' => ['required', 'string', 'max:50'],
+            'caste' => ['required', 'string', 'max:50'],
+            'type' => ['required', Rule::in(['groom', 'bride'])],
+        ]);
+
+        DB::table('profiles')->where('id', $id)->update([
+            'city' => $validated['city'],
+            'state' => $validated['state'],
+            'marital_status' => $validated['marital_status'],
+            'religion' => $validated['religion'],
+            'caste' => $validated['caste'],
+            'updated_at' => now(),
+        ]);
+
         return redirect()
-            ->route('admin.profile-verification.index', [
-                'type' => $type,
-                'status' => $validated['decision'],
-                'id' => $id,
-            ])
-            ->with(
-                'success',
-                'Profile verification decision saved successfully.'
-            );
+            ->route('admin.profile-verification.index', ['type' => $validated['type'], 'status' => request('status', 'all'), 'id' => $id])
+            ->with('success', 'Profile details updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $profile = DB::table('profiles')->where('id', $id)->first();
+
+        if ($profile) {
+            DB::table('profiles')->where('id', $id)->delete();
+        }
+
+        return redirect()->back()->with('success', 'Profile deleted successfully.');
     }
 }
