@@ -217,7 +217,7 @@
                                 <th class="py-3">AGENT NAME</th>
                                 <th class="py-3">MOBILE NUMBER</th>
                                 <th class="py-3">CITY</th>
-                                <th class="py-3">CUSTOMERS</th>
+                                <th class="py-3">PROFILES</th>
                                 <th class="py-3">STATUS</th>
                                 <th class="py-3">COMMISSION</th>
                                 <th class="text-center pe-4 py-3">ACTION</th>
@@ -557,12 +557,11 @@
         const addVendorForm = addVendorModalEl ? addVendorModalEl.querySelector('form') : null;
 
         // Auto reopen modal if validation failed on submission
-        @if($errors->any())
-            if (addVendorModalEl) {
-                const modalInstance = new bootstrap.Modal(addVendorModalEl);
-                modalInstance.show();
-            }
-        @endif
+        const reopenAddVendorModal = @json($errors->any());
+        if (reopenAddVendorModal && addVendorModalEl) {
+            const modalInstance = new bootstrap.Modal(addVendorModalEl);
+            modalInstance.show();
+        }
 
         if (mobileInput) {
             // Regex for Indian mobile number: optional +91 or 0 prefix, then 10 digits starting with 6-9
