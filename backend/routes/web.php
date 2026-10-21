@@ -16,7 +16,12 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\DashboardController;
 
-
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/profile', [ProfileVerificationController::class, 'index'])->name('profile-verification.index');
+    Route::post('/profile/{id}/review', [ProfileVerificationController::class, 'review'])->name('profile-verification.review');
+    Route::put('/profile/{id}', [ProfileVerificationController::class, 'update'])->name('profile-verification.update'); // For Edit
+    Route::delete('/profile/{id}', [ProfileVerificationController::class, 'destroy'])->name('profile-verification.destroy'); // For Delete
+});
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/matches-interests', [MatchesInterestsController::class, 'index'])->name('matches-interests');
     Route::put('/matches-interests/{id}', [MatchesInterestsController::class, 'update'])->name('matches-interests.update');
@@ -81,11 +86,11 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
         Route::get('/management/export', [UserController::class, 'userexport'])->name('users.export');
 
         // Profile Verification
-        Route::get('/profile', [ProfileVerificationController::class, 'index'])->name('admin.profile-verification.index');
-        Route::post('/profile/{id}/review', [ProfileVerificationController::class, 'review'])
-            ->whereNumber('id')
-            ->name('admin.profile-verification.review');
-
+        // Route::get('/profile', [ProfileVerificationController::class, 'index'])->name('admin.profile-verification.index');
+        //Route::post('/profile/{id}/review', [ProfileVerificationController::class, 'review'])
+        //  ->whereNumber('id')
+        //->name('admin.profile-verification.review');
+        //Route::delete('/profile/{id}', [ProfileVerificationController::class, 'destroy'])->name('profile-verification.destroy');
         Route::get('/matches-interests', [MatchesInterestsController::class, 'index'])
             ->name('admin.matches-interests');
         Route::get('/vendor-assignment-report', [VendorAssignmentReportController::class, 'index'])
