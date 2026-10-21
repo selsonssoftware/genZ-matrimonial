@@ -220,7 +220,7 @@
                                 <th class="py-3">PROFILES</th>
                                 <th class="py-3">STATUS</th>
                                 <th class="py-3">COMMISSION</th>
-                                <th class="text-center pe-4 py-3">ACTION</th>
+                                <!-- <th class="text-center pe-4 py-3">ACTION</th> -->
                             </tr>
                         </thead>
                        
@@ -272,7 +272,7 @@
                 ₹{{ number_format((float) $vendor->commission, 2) }}
             </td>
 
-            <td class="text-center pe-4">
+            <!-- <td class="text-center pe-4">
                 <button type="button"
                         class="btn btn-sm btn-outline-secondary js-toggle-vendor-assignment"
                         data-template="assignVendor{{ $vendor->id }}"
@@ -299,7 +299,7 @@
                         </button>
                     </form>
                 </template>
-            </td>
+            </td> -->
         </tr>
     @empty
         <tr>
