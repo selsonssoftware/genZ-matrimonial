@@ -45,10 +45,37 @@
 
         .reports-page {
             width: 100%;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 24px;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
         }
+
+        .reports-content-page {
+            background-color: var(--background);
+        }
+
+        /* DataTables Maroon Export Buttons */
+        .reports-page .dt-buttons .btn,
+        .reports-page .btn-data-table-excel,
+        .reports-page .btn-data-table-csv {
+            min-height: 32px !important;
+            padding: 6px 14px !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            background-color: #561325 !important;
+            border-color: #561325 !important;
+            color: #ffffff !important;
+            border-radius: 6px !important;
+        }
+
+        .reports-page .dt-buttons .btn:hover,
+        .reports-page .btn-data-table-excel:hover,
+        .reports-page .btn-data-table-csv:hover {
+            background-color: #42101d !important;
+            border-color: #42101d !important;
+            color: #ffffff !important;
+        }
+
 
         /* Header */
 
@@ -615,6 +642,8 @@
             }
         }
     </style>
+<div class="content-page reports-content-page">
+    <div class="container-fluid px-3 px-lg-4 py-4" style="min-height: 100vh;">
 <main class="reports-page">
 
     <!-- PAGE HEADER -->
@@ -874,6 +903,8 @@
     </section>
 
 </main>
+    </div>
+</div>
 
 <script>
 "use strict";

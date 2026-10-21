@@ -380,23 +380,36 @@
                         </div>
 
                         {{-- Vendor Mobile Number --}}
-<div class="col-md-6">
-    <label for="vendor_mobile" class="form-label fw-semibold">
-        Mobile Number <span class="text-danger">*</span>
-    </label>
+                        <div class="col-md-6">
+                            <label for="vendor_mobile" class="form-label fw-semibold">
+                                Mobile Number <span class="text-danger">*</span>
+                            </label>
 
-    <input
-        type="tel"
-        id="vendor_mobile"
-        name="vendor_mobile"
-        class="form-control"
-        placeholder="Enter mobile number"
-        value="{{ old('vendor_mobile') }}"
-        maxlength="20"
-        pattern="[0-9+\- ()]{7,20}"
-        title="Enter a valid mobile number"
-        required>
-</div>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="ti ti-phone fs-15"></i>
+                                </span>
+                                <input
+                                    type="tel"
+                                    id="vendor_mobile"
+                                    name="vendor_mobile"
+                                    class="form-control border-start-0 @error('vendor_mobile') is-invalid @enderror"
+                                    placeholder="e.g. 9876543210"
+                                    value="{{ old('vendor_mobile') }}"
+                                    maxlength="14"
+                                    pattern="^(\+91[\-\s]?|0)?[6-9]\d{9}$"
+                                    title="Please enter a valid 10-digit mobile number (e.g. 9876543210 or +91 9876543210)"
+                                    required
+                                    autocomplete="tel">
+                                @error('vendor_mobile')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                                <div class="invalid-feedback" id="vendorMobileJsError" style="display: none;">
+                                    Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.
+                                </div>
+                            </div>
+                            <small class="text-muted fs-11 mt-1 d-block">10-digit mobile number (e.g. 9876543210 or +91 9876543210)</small>
+                        </div>
 
                         {{-- City --}}
                         <div class="col-md-6">
@@ -536,7 +549,70 @@
         </div>
     </div>
 </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mobileInput = document.getElementById('vendor_mobile');
+        const mobileError = document.getElementById('vendorMobileJsError');
+        const addVendorModalEl = document.getElementById('addVendorModal');
+        const addVendorForm = addVendorModalEl ? addVendorModalEl.querySelector('form') : null;
 
+        // Auto reopen modal if validation failed on submission
+        @if($errors->any())
+            if (addVendorModalEl) {
+                const modalInstance = new bootstrap.Modal(addVendorModalEl);
+                modalInstance.show();
+            }
+        @endif
 
-   
+        if (mobileInput) {
+            // Regex for Indian mobile number: optional +91 or 0 prefix, then 10 digits starting with 6-9
+            const mobileRegex = /^(\+91[\-\s]?|0)?[6-9]\d{9}$/;
+
+            // Restrict input characters to numbers, +, -, and spaces
+            mobileInput.addEventListener('keypress', function (e) {
+                const char = String.fromCharCode(e.which || e.keyCode);
+                if (!/[\d\+\-\s]/.test(char)) {
+                    e.preventDefault();
+                }
+            });
+
+            function validateMobile() {
+                const rawVal = mobileInput.value.trim();
+                if (!rawVal) {
+                    mobileInput.classList.remove('is-valid', 'is-invalid');
+                    if (mobileError) mobileError.style.display = 'none';
+                    return false;
+                }
+
+                if (mobileRegex.test(rawVal)) {
+                    mobileInput.classList.remove('is-invalid');
+                    mobileInput.classList.add('is-valid');
+                    if (mobileError) mobileError.style.display = 'none';
+                    return true;
+                } else {
+                    mobileInput.classList.remove('is-valid');
+                    mobileInput.classList.add('is-invalid');
+                    if (mobileError) {
+                        mobileError.style.display = 'block';
+                        mobileError.textContent = 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210).';
+                    }
+                    return false;
+                }
+            }
+
+            mobileInput.addEventListener('input', validateMobile);
+            mobileInput.addEventListener('blur', validateMobile);
+
+            if (addVendorForm) {
+                addVendorForm.addEventListener('submit', function (e) {
+                    if (!validateMobile()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        mobileInput.focus();
+                    }
+                });
+            }
+        }
+    });
+    </script>
 @endsection

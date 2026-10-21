@@ -394,12 +394,22 @@ class SettingsController extends Controller
     public function adminStore(Request $request)
     {
         $passwordRules = $this->adminPasswordRules();
+        $messages = [
+            'password.regex' => 'The password must contain at least one uppercase letter (A-Z) and one lowercase letter (a-z).',
+            'password.min' => 'The password must be at least :min characters.',
+            'password.letters' => 'The password must contain at least one letter.',
+            'password.mixed_case' => 'The password must contain at least one uppercase and one lowercase letter.',
+            'password.numbers' => 'The password must contain at least one number (0-9).',
+            'password.symbols' => 'The password must contain at least one special character.',
+            'password.confirmed' => 'The password confirmation does not match.',
+        ];
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:191', Rule::unique(self::ADMIN_TABLE, self::ADMIN_EMAIL_COLUMN)],
             'role' => ['required', Rule::in(array_keys($this->roles()))],
             'password' => ['required', 'confirmed', $passwordRules],
-        ]);
+        ], $messages);
 
         $admin = new Admin;
         $admin->name = trim($validated['name']);
@@ -421,6 +431,16 @@ class SettingsController extends Controller
     public function adminUpdate(Request $request, int $id)
     {
         $admin = Admin::query()->findOrFail($id);
+        $messages = [
+            'password.regex' => 'The password must contain at least one uppercase letter (A-Z) and one lowercase letter (a-z).',
+            'password.min' => 'The password must be at least :min characters.',
+            'password.letters' => 'The password must contain at least one letter.',
+            'password.mixed_case' => 'The password must contain at least one uppercase and one lowercase letter.',
+            'password.numbers' => 'The password must contain at least one number (0-9).',
+            'password.symbols' => 'The password must contain at least one special character.',
+            'password.confirmed' => 'The password confirmation does not match.',
+        ];
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -431,7 +451,7 @@ class SettingsController extends Controller
             ],
             'role' => ['required', Rule::in(array_keys($this->roles()))],
             'password' => ['nullable', 'confirmed', $this->adminPasswordRules()],
-        ]);
+        ], $messages);
 
         if (
             strtolower((string) $admin->role) === 'admin'
@@ -491,16 +511,18 @@ class SettingsController extends Controller
         $rule = Password::min((int) $settings['minimum_password_length']);
         $extraRules = [];
 
-        if ($settings['require_uppercase']) {
+        if (! empty($settings['require_uppercase']) && ! empty($settings['require_lowercase'])) {
+            $rule->mixedCase();
+        } elseif (! empty($settings['require_uppercase'])) {
             $extraRules[] = 'regex:/[A-Z]/';
-        }
-        if ($settings['require_lowercase']) {
+        } elseif (! empty($settings['require_lowercase'])) {
             $extraRules[] = 'regex:/[a-z]/';
         }
-        if ($settings['require_number']) {
+
+        if (! empty($settings['require_number'])) {
             $rule->numbers();
         }
-        if ($settings['require_special_character']) {
+        if (! empty($settings['require_special_character'])) {
             $rule->symbols();
         }
         if ($extraRules !== []) {

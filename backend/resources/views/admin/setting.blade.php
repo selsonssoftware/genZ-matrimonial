@@ -368,8 +368,18 @@
                 <div class="modal-body">
                     <label class="form-label">Full name</label><input class="form-control mb-3" name="name" maxlength="255" required>
                     <label class="form-label">Email</label><input class="form-control mb-3" type="email" name="email" maxlength="191" required>
-                    <label class="form-label">Role</label><select class="form-select mb-3" name="role" required>@foreach($roles as $roleKey => $roleLabel)<option value="{{ $roleKey }}">{{ $roleLabel }}</option>@endforeach</select>
-                    <label class="form-label">Password</label><input class="form-control mb-3" type="password" name="password" minlength="{{ $settings['minimum_password_length'] }}" autocomplete="new-password" required>
+                    <label class="form-label">Password</label>
+                    <input class="form-control mb-1" type="password" name="password" minlength="{{ $settings['minimum_password_length'] }}" autocomplete="new-password" required>
+                    <div class="mb-3">
+                        <small class="text-muted fw-semibold d-block mb-1"><i class="ti ti-info-circle me-1"></i>Required Password Format:</small>
+                        <div class="d-flex flex-wrap gap-1">
+                            <span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>Min {{ $settings['minimum_password_length'] }} chars</span>
+                            @if(!empty($settings['require_uppercase']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Uppercase (A-Z)</span>@endif
+                            @if(!empty($settings['require_lowercase']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Lowercase (a-z)</span>@endif
+                            @if(!empty($settings['require_number']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Number (0-9)</span>@endif
+                            @if(!empty($settings['require_special_character']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Symbol (!@#$...)</span>@endif
+                        </div>
+                    </div>
                     <label class="form-label">Confirm password</label><input class="form-control" type="password" name="password_confirmation" minlength="{{ $settings['minimum_password_length'] }}" autocomplete="new-password" required>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button class="btn settings-save" type="submit">Create Admin</button></div>
@@ -386,7 +396,18 @@
                     <label class="form-label">Full name</label><input class="form-control mb-3" name="name" id="editAdminName" maxlength="255" required>
                     <label class="form-label">Email</label><input class="form-control mb-3" type="email" name="email" id="editAdminEmail" maxlength="191" required>
                     <label class="form-label">Role</label><select class="form-select mb-3" name="role" id="editAdminRole" required>@foreach($roles as $roleKey => $roleLabel)<option value="{{ $roleKey }}">{{ $roleLabel }}</option>@endforeach</select>
-                    <label class="form-label">New password (optional)</label><input class="form-control mb-3" type="password" name="password" minlength="{{ $settings['minimum_password_length'] }}" autocomplete="new-password">
+                    <label class="form-label">New password (optional)</label>
+                    <input class="form-control mb-1" type="password" name="password" minlength="{{ $settings['minimum_password_length'] }}" autocomplete="new-password">
+                    <div class="mb-3">
+                        <small class="text-muted fw-semibold d-block mb-1"><i class="ti ti-info-circle me-1"></i>Required Password Format (leave blank to keep current):</small>
+                        <div class="d-flex flex-wrap gap-1">
+                            <span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>Min {{ $settings['minimum_password_length'] }} chars</span>
+                            @if(!empty($settings['require_uppercase']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Uppercase (A-Z)</span>@endif
+                            @if(!empty($settings['require_lowercase']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Lowercase (a-z)</span>@endif
+                            @if(!empty($settings['require_number']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Number (0-9)</span>@endif
+                            @if(!empty($settings['require_special_character']))<span class="badge bg-light text-dark border"><i class="ti ti-check me-1 text-success"></i>1 Symbol (!@#$...)</span>@endif
+                        </div>
+                    </div>
                     <label class="form-label">Confirm new password</label><input class="form-control" type="password" name="password_confirmation" minlength="{{ $settings['minimum_password_length'] }}" autocomplete="new-password">
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button class="btn settings-save" type="submit">Save Admin</button></div>
