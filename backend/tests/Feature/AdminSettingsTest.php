@@ -33,13 +33,17 @@ class AdminSettingsTest extends TestCase
             $table->longText('setting_value')->nullable();
             $table->timestamps();
         });
-        Schema::connection('sqlite')->create('admins', function ($table): void {
+        Schema::connection('sqlite')->create('admin', function ($table): void {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('mailid')->unique();
             $table->string('role')->default('admin');
             $table->string('password');
-            $table->timestamps();
+            $table->string('reset_token')->nullable();
+            $table->timestamp('reset_token_created_at')->nullable();
+            $table->rememberToken();
+            $table->timestamp('created_date')->nullable();
+            $table->timestamp('updated_date')->nullable();
         });
         Schema::connection('sqlite')->create('admin_audit_logs', function ($table): void {
             $table->id();
@@ -204,9 +208,9 @@ class AdminSettingsTest extends TestCase
             'password_confirmation' => 'StrongPass1',
         ])->assertRedirect(route('admin.setting', ['section' => 'admin-users-roles']));
 
-        $supportId = DB::table('admins')->where('email', 'support@example.test')->value('id');
+        $supportId = DB::table('admin')->where('mailid', 'support@example.test')->value('id');
         $this->assertNotNull($supportId);
-        $this->assertNotSame('StrongPass1', DB::table('admins')->where('id', $supportId)->value('password'));
+        $this->assertNotSame('StrongPass1', DB::table('admin')->where('id', $supportId)->value('password'));
 
         $this->put(route('admin.setting.admins.update', $supportId), [
             'name' => 'Support Manager',
@@ -216,16 +220,16 @@ class AdminSettingsTest extends TestCase
             'password_confirmation' => '',
         ])->assertRedirect(route('admin.setting', ['section' => 'admin-users-roles']));
 
-        $this->assertDatabaseHas('admins', [
+        $this->assertDatabaseHas('admin', [
             'id' => $supportId,
             'name' => 'Support Manager',
-            'email' => 'manager@example.test',
+            'mailid' => 'manager@example.test',
             'role' => 'manager',
         ]);
 
         $this->delete(route('admin.setting.admins.destroy', $supportId))
             ->assertRedirect(route('admin.setting', ['section' => 'admin-users-roles']));
-        $this->assertDatabaseMissing('admins', ['id' => $supportId]);
+        $this->assertDatabaseMissing('admin', ['id' => $supportId]);
         $this->assertDatabaseHas('admin_audit_logs', ['action' => 'admin_created']);
         $this->assertDatabaseHas('admin_audit_logs', ['action' => 'admin_updated']);
         $this->assertDatabaseHas('admin_audit_logs', ['action' => 'admin_deleted']);

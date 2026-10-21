@@ -120,6 +120,6 @@ class AdminDashboardTest extends TestCase
             ->assertSee('Pending profiles without photo')
             ->assertSee('Recent Member')
             ->assertSee('TM-100')
-            ->assertSee('data: [0,0,0,0,0,1,2]', false);
+            ->assertSee('data-registration-values="[0,0,0,0,0,1,2]"', false);
     }
 }

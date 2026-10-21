@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class AdminAuthController extends Controller
@@ -27,7 +28,7 @@ class AdminAuthController extends Controller
         return view('admin.login');
     }
 
-    // 2. Admin Login - admins table only
+    // 2. Admin Login - admin table only
     public function login(Request $request)
     {
         $request->validate([
@@ -92,16 +93,16 @@ class AdminAuthController extends Controller
         return view('admin.forgot-password');
     }
 
-    // 4. Send Reset Link - admins table only
+    // 4. Send Reset Link - admin table only
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:admins,email',
+            'email' => ['required', 'email', Rule::exists((new Admin)->getTable(), 'mailid')],
         ], [
             'email.exists' => 'No admin account found with this email.',
         ]);
 
-        $admin = Admin::where('email', $request->email)->firstOrFail();
+        $admin = Admin::whereRaw('LOWER(mailid) = ?', [mb_strtolower($request->input('email'))])->firstOrFail();
 
         $token = Str::random(60);
 
@@ -148,7 +149,7 @@ class AdminAuthController extends Controller
         ]);
     }
 
-    // 6. Reset Password - admins table only
+    // 6. Reset Password - admin table only
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -157,7 +158,7 @@ class AdminAuthController extends Controller
             'password' => ['required', 'confirmed', $this->passwordRule()],
         ]);
 
-        $admin = Admin::where('email', $request->email)->first();
+        $admin = Admin::whereRaw('LOWER(mailid) = ?', [mb_strtolower($request->input('email'))])->first();
 
         if (
             ! $admin instanceof Admin ||
@@ -202,7 +203,7 @@ class AdminAuthController extends Controller
         return view('admin.change-password');
     }
 
-    // 8. Update Password - admins table only
+    // 8. Update Password - admin table only
     public function updatePassword(Request $request)
     {
         $request->validate([

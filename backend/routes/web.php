@@ -90,7 +90,7 @@ Route::get('/matches-interests', [
     MatchesInterestsController::class,
     'index'
 ])->name('admin.matches-interests');
-        
+
 Route::get('/membership', [
     MembershipController::class,
     'index'

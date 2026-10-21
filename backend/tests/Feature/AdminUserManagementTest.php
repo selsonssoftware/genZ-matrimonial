@@ -44,6 +44,9 @@ class AdminUserManagementTest extends TestCase
         Schema::connection('sqlite')->create('profiles', function ($table): void {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('profile_id')->nullable();
+            $table->string('verification_status')->nullable();
+            $table->timestamps();
         });
         Schema::connection('sqlite')->create('user_subscriptions', function ($table): void {
             $table->id();

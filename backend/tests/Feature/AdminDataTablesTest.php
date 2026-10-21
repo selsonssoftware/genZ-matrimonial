@@ -75,6 +75,7 @@ class AdminDataTablesTest extends TestCase
         Schema::connection('sqlite')->create('vendor', function ($table): void {
             $table->id();
             $table->string('agent_name');
+            $table->string('vendor_mobile')->nullable();
             $table->string('city');
             $table->string('status');
             $table->decimal('commission', 10, 2)->default(0);

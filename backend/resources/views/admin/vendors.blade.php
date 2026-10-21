@@ -326,7 +326,7 @@
     </div>
 
     <!-- Add Vendor Modal -->
-  
+
 <div class="modal fade" id="addVendorModal" tabindex="-1"
      aria-labelledby="addVendorModalLabel" aria-hidden="true">
 

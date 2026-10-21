@@ -28,7 +28,6 @@ class MatchesInterestsController extends Controller
         $reportedCount = 0;
 
         // Interest activity records
-       
 
 $query = DB::table('interests')
     ->leftJoin('users as sender', 'interests.sender_id', '=', 'sender.id')
@@ -50,7 +49,6 @@ $query = DB::table('interests')
 
 
 
-        
         // Search by request ID, profile ID, sender ID, or receiver ID
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
@@ -72,7 +70,7 @@ $query = DB::table('interests')
         // UI "Awaiting" maps to database "Pending"
         if ($status === 'Awaiting') {
             $query->where('status', 'Pending');
-        } elseif (in_array($status, ['Accepted', 'Rejected'], true)) {
+        } elseif (\in_array($status, ['Accepted', 'Rejected'], true)) {
             $query->where('status', $status);
         } elseif ($status === 'Reported') {
             // No reported status exists in the interests table.

@@ -19,6 +19,10 @@ use JsonException;
 
 class SettingsController extends Controller
 {
+    private const ADMIN_TABLE = 'admin';
+
+    private const ADMIN_EMAIL_COLUMN = 'mailid';
+
     private const DEFAULTS = [
         'shop_name' => '',
         'support_email' => '',
@@ -392,7 +396,7 @@ class SettingsController extends Controller
         $passwordRules = $this->adminPasswordRules();
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:191', Rule::unique('admins', 'email')],
+            'email' => ['required', 'email', 'max:191', Rule::unique(self::ADMIN_TABLE, self::ADMIN_EMAIL_COLUMN)],
             'role' => ['required', Rule::in(array_keys($this->roles()))],
             'password' => ['required', 'confirmed', $passwordRules],
         ]);
@@ -419,7 +423,12 @@ class SettingsController extends Controller
         $admin = Admin::query()->findOrFail($id);
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:191', Rule::unique('admins', 'email')->ignore($admin->id)],
+            'email' => [
+                'required',
+                'email',
+                'max:191',
+                Rule::unique(self::ADMIN_TABLE, self::ADMIN_EMAIL_COLUMN)->ignore($admin->id),
+            ],
             'role' => ['required', Rule::in(array_keys($this->roles()))],
             'password' => ['nullable', 'confirmed', $this->adminPasswordRules()],
         ]);
@@ -503,15 +512,20 @@ class SettingsController extends Controller
 
     private function adminAccounts()
     {
-        if (! Schema::hasTable('admins')) {
+        if (! Schema::hasTable(self::ADMIN_TABLE)) {
             return collect();
         }
 
-        return DB::table('admins')
-            ->select(array_values(array_filter(
-                ['id', 'name', 'email', 'role'],
-                fn (string $column): bool => Schema::hasColumn('admins', $column)
-            )))
+        $columns = array_values(array_filter(
+            ['id', 'name', 'role'],
+            fn (string $column): bool => Schema::hasColumn(self::ADMIN_TABLE, $column)
+        ));
+        if (Schema::hasColumn(self::ADMIN_TABLE, self::ADMIN_EMAIL_COLUMN)) {
+            $columns[] = DB::raw(self::ADMIN_EMAIL_COLUMN.' as email');
+        }
+
+        return DB::table(self::ADMIN_TABLE)
+            ->select($columns)
             ->orderBy('id')
             ->get();
     }
@@ -519,11 +533,11 @@ class SettingsController extends Controller
     private function roles(): array
     {
         $roles = self::ROLES;
-        if (! Schema::hasTable('admins') || ! Schema::hasColumn('admins', 'role')) {
+        if (! Schema::hasTable(self::ADMIN_TABLE) || ! Schema::hasColumn(self::ADMIN_TABLE, 'role')) {
             return $roles;
         }
 
-        foreach (DB::table('admins')->whereNotNull('role')->distinct()->pluck('role') as $role) {
+        foreach (DB::table(self::ADMIN_TABLE)->whereNotNull('role')->distinct()->pluck('role') as $role) {
             $key = strtolower(trim((string) $role));
             if ($key !== '') {
                 $roles[$key] ??= ucwords(str_replace(['-', '_'], ' ', $key));

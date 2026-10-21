@@ -3,10 +3,78 @@
 namespace Tests\Feature;
 
 use App\Models\Admin;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class AdminReportTest extends TestCase
 {
+    private string $originalConnection;
+
+    private array $originalSqliteConfig;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->originalConnection = config('database.default');
+        $this->originalSqliteConfig = config('database.connections.sqlite');
+        config([
+            'database.default' => 'sqlite',
+            'database.connections.sqlite.database' => ':memory:',
+        ]);
+        DB::purge('sqlite');
+
+        Schema::connection('sqlite')->create('users', function ($table): void {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('member_id')->nullable();
+            $table->timestamp('created_at')->nullable();
+        });
+        Schema::connection('sqlite')->create('profiles', function ($table): void {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('profile_id')->nullable();
+            $table->string('gender')->nullable();
+            $table->unsignedInteger('age')->nullable();
+            $table->string('city')->nullable();
+            $table->string('religion')->nullable();
+            $table->string('marital_status')->nullable();
+            $table->string('verification_status')->nullable();
+            $table->timestamp('created_at')->nullable();
+        });
+        Schema::connection('sqlite')->create('subscriptions', function ($table): void {
+            $table->id();
+            $table->string('plan_name')->nullable();
+            $table->decimal('amount', 10, 2)->default(0);
+        });
+        Schema::connection('sqlite')->create('user_subscriptions', function ($table): void {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('subscription_id')->nullable();
+            $table->string('transaction_id')->nullable();
+            $table->string('profile_id')->nullable();
+            $table->string('payment_status')->nullable();
+            $table->string('status')->nullable();
+            $table->timestamp('created_at')->nullable();
+        });
+        Schema::connection('sqlite')->create('vendor_customer_assignments', function ($table): void {
+            $table->id();
+            $table->timestamp('assigned_at')->nullable();
+        });
+    }
+
+    protected function tearDown(): void
+    {
+        DB::purge('sqlite');
+        config([
+            'database.default' => $this->originalConnection,
+            'database.connections.sqlite' => $this->originalSqliteConfig,
+        ]);
+
+        parent::tearDown();
+    }
+
     public function test_report_page_loads_live_analytics(): void
     {
         $this->actingAs((new Admin)->forceFill(['id' => 1, 'name' => 'Admin', 'email' => 'admin@example.test', 'role' => 'admin']), 'admin');
