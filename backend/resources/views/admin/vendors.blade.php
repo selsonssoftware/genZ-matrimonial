@@ -556,12 +556,13 @@
         const addVendorModalEl = document.getElementById('addVendorModal');
         const addVendorForm = addVendorModalEl ? addVendorModalEl.querySelector('form') : null;
 
-        // Auto reopen modal if validation failed on submission
-        const reopenAddVendorModal = @json($errors->any());
-        if (reopenAddVendorModal && addVendorModalEl) {
-            const modalInstance = new bootstrap.Modal(addVendorModalEl);
-            modalInstance.show();
-        }
+        // Auto reopen modal if validation failed
+const reopenAddVendorModal = {{ $errors->any() ? 'true' : 'false' }};
+
+if (reopenAddVendorModal && addVendorModalEl) {
+    const modalInstance = new bootstrap.Modal(addVendorModalEl);
+    modalInstance.show();
+}
 
         if (mobileInput) {
             // Regex for Indian mobile number: optional +91 or 0 prefix, then 10 digits starting with 6-9
