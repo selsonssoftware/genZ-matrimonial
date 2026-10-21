@@ -550,69 +550,89 @@
     </div>
 </div>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const mobileInput = document.getElementById('vendor_mobile');
-        const mobileError = document.getElementById('vendorMobileJsError');
-        const addVendorModalEl = document.getElementById('addVendorModal');
-        const addVendorForm = addVendorModalEl ? addVendorModalEl.querySelector('form') : null;
+    
+document.addEventListener('DOMContentLoaded', function () {
+    const mobileInput = document.getElementById('vendor_mobile');
+    const mobileError = document.getElementById('vendorMobileJsError');
+    const addVendorModalEl = document.getElementById('addVendorModal');
+    const addVendorForm = addVendorModalEl
+        ? addVendorModalEl.querySelector('form')
+        : null;
 
-        // Auto reopen modal if validation failed
-const reopenAddVendorModal = {{ $errors->any() ? 'true' : 'false' }};
+    // Auto reopen modal if validation failed
+    const vendorPageConfig = document.getElementById('vendorPageConfig');
+    const reopenAddVendorModal =
+        vendorPageConfig &&
+        vendorPageConfig.dataset.reopenModal === '1';
 
-if (reopenAddVendorModal && addVendorModalEl) {
-    const modalInstance = new bootstrap.Modal(addVendorModalEl);
-    modalInstance.show();
-}
+    if (reopenAddVendorModal && addVendorModalEl) {
+        const modalInstance = new bootstrap.Modal(addVendorModalEl);
+        modalInstance.show();
+    }
 
-        if (mobileInput) {
-            // Regex for Indian mobile number: optional +91 or 0 prefix, then 10 digits starting with 6-9
-            const mobileRegex = /^(\+91[\-\s]?|0)?[6-9]\d{9}$/;
+    if (mobileInput) {
+        // Regex for Indian mobile number
+        const mobileRegex = /^(\+91[\-\s]?|0)?[6-9]\d{9}$/;
 
-            // Restrict input characters to numbers, +, -, and spaces
-            mobileInput.addEventListener('keypress', function (e) {
-                const char = String.fromCharCode(e.which || e.keyCode);
-                if (!/[\d\+\-\s]/.test(char)) {
-                    e.preventDefault();
+        // Restrict input characters to numbers, +, -, and spaces
+        mobileInput.addEventListener('keypress', function (e) {
+            const char = String.fromCharCode(e.which || e.keyCode);
+
+            if (!/[\d\+\-\s]/.test(char)) {
+                e.preventDefault();
+            }
+        });
+
+        function validateMobile() {
+            const rawVal = mobileInput.value.trim();
+
+            if (!rawVal) {
+                mobileInput.classList.remove('is-valid', 'is-invalid');
+
+                if (mobileError) {
+                    mobileError.style.display = 'none';
                 }
-            });
 
-            function validateMobile() {
-                const rawVal = mobileInput.value.trim();
-                if (!rawVal) {
-                    mobileInput.classList.remove('is-valid', 'is-invalid');
-                    if (mobileError) mobileError.style.display = 'none';
-                    return false;
-                }
-
-                if (mobileRegex.test(rawVal)) {
-                    mobileInput.classList.remove('is-invalid');
-                    mobileInput.classList.add('is-valid');
-                    if (mobileError) mobileError.style.display = 'none';
-                    return true;
-                } else {
-                    mobileInput.classList.remove('is-valid');
-                    mobileInput.classList.add('is-invalid');
-                    if (mobileError) {
-                        mobileError.style.display = 'block';
-                        mobileError.textContent = 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210).';
-                    }
-                    return false;
-                }
+                return false;
             }
 
-            mobileInput.addEventListener('input', validateMobile);
-            mobileInput.addEventListener('blur', validateMobile);
+            if (mobileRegex.test(rawVal)) {
+                mobileInput.classList.remove('is-invalid');
+                mobileInput.classList.add('is-valid');
 
-            if (addVendorForm) {
-                addVendorForm.addEventListener('submit', function (e) {
-                    if (!validateMobile()) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        mobileInput.focus();
-                    }
-                });
+                if (mobileError) {
+                    mobileError.style.display = 'none';
+                }
+
+                return true;
+            } else {
+                mobileInput.classList.remove('is-valid');
+                mobileInput.classList.add('is-invalid');
+
+                if (mobileError) {
+                    mobileError.style.display = 'block';
+                    mobileError.textContent =
+                        'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9 (e.g. 9876543210).';
+                }
+
+                return false;
             }
         }
-    });
+
+        mobileInput.addEventListener('input', validateMobile);
+        mobileInput.addEventListener('blur', validateMobile);
+
+        if (addVendorForm) {
+            addVendorForm.addEventListener('submit', function (e) {
+                if (!validateMobile()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    mobileInput.focus();
+                }
+            });
+        }
+    }
+});
+
     </script>
 @endsection
