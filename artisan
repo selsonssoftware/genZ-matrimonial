@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+
+$backendPath = __DIR__ . DIRECTORY_SEPARATOR . 'backend';
+
+if (!is_file($backendPath . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
+    fwrite(STDERR, "Laravel dependencies are missing. Run `composer install` in the backend directory first.\n");
+    exit(1);
+}
+
+chdir($backendPath);
+require $backendPath . DIRECTORY_SEPARATOR . 'artisan';

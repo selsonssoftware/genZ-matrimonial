@@ -21,8 +21,10 @@
 
     <!-- Vendor css -->
     <link href="{{ asset('dashboardassets/css/vendors.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('dashboardassets/plugins/datatables/buttons.bootstrap5.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('dashboardassets/plugins/datatables/buttons.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
 
     <!-- App css -->
     <link id="app-style" href="{{ asset('dashboardassets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
@@ -139,8 +141,6 @@
                         <i class="ti ti-search app-search-icon text-muted"></i>
                     </div>
 
-                   
-                    
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
@@ -176,8 +176,6 @@
                         </div>
                         <!-- end dropdown-->
                     </div>
-
-                   
 
                     <div id="notification-dropdown-people" class="topbar-item">
                         <div class="dropdown">
@@ -224,7 +222,7 @@
                                                 </span>
                                                 <span class="flex-grow-1 text-muted">
                                                     <span class="fw-medium text-body">
-                                                        {{ $notification->member_name ?: ($notification->profile_id ?: 'Profile #'.$notification->id) }}
+                                                        {{ $notification->member_name ?: ($notification->profile_id ?: 'Profile #' . $notification->id) }}
                                                     </span>
                                                     has a profile waiting for verification.
                                                     <br />
@@ -335,8 +333,11 @@
                                     class="rounded-circle me-lg-2 d-flex" alt="user-image" />
                                 <div class="d-lg-flex align-items-center gap-1 d-none">
                                     <span>
-                                        <h5 class="my-0 lh-1 pro-username">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</h5>
-                                        <span class="fs-xs lh-1">{{ ucfirst(Auth::guard('admin')->user()->role ?? 'Admin') }}</span>
+                                        <h5 class="my-0 lh-1 pro-username">
+                                            {{ Auth::guard('admin')->user()->name ?? 'Admin' }}
+                                        </h5>
+                                        <span
+                                            class="fs-xs lh-1">{{ ucfirst(Auth::guard('admin')->user()->role ?? 'Admin') }}</span>
                                     </span>
                                     <i class="ti ti-chevron-down align-middle"></i>
                                 </div>
@@ -421,8 +422,10 @@
                             <a href="#!" class="link-reset">
                                 <img src="{{ asset('dashboardassets/images/users/user-1.jpg') }}" alt="user-image"
                                     class="rounded-circle mb-2 avatar-md" />
-                                <span class="sidenav-user-name fw-bold">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span>
-                                <span class="fs-12 fw-semibold" data-lang="user-role">{{ ucfirst(Auth::guard('admin')->user()->role ?? 'Super Admin') }}</span>
+                                <span
+                                    class="sidenav-user-name fw-bold">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span>
+                                <span class="fs-12 fw-semibold"
+                                    data-lang="user-role">{{ ucfirst(Auth::guard('admin')->user()->role ?? 'Super Admin') }}</span>
                             </a>
                         </div>
                         <div>
@@ -499,36 +502,33 @@
                         </li>
 
                         <li class="side-nav-item">
-    <a data-bs-toggle="collapse"
-       href="#profileDropdown"
-       aria-expanded="false"
-       aria-controls="profileDropdown"
-       class="side-nav-link">
-        <span class="menu-icon">
-            <i class="ti ti-users"></i>
-        </span>
-        <span class="menu-text">Profiles</span>
-        <span class="menu-arrow"></span>
-    </a>
+                            <a data-bs-toggle="collapse" href="#profileDropdown" aria-expanded="false"
+                                aria-controls="profileDropdown" class="side-nav-link">
+                                <span class="menu-icon">
+                                    <i class="ti ti-users"></i>
+                                </span>
+                                <span class="menu-text">Profiles</span>
+                                <span class="menu-arrow"></span>
+                            </a>
 
-    <div class="collapse" id="profileDropdown">
-        <ul class="sub-menu">
-            <li class="side-nav-item">
-                <a href="{{ route('admin.profile-verification.index', ['type' => 'groom']) }}"
-                   class="side-nav-link">
-                    <span class="menu-text">Groom</span>
-                </a>
-            </li>
+                            <div class="collapse" id="profileDropdown">
+                                <ul class="sub-menu">
+                                    <li class="side-nav-item">
+                                        <a href="{{ route('admin.profile-verification.index', ['type' => 'groom']) }}"
+                                            class="side-nav-link">
+                                            <span class="menu-text">Groom</span>
+                                        </a>
+                                    </li>
 
-            <li class="side-nav-item">
-                <a href="{{ route('admin.profile-verification.index', ['type' => 'bride']) }}"
-                   class="side-nav-link">
-                    <span class="menu-text">Bride</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-</li>
+                                    <li class="side-nav-item">
+                                        <a href="{{ route('admin.profile-verification.index', ['type' => 'bride']) }}"
+                                            class="side-nav-link">
+                                            <span class="menu-text">Bride</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
 
                         <li class="side-nav-item">
                             <a href="{{ route('admin.vendors.index') }}" class="side-nav-link">
@@ -1316,92 +1316,92 @@
         <!-- Custom table -->
         <script src="{{ asset('dashboardassets/js/pages/custom-table.js') }}"></script>
 
-    <!-- Datatables -->
-    <script src="{{ asset('dashboardassets/plugins/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/buttons.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/jszip.min.js') }}"></script>
-    <script src="{{ asset('dashboardassets/plugins/datatables/buttons.html5.min.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!window.jQuery || !jQuery.fn.DataTable) {
-                return;
-            }
-
-            jQuery('table.js-data-table').each(function () {
-                const table = jQuery(this);
-                const placeholderRows = table.find('tbody > tr').filter(function () {
-                    return this.children.length === 1 && this.children[0].colSpan > 1;
-                });
-                const placeholderMessage = placeholderRows.first().text().trim().replace(/\s+/g, ' ');
-                placeholderRows.remove();
-
-                const options = {
-                    responsive: true,
-                    autoWidth: false,
-                    order: [],
-                    pageLength: Number(table.data('page-length')) || 10,
-                    layout: {
-                        topStart: ['buttons', 'pageLength'],
-                        topEnd: 'search',
-                        bottomStart: 'info',
-                        bottomEnd: 'paging'
-                    },
-                    buttons: [
-                        {
-                            extend: 'excelHtml5',
-                            text: 'Excel',
-                            className: 'btn btn-sm btn-data-table-excel'
-                        },
-                        {
-                            extend: 'csvHtml5',
-                            text: 'CSV',
-                            className: 'btn btn-sm btn-data-table-csv'
-                        }
-                    ],
-                    language: {
-                        emptyTable: table.data('empty-table') || placeholderMessage || 'No data available in table'
-                    }
-                };
-
-                if (table.data('paging') === false) {
-                    options.paging = false;
-                    options.info = false;
+        <!-- Datatables -->
+        <script src="{{ asset('dashboardassets/plugins/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.bootstrap5.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/responsive.bootstrap5.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/dataTables.buttons.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/buttons.bootstrap5.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/jszip.min.js') }}"></script>
+        <script src="{{ asset('dashboardassets/plugins/datatables/buttons.html5.min.js') }}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (!window.jQuery || !jQuery.fn.DataTable) {
+                    return;
                 }
 
-                const dataTable = table.DataTable(options);
-
-                if (table.attr('id') === 'vendorDirectoryTable') {
-                    table.on('click', '.js-toggle-vendor-assignment', function () {
-                        const button = jQuery(this);
-                        const template = document.getElementById(button.data('template'));
-
-                        if (!template) {
-                            console.error('Vendor assignment form template was not found.');
-                            return;
-                        }
-
-                        const row = dataTable.row(button.closest('tr'));
-
-                        if (row.child.isShown()) {
-                            row.child.hide();
-                            button.attr('aria-expanded', 'false');
-                        } else {
-                            row.child(template.innerHTML).show();
-                            button.attr('aria-expanded', 'true');
-                        }
+                jQuery('table.js-data-table').each(function () {
+                    const table = jQuery(this);
+                    const placeholderRows = table.find('tbody > tr').filter(function () {
+                        return this.children.length === 1 && this.children[0].colSpan > 1;
                     });
-                }
-            });
-        });
-    </script>
+                    const placeholderMessage = placeholderRows.first().text().trim().replace(/\s+/g, ' ');
+                    placeholderRows.remove();
 
-    <!-- Dashboard js -->
-    <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js"></script>
+                    const options = {
+                        responsive: true,
+                        autoWidth: false,
+                        order: [],
+                        pageLength: Number(table.data('page-length')) || 10,
+                        layout: {
+                            topStart: ['buttons', 'pageLength'],
+                            topEnd: 'search',
+                            bottomStart: 'info',
+                            bottomEnd: 'paging'
+                        },
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                text: 'Excel',
+                                className: 'btn btn-sm btn-data-table-excel'
+                            },
+                            {
+                                extend: 'csvHtml5',
+                                text: 'CSV',
+                                className: 'btn btn-sm btn-data-table-csv'
+                            }
+                        ],
+                        language: {
+                            emptyTable: table.data('empty-table') || placeholderMessage || 'No data available in table'
+                        }
+                    };
+
+                    if (table.data('paging') === false) {
+                        options.paging = false;
+                        options.info = false;
+                    }
+
+                    const dataTable = table.DataTable(options);
+
+                    if (table.attr('id') === 'vendorDirectoryTable') {
+                        table.on('click', '.js-toggle-vendor-assignment', function () {
+                            const button = jQuery(this);
+                            const template = document.getElementById(button.data('template'));
+
+                            if (!template) {
+                                console.error('Vendor assignment form template was not found.');
+                                return;
+                            }
+
+                            const row = dataTable.row(button.closest('tr'));
+
+                            if (row.child.isShown()) {
+                                row.child.hide();
+                                button.attr('aria-expanded', 'false');
+                            } else {
+                                row.child(template.innerHTML).show();
+                                button.attr('aria-expanded', 'true');
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+
+        <!-- Dashboard js -->
+        <script src="{{ asset('dashboardassets/js/pages/dashboard-projects.js"></script>
 </body>
 
 </html>

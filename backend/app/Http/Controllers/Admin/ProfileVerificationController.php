@@ -11,9 +11,20 @@ class ProfileVerificationController extends Controller
 {
     /**
      * Profile Verification page.
+     * Groom and Bride profiles are filtered separately.
      */
     public function index(Request $request)
     {
+        // Profile type: groom or bride
+        $type = strtolower($request->query('type', 'groom'));
+
+        if (!in_array($type, ['groom', 'bride'], true)) {
+            abort(404, 'Invalid profile type.');
+        }
+
+        // Support multiple database gender formats ('male'/'female' or 'groom'/'bride')
+        $genderValues = $type === 'groom' ? ['male', 'groom'] : ['female', 'bride'];
+
         $status = $request->query('status', 'pending');
         $search = trim($request->query('search', ''));
 
@@ -29,8 +40,23 @@ class ProfileVerificationController extends Controller
             $status = 'pending';
         }
 
-        $query = DB::table('profiles as p')
-            ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
+        /*
+         * Reusable profile query with robust gender filtering.
+         */
+        $baseQuery = function () use ($genderValues) {
+            return DB::table('profiles as p')
+                ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
+                ->where(function ($q) use ($genderValues) {
+                    foreach ($genderValues as $gender) {
+                        $q->orWhereRaw('LOWER(TRIM(p.gender)) = ?', [strtolower($gender)]);
+                    }
+                });
+        };
+
+        /*
+         * Profile list query for the current status tab.
+         */
+        $query = $baseQuery()
             ->select(
                 'p.*',
                 'u.name as user_name',
@@ -68,18 +94,19 @@ class ProfileVerificationController extends Controller
             ")
             ->orderByDesc('p.id');
 
-        $profiles = $status === 'all'
-            ? $query->get()
-            : $query->paginate(10)->appends($request->query());
+        // Fetch paginated profiles for all tabs so the table always displays!
+        $profiles = $query->paginate(10)->appends($request->query());
 
+        /*
+         * Selected profile and related details.
+         */
         $selectedProfile = null;
         $education = collect();
         $occupation = null;
         $photos = collect();
 
-        if ($status !== 'all' && $request->filled('id')) {
-            $selectedProfile = DB::table('profiles as p')
-                ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
+        if ($request->filled('id')) {
+            $selectedProfile = $baseQuery()
                 ->select(
                     'p.*',
                     'u.name as user_name',
@@ -90,28 +117,25 @@ class ProfileVerificationController extends Controller
                 ->first();
         }
 
-        if (!$selectedProfile && $status !== 'all') {
-            $selectedProfile = DB::table('profiles as p')
-                ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
+        /*
+         * If no profile was explicitly selected, default to the first profile in the list.
+         */
+        if (!$selectedProfile && $profiles->isNotEmpty()) {
+            $firstItem = $profiles->items()[0];
+            $selectedProfile = $baseQuery()
                 ->select(
                     'p.*',
                     'u.name as user_name',
                     'u.email as user_email',
                     'u.phone as user_phone'
                 )
-                ->when($status !== 'all', function ($q) use ($status) {
-                    $q->where('p.verification_status', $status);
-                })
-                ->orderByRaw("
-                    CASE
-                        WHEN p.verification_status = 'pending' THEN 0
-                        ELSE 1
-                    END
-                ")
-                ->orderByDesc('p.id')
+                ->where('p.id', $firstItem->id)
                 ->first();
         }
 
+        /*
+         * Education, occupation and photos for the selected profile.
+         */
         if ($selectedProfile) {
             $education = DB::table('education_details')
                 ->where('profile_id', $selectedProfile->profile_id)
@@ -130,23 +154,21 @@ class ProfileVerificationController extends Controller
                 ->get();
         }
 
-        $counts = [
-            'pending' => DB::table('profiles')
-                ->where('verification_status', 'pending')
-                ->count(),
+        /*
+         * Verification counts for the current gender/type only.
+         */
+        $counts = [];
 
-            'approved' => DB::table('profiles')
-                ->where('verification_status', 'approved')
-                ->count(),
-
-            'rejected' => DB::table('profiles')
-                ->where('verification_status', 'rejected')
-                ->count(),
-
-            'update_requested' => DB::table('profiles')
-                ->where('verification_status', 'update_requested')
-                ->count(),
-        ];
+        foreach ([
+            'pending',
+            'approved',
+            'rejected',
+            'update_requested',
+        ] as $verificationStatus) {
+            $counts[$verificationStatus] = $baseQuery()
+                ->where('p.verification_status', $verificationStatus)
+                ->count();
+        }
 
         return view('admin.profile', compact(
             'profiles',
@@ -156,7 +178,8 @@ class ProfileVerificationController extends Controller
             'photos',
             'status',
             'search',
-            'counts'
+            'counts',
+            'type'
         ));
     }
 
@@ -174,48 +197,64 @@ class ProfileVerificationController extends Controller
                     'update_requested',
                 ]),
             ],
+
             'review_notes' => [
                 Rule::requiredIf(
-                    in_array($request->input('decision'), [
-                        'rejected',
-                        'update_requested',
-                    ], true)
+                    in_array(
+                        $request->input('decision'),
+                        ['rejected', 'update_requested'],
+                        true
+                    )
                 ),
                 'nullable',
                 'string',
                 'max:5000',
             ],
+
+            'type' => [
+                'required',
+                Rule::in(['groom', 'bride']),
+            ],
         ]);
 
-        $profile = DB::table('profiles')
+        $type = $validated['type'];
+        $genderValues = $type === 'groom' ? ['male', 'groom'] : ['female', 'bride'];
+
+        $profileQuery = DB::table('profiles')
             ->where('id', $id)
-            ->first();
+            ->where(function ($q) use ($genderValues) {
+                foreach ($genderValues as $gender) {
+                    $q->orWhereRaw('LOWER(TRIM(gender)) = ?', [strtolower($gender)]);
+                }
+            });
+
+        $profile = $profileQuery->first();
 
         if (!$profile) {
             return redirect()
-                ->route('admin.profile-verification.index')
-                ->with('error', 'Profile not found.');
+                ->route('admin.profile-verification.index', [
+                    'type' => $type,
+                ])
+                ->with('error', 'Profile not found in this section.');
         }
 
-        DB::table('profiles')
-            ->where('id', $id)
-            ->update([
-                'verification_status' => $validated['decision'],
-                'review_notes' => $validated['review_notes'] ?? null,
-
-                // Set this only if your admin login stores the admin ID
-                // in the session under "admin_id".
-                'reviewed_by' => session('admin_id'),
-
-                'reviewed_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $profileQuery->update([
+            'verification_status' => $validated['decision'],
+            'review_notes' => $validated['review_notes'] ?? null,
+            'reviewed_by' => session('admin_id'),
+            'reviewed_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return redirect()
             ->route('admin.profile-verification.index', [
+                'type' => $type,
                 'status' => $validated['decision'],
                 'id' => $id,
             ])
-            ->with('success', 'Profile verification decision saved successfully.');
+            ->with(
+                'success',
+                'Profile verification decision saved successfully.'
+            );
     }
 }
