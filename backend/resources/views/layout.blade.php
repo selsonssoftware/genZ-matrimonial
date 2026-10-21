@@ -50,38 +50,47 @@
         background-size: cover;
     }
 
-    .dt-buttons .dt-button.btn-data-table-excel {
+    /* DataTables Export Buttons (Excel & CSV) - Maroon Theme */
+    .dt-buttons .btn-data-table-excel,
+    .dt-buttons .btn-data-table-csv,
+    .dt-buttons .buttons-excel,
+    .dt-buttons .buttons-csv,
+    .dt-buttons .dt-button.btn-data-table-excel,
+    .dt-buttons .dt-button.btn-data-table-csv,
+    button.btn-data-table-excel,
+    button.btn-data-table-csv,
+    .btn-data-table-excel,
+    .btn-data-table-csv {
         background-color: #561325 !important;
         border-color: #561325 !important;
-        color: #fff !important;
+        color: #ffffff !important;
+        font-weight: 500 !important;
+        border-radius: 6px !important;
+        box-shadow: 0 1px 3px rgba(86, 19, 37, 0.2) !important;
     }
 
-    .dt-buttons .dt-button.btn-data-table-excel:hover,
-    .dt-buttons .dt-button.btn-data-table-excel:focus {
+    .dt-buttons .btn-data-table-excel:hover,
+    .dt-buttons .btn-data-table-excel:focus,
+    .dt-buttons .btn-data-table-excel:active,
+    .dt-buttons .btn-data-table-csv:hover,
+    .dt-buttons .btn-data-table-csv:focus,
+    .dt-buttons .btn-data-table-csv:active,
+    .dt-buttons .buttons-excel:hover,
+    .dt-buttons .buttons-csv:hover,
+    button.btn-data-table-excel:hover,
+    button.btn-data-table-csv:hover,
+    .btn-data-table-excel:hover,
+    .btn-data-table-csv:hover {
         background-color: #42101d !important;
         border-color: #42101d !important;
-        color: #fff !important;
+        color: #ffffff !important;
     }
 
-    .dt-buttons .dt-button.btn-data-table-excel:focus-visible {
-        box-shadow: 0 0 0 0.2rem rgba(86, 19, 37, 0.25);
-    }
-
-    .dt-buttons .dt-button.btn-data-table-csv {
-        background-color: #fcecee !important;
-        border-color: #e8c5cd !important;
-        color: #561325 !important;
-    }
-
-    .dt-buttons .dt-button.btn-data-table-csv:hover,
-    .dt-buttons .dt-button.btn-data-table-csv:focus {
-        background-color: #f5dde3 !important;
-        border-color: #ddafba !important;
-        color: #42101d !important;
-    }
-
-    .dt-buttons .dt-button.btn-data-table-csv:focus-visible {
-        box-shadow: 0 0 0 0.2rem rgba(86, 19, 37, 0.2);
+    .dt-buttons .btn-data-table-excel:focus-visible,
+    .dt-buttons .btn-data-table-csv:focus-visible,
+    .btn-data-table-excel:focus-visible,
+    .btn-data-table-csv:focus-visible {
+        box-shadow: 0 0 0 0.2rem rgba(86, 19, 37, 0.3) !important;
     }
 </style>
 

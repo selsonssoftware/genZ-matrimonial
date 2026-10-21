@@ -2,7 +2,8 @@
 
 @section('content')
 
-<div class="container-fluid py-4">
+<div class="content-page">
+    <div class="container-fluid py-4 px-4" style="background-color: #FAF5F5; min-height: 100vh;">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -119,6 +120,7 @@
         </div>
     </div>
 
+    </div>
 </div>
 
 @endsection
