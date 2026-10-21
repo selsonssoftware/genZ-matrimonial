@@ -1126,6 +1126,20 @@ body {
 
                 <div class="modal-body px-4">
 
+                    <div class="mb-3" id="planUserField">
+                        <label for="planUser" class="form-label fw-semibold">
+                            Member
+                        </label>
+                        <select class="form-select" id="planUser" name="user_id" required>
+                            <option value="">Choose a member</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>
+                                    {{ $user->name ?: 'Member' }}{{ $user->email ? ' (' . $user->email . ')' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="mb-3">
 
                         <label
@@ -1249,6 +1263,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('planModal');
     const method = document.getElementById('planMethod');
     const title = document.getElementById('planModalLabel');
+    const userField = document.getElementById('planUserField');
+    const userSelect = document.getElementById('planUser');
 
     const storeUrl = "{{ route('admin.membership.plans.store') }}";
     const updateBaseUrl = "{{ url('/admin/membership/plans') }}";
@@ -1260,6 +1276,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         form.action = storeUrl;
         method.value = 'POST';
+        userField.hidden = false;
+        userSelect.required = true;
 
         title.textContent = 'Add Membership Plan';
     });
@@ -1271,6 +1289,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             form.action = updateBaseUrl + '/' + this.dataset.id;
             method.value = 'PUT';
+            userField.hidden = true;
+            userSelect.required = false;
 
             document.getElementById('planName').value =
                 this.dataset.name || '';

@@ -68,16 +68,16 @@
     }
 
     .dt-buttons .dt-button.btn-data-table-csv {
-        background-color: #fcecee !important;
-        border-color: #e8c5cd !important;
-        color: #561325 !important;
+        background-color: #561325 !important;
+        border-color: #561325 !important;
+        color: #fff !important;
     }
 
     .dt-buttons .dt-button.btn-data-table-csv:hover,
     .dt-buttons .dt-button.btn-data-table-csv:focus {
-        background-color: #f5dde3 !important;
-        border-color: #ddafba !important;
-        color: #42101d !important;
+        background-color: #42101d !important;
+        border-color: #42101d !important;
+        color: #fff !important;
     }
 
     .dt-buttons .dt-button.btn-data-table-csv:focus-visible {

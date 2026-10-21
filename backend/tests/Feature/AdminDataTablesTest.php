@@ -74,16 +74,22 @@ class AdminDataTablesTest extends TestCase
         });
         Schema::connection('sqlite')->create('vendor', function ($table): void {
             $table->id();
+            $table->string('profile_id')->nullable();
+            $table->unsignedBigInteger('vector_id')->nullable();
             $table->string('agent_name');
             $table->string('vendor_mobile')->nullable();
             $table->string('city');
             $table->string('status');
             $table->decimal('commission', 10, 2)->default(0);
+            $table->string('action')->nullable();
         });
         Schema::connection('sqlite')->create('vendor_logins', function ($table): void {
             $table->id();
             $table->unsignedBigInteger('vendor_id');
             $table->string('email');
+            $table->string('password')->nullable();
+            $table->boolean('is_active')->nullable();
+            $table->timestamps();
         });
         Schema::connection('sqlite')->create('vendor_customer_assignments', function ($table): void {
             $table->id();
@@ -101,7 +107,7 @@ class AdminDataTablesTest extends TestCase
         });
         Schema::connection('sqlite')->create('subscriptions', function ($table): void {
             $table->id();
-            $table->string('profile_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('plan_name');
             $table->decimal('amount', 10, 2);
             $table->unsignedInteger('validity_days')->nullable();
@@ -175,11 +181,63 @@ class AdminDataTablesTest extends TestCase
             ->assertSee('TXN-11');
     }
 
+    public function test_vendor_creation_preserves_a_ten_digit_mobile_number_as_a_string(): void
+    {
+        $this->post(route('admin.vendors.store'), [
+            'agent_name' => 'New Vendor',
+            'vendor_mobile' => '9043455673',
+            'city' => 'Avadi',
+            'status' => 'Active',
+            'commission' => 15,
+            'email' => 'new-vendor@example.test',
+            'password' => 'Secret123!',
+            'password_confirmation' => 'Secret123!',
+        ])->assertRedirect(route('admin.vendors.index'));
+
+        $this->assertDatabaseHas('vendor', [
+            'agent_name' => 'New Vendor',
+            'vendor_mobile' => '9043455673',
+            'city' => 'Avadi',
+        ]);
+    }
+
+    public function test_membership_plan_is_saved_with_selected_user_from_users_table(): void
+    {
+        $this->post(route('admin.membership.plans.store'), [
+            'user_id' => 2,
+            'plan_name' => 'Selected User Plan',
+            'amount' => 2500,
+            'validity_days' => 180,
+            'features' => 'Member-specific plan',
+        ])->assertRedirect(route('admin.membership'));
+
+        $this->assertDatabaseHas('subscriptions', [
+            'user_id' => 2,
+            'plan_name' => 'Selected User Plan',
+            'amount' => 2500,
+        ]);
+    }
+
+    public function test_membership_plan_rejects_user_id_missing_from_users_table(): void
+    {
+        $this->from(route('admin.membership'))->post(route('admin.membership.plans.store'), [
+            'user_id' => 999,
+            'plan_name' => 'Invalid User Plan',
+            'amount' => 2500,
+            'validity_days' => 180,
+        ])->assertRedirect(route('admin.membership'))
+            ->assertSessionHasErrors('user_id');
+
+        $this->assertDatabaseMissing('subscriptions', [
+            'plan_name' => 'Invalid User Plan',
+        ]);
+    }
+
     private function seedTableRows(): void
     {
         DB::table('subscriptions')->insert([
             'id' => 1,
-            'profile_id' => 'PLAN-1',
+            'user_id' => 1,
             'plan_name' => 'Premium',
             'amount' => 1000,
             'validity_days' => 30,

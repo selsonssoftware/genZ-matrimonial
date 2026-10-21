@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class MembershipController extends Controller
@@ -22,6 +21,11 @@ class MembershipController extends Controller
         // Membership plans
         $plans = DB::table('subscriptions')
             ->orderBy('amount')
+            ->orderBy('id')
+            ->get();
+        $users = DB::table('users')
+            ->select('id', 'name', 'email')
+            ->orderBy('name')
             ->orderBy('id')
             ->get();
 
@@ -128,6 +132,7 @@ class MembershipController extends Controller
 
         return view('admin.membership', compact(
             'plans',
+            'users',
             'activePremiumProfiles',
             'monthlyRevenue',
             'pendingApprovals',
@@ -140,6 +145,11 @@ class MembershipController extends Controller
     public function storePlan(Request $request)
     {
         $validated = $request->validate([
+            'user_id' => [
+                'required',
+                'integer',
+                'exists:users,id',
+            ],
             'plan_name' => [
                 'required',
                 'string',
@@ -165,9 +175,7 @@ class MembershipController extends Controller
         ]);
 
         DB::table('subscriptions')->insert([
-            // Current schema requires subscriptions.profile_id.
-            // Confirm whether your project has a different plan-code rule.
-            'profile_id' => 'PLAN-' . Str::upper(Str::random(12)),
+            'user_id' => $validated['user_id'],
             'plan_name' => $validated['plan_name'],
             'amount' => $validated['amount'],
             'validity_days' => $validated['validity_days'],
