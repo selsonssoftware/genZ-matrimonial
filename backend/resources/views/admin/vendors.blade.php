@@ -137,89 +137,124 @@
                 </div>
             </div>
 
-            <!-- Vendor Directory Table Card -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4"
-                style="border: 1px solid #F3E5E8 !important;">
-                <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
-                    <h5 class="fw-bold mb-1" style="color: #561325;">Vendor Directory</h5>
-                    <p class="text-muted fs-12 mb-0">Each agent has a separate login and scoped customer access.</p>
-                </div>
+            
+<!-- Vendor Directory Table Card -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4"
+     style="border: 1px solid #F3E5E8 !important;">
 
-                <div class="table-responsive">
-                    <table id="vendorDirectoryTable" class="table align-middle mb-0 table-hover js-data-table"
-                        data-page-length="10" data-empty-table="No vendors found.">
-                        <thead style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase;">
-                            <tr style="color: #561325;">
-                                <th class="ps-4 py-3">VENDOR ID</th>
-                                <th class="py-3">AGENT NAME</th>
-                                <th class="py-3">MOBILE NUMBER</th>
-                                <th class="py-3">CITY</th>
-                                <th class="py-3">PROFILES</th>
-                                <th class="py-3">STATUS</th>
-                                <th class="py-3">COMMISSION</th>
-                                <th class="text-center pe-4 py-3">ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody class="fs-13">
-                            @forelse($vendors as $vendor)
-                                <tr>
-                                    <td class="ps-4 fw-semibold text-dark">
-                                        VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}
-                                    </td>
-                                    <td class="fw-medium text-dark">{{ $vendor->agent_name }}</td>
-                                    <td class="fw-medium text-dark">{{ $vendor->vendor_mobile }}</td>
-                                    <td class="text-muted">{{ $vendor->city }}</td>
-                                    <td class="fw-medium text-dark">{{ $vendor->customers_count }}</td>
-                                    <td>
-                                        @php
-                                            $statusClass = match ($vendor->status) {
-                                                'Active' => 'text-success',
-                                                'Pending' => 'text-warning',
-                                                'Suspended' => 'text-danger',
-                                                default => 'text-secondary'
-                                            };
-                                        @endphp
-                                        <span class="fw-semibold {{ $statusClass }}">{{ $vendor->status }}</span>
-                                    </td>
-                                    <td class="fw-medium text-dark">₹{{ number_format((float) $vendor->commission, 2) }}</td>
-                                    <td class="text-center pe-4">
-                                        <div class="d-inline-flex gap-1">
-                                            <!-- Edit Button -->
-                                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                                                data-bs-target="#editVendorModal{{ $vendor->id }}" title="Edit vendor">
-                                                <i class="ti ti-edit"></i> Edit
-                                            </button>
-
-                                            <!-- Delete Button -->
-                                            <form action="{{ route('admin.vendors.destroy', $vendor->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this vendor?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    title="Delete vendor">
-                                                    <i class="ti ti-trash"></i> Delete
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="text-center py-4 text-muted">No vendors found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination Links -->
-                <div class="p-3">
-                    {{ $vendors->links() }}
-                </div>
-            </div>
-
-        </div>
+    <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
+        <h5 class="fw-bold mb-1" style="color: #561325;">Vendor Directory</h5>
+        <p class="text-muted fs-12 mb-0">
+            Each agent has a separate login and scoped customer access.
+        </p>
     </div>
+
+    <div class="table-responsive">
+        <table id="vendorDirectoryTable"
+               class="table align-middle mb-0 table-hover js-data-table"
+               data-page-length="10"
+               data-empty-table="No vendors found.">
+
+            <thead style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase;">
+                <tr style="color: #561325;">
+                    <th class="ps-4 py-3">VENDOR ID</th>
+                    <th class="py-3">AGENT NAME</th>
+                    <th class="py-3">MOBILE NUMBER</th>
+                    <th class="py-3">CITY</th>
+                    <th class="py-3">PROFILES</th>
+                    <th class="py-3">STATUS</th>
+                    <th class="py-3">COMMISSION</th>
+                    <th class="text-center pe-4 py-3">ACTIONS</th>
+                </tr>
+            </thead>
+
+            <tbody class="fs-13">
+                @forelse($vendors as $vendor)
+                    <tr>
+                        <td class="ps-4 fw-semibold text-dark">
+                            VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}
+                        </td>
+
+                        <td class="fw-medium text-dark">
+                            {{ $vendor->agent_name }}
+                        </td>
+
+                        <td class="fw-medium text-dark">
+                            {{ $vendor->vendor_mobile }}
+                        </td>
+
+                        <td class="text-muted">
+                            {{ $vendor->city }}
+                        </td>
+
+                        <td class="fw-medium text-dark">
+                            {{ $vendor->customers_count }}
+                        </td>
+
+                        <td>
+                            @php
+                                $statusClass = 'text-secondary';
+
+                                if ($vendor->status === 'Active') {
+                                    $statusClass = 'text-success';
+                                } elseif ($vendor->status === 'Pending') {
+                                    $statusClass = 'text-warning';
+                                } elseif ($vendor->status === 'Suspended') {
+                                    $statusClass = 'text-danger';
+                                }
+                            @endphp
+
+                            <span class="fw-semibold {{ $statusClass }}">
+                                {{ $vendor->status }}
+                            </span>
+                        </td>
+
+                        <td class="fw-medium text-dark">
+                            ₹{{ number_format((float) $vendor->commission, 2) }}
+                        </td>
+
+                        <td class="text-center pe-4">
+                            <div class="d-inline-flex gap-1">
+
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editVendorModal{{ $vendor->id }}">
+                                    <i class="ti ti-edit"></i> Edit
+                                </button>
+
+                                <form action="{{ route('admin.vendors.destroy', $vendor->id) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Are you sure you want to delete this vendor?');">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger">
+                                        <i class="ti ti-trash"></i> Delete
+                                    </button>
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No vendors found.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="p-3">
+        {{ $vendors->links() }}
+    </div>
+</div>
+
 
     <!-- Add Vendor Modal -->
     <div class="modal fade" id="addVendorModal" tabindex="-1" aria-hidden="true">

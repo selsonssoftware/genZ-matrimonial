@@ -58,8 +58,9 @@
                             <tr>
                                 <td>{{ $assignments->firstItem() + $loop->index }}</td>
 
-                                <td>{{ $assignment->vendor_id }}</td>
-
+<td class="fw-semibold text-dark">
+    VN-{{ str_pad($assignment->vendor_id, 5, '0', STR_PAD_LEFT) }}
+</td>
                                 <td>
                                     {{ $assignment->agent_name }}
                                 </td>
