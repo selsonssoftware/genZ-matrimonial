@@ -122,4 +122,15 @@ class AdminDashboardTest extends TestCase
             ->assertSee('TM-100')
             ->assertSee('data-registration-values="[0,0,0,0,0,1,2]"', false);
     }
+
+    public function test_dashboard_works_when_users_table_has_no_member_id_column(): void
+    {
+        Schema::connection('sqlite')->table('users', function ($table): void {
+            $table->dropColumn('member_id');
+        });
+
+        $this->actingAs((new Admin)->forceFill(['id' => 99, 'name' => 'Admin', 'email' => 'admin@example.test', 'role' => 'admin']), 'admin')
+            ->get(route('dashboard'))
+            ->assertOk();
+    }
 }
