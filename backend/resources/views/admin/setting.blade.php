@@ -410,7 +410,7 @@
             document.querySelectorAll('.js-edit-admin').forEach(function (button) {
                 button.addEventListener('click', function () {
                     const form = document.getElementById('editAdminForm');
-                    form.action = @json(route('admin.setting.admins.update', ['id' => '__ID__'])).replace('__ID__', encodeURIComponent(button.dataset.id));
+                    form.action = '{{ route("admin.setting.admins.update", ["id" => "__ID__"]) }}'.replace('__ID__', encodeURIComponent(button.dataset.id));
                     document.getElementById('editAdminName').value = button.dataset.name;
                     document.getElementById('editAdminEmail').value = button.dataset.email;
                     document.getElementById('editAdminRole').value = button.dataset.role;
