@@ -93,6 +93,41 @@ class AdminAuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($admin, 'admin');
     }
 
+    public function test_admin_can_log_in_with_a_case_insensitive_name(): void
+    {
+        $admin = Admin::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.test',
+            'password' => Hash::make('password'),
+        ]);
+
+        $this->post(route('login.submit'), [
+            'login' => 'admin',
+            'password' => 'password',
+        ])->assertRedirect('/admin/dashboard');
+
+        $this->assertAuthenticatedAs($admin, 'admin');
+    }
+
+    public function test_admin_can_log_in_when_admin_table_has_no_name_column(): void
+    {
+        Schema::connection('sqlite')->table('admin', function ($table): void {
+            $table->dropColumn('name');
+        });
+
+        $admin = Admin::create([
+            'email' => 'admin@example.test',
+            'password' => Hash::make('password'),
+        ]);
+
+        $this->post(route('login.submit'), [
+            'login' => 'admin@example.test',
+            'password' => 'password',
+        ])->assertRedirect('/admin/dashboard');
+
+        $this->assertAuthenticatedAs($admin, 'admin');
+    }
+
     public function test_successful_login_hashes_a_legacy_plain_text_password(): void
     {
         $admin = Admin::create([

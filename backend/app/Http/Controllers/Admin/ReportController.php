@@ -23,6 +23,13 @@ class ReportController extends Controller
 
     public function index(Request $request)
     {
+        $vendorFilters = $request->validate([
+            'vendor_search' => ['nullable', 'string', 'max:100'],
+            'vendor_city' => ['nullable', 'string', 'max:255'],
+            'vendor_start_date' => ['nullable', 'date'],
+            'vendor_end_date' => ['nullable', 'date', 'after_or_equal:vendor_start_date'],
+        ]);
+
         $period = $request->query('period', 'last_90_days');
         if (!array_key_exists($period, self::PERIODS)) {
             $period = 'last_90_days';
@@ -152,6 +159,61 @@ class ReportController extends Controller
             ->orderByDesc('us.id')
             ->get();
 
+        $vendorCities = DB::table('vendor')
+            ->whereNotNull('city')
+            ->where('city', '<>', '')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        $vendorsQuery = DB::table('vendor as v')
+            ->leftJoin('vendor_customer_assignments as assignments', function ($join) use ($vendorFilters) {
+                $join->on('assignments.vendor_id', '=', 'v.id');
+
+                if (!empty($vendorFilters['vendor_start_date'])) {
+                    $join->where('assignments.assigned_at', '>=', $vendorFilters['vendor_start_date'] . ' 00:00:00');
+                }
+
+                if (!empty($vendorFilters['vendor_end_date'])) {
+                    $join->where('assignments.assigned_at', '<=', $vendorFilters['vendor_end_date'] . ' 23:59:59');
+                }
+            })
+            ->leftJoin('user_subscriptions as paid_subscriptions', function ($join) {
+                if (DB::getDriverName() === 'mysql') {
+                    $join->whereRaw(
+                        'CONVERT(paid_subscriptions.profile_id USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(assignments.profile_id USING utf8mb4) COLLATE utf8mb4_unicode_ci'
+                    );
+                } else {
+                    $join->on('paid_subscriptions.profile_id', '=', 'assignments.profile_id');
+                }
+
+                $join->whereIn(DB::raw('LOWER(paid_subscriptions.payment_status)'), self::PAID_STATUSES);
+            })
+            ->select([
+                'v.id',
+                'v.agent_name',
+                'v.city',
+                'v.status',
+                'v.commission',
+            ])
+            ->selectRaw('COUNT(DISTINCT assignments.id) as customers_count')
+            ->selectRaw('COUNT(DISTINCT paid_subscriptions.profile_id) as paid_memberships_count')
+            ->groupBy('v.id', 'v.agent_name', 'v.city', 'v.status', 'v.commission')
+            ->orderByDesc('v.id');
+
+        if (!empty($vendorFilters['vendor_city'])) {
+            $vendorsQuery->where('v.city', $vendorFilters['vendor_city']);
+        }
+
+        if (!empty($vendorFilters['vendor_search'])) {
+            $searchVendor = $vendorFilters['vendor_search'];
+            $vendorsQuery->where(function ($query) use ($searchVendor) {
+                $query->where('v.agent_name', 'like', "%{$searchVendor}%")
+                    ->orWhere('v.city', 'like', "%{$searchVendor}%")
+                    ->orWhere('v.id', 'like', "%{$searchVendor}%");
+            });
+        }
+
         return view('admin.report', [
             'period' => $period,
             'periods' => self::PERIODS,
@@ -165,6 +227,9 @@ class ReportController extends Controller
             'registrationValues' => $registrationValues,
             'profileDistribution' => $profileDistribution,
             'transactions' => $transactions,
+            'vendors' => $vendorsQuery->get(),
+            'vendorCities' => $vendorCities,
+            'vendorFilters' => $vendorFilters,
         ]);
     }
 

@@ -146,14 +146,15 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover">
+                    <table id="vendorDirectoryTable" class="table align-middle mb-0 table-hover js-data-table"
+                        data-page-length="10" data-empty-table="No vendors found.">
                         <thead style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase;">
                             <tr style="color: #561325;">
                                 <th class="ps-4 py-3">VENDOR ID</th>
                                 <th class="py-3">AGENT NAME</th>
                                 <th class="py-3">MOBILE NUMBER</th>
                                 <th class="py-3">CITY</th>
-                                <th class="py-3">CUSTOMERS</th>
+                                <th class="py-3">PROFILES</th>
                                 <th class="py-3">STATUS</th>
                                 <th class="py-3">COMMISSION</th>
                                 <th class="text-center pe-4 py-3">ACTIONS</th>
@@ -287,7 +288,6 @@
             </div>
         </div>
     </div>
-
     <!-- Edit Vendor Modals Loop -->
     @foreach($vendors as $vendor)
         <div class="modal fade" id="editVendorModal{{ $vendor->id }}" tabindex="-1" aria-hidden="true">

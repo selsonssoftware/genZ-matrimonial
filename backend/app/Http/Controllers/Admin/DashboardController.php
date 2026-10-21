@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
@@ -77,18 +78,22 @@ class DashboardController extends Controller
             ->whereRaw('LOWER(status) = ?', ['pending'])
             ->count();
 
+        $registrationColumns = [
+            'p.id',
+            'p.profile_id',
+            'p.gender',
+            'p.city',
+            'p.verification_status',
+            'p.created_at',
+        ];
+        if (Schema::hasColumn('users', 'member_id')) {
+            $registrationColumns[] = 'u.member_id';
+        }
+        $registrationColumns[] = 'u.name as member_name';
+
         $recentRegistrations = DB::table('profiles as p')
             ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
-            ->select([
-                'p.id',
-                'p.profile_id',
-                'p.gender',
-                'p.city',
-                'p.verification_status',
-                'p.created_at',
-                'u.member_id',
-                'u.name as member_name',
-            ])
+            ->select($registrationColumns)
             ->orderByDesc('p.created_at')
             ->orderByDesc('p.id')
             ->limit(10)

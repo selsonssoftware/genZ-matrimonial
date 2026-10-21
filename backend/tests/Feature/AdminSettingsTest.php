@@ -80,6 +80,13 @@ class AdminSettingsTest extends TestCase
             ->assertSee('Privacy & Retention')
             ->assertSee('name="settings[minimum_password_length]"', false);
 
+        $this->get(route('admin.settings.index'))
+            ->assertOk()
+            ->assertSee('Admin Users')
+            ->assertSee('Security & Login')
+            ->assertSee('Privacy & Retention')
+            ->assertSee('name="settings[minimum_password_length]"', false);
+
         $this->post(route('admin.setting.update'), [
             'settings' => [
                 'shop_name' => 'GenZ Matrimonial',

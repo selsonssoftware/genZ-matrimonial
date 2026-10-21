@@ -73,8 +73,7 @@ class MatchesInterestsController extends Controller
 
         $activities = $query
             ->orderByDesc('interests.created_at')
-            ->paginate(10)
-            ->appends($request->query());
+            ->get();
 
         return view('admin.matches-interests', compact(
             'activities',

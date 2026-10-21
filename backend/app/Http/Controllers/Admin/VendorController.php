@@ -81,6 +81,7 @@ class VendorController extends Controller
                 'string',
                 'max:20',
                 'regex:/^[0-9+\-\s()]{7,20}$/',
+                'unique:vendor,vendor_mobile',
             ],
             'city' => ['required', 'string', 'max:255'],
             'status' => [
@@ -95,14 +96,20 @@ class VendorController extends Controller
                 'unique:vendor_logins,email'
             ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'vendor_mobile.required' => 'Mobile number is required.',
+            'vendor_mobile.regex' => 'Please enter a valid 10-digit mobile number (e.g., 9876543210 or +91 9876543210).',
+            'vendor_mobile.unique' => 'This mobile number is already registered with another vendor.',
         ]);
 
-        DB::transaction(function () use ($validated) {
+        $cleanMobile = preg_replace('/[\s\-]/', '', $validated['vendor_mobile']);
+
+        DB::transaction(function () use ($validated, $cleanMobile) {
             $vendorId = DB::table('vendor')->insertGetId([
                 'profile_id' => '',
                 'vector_id' => 0,
                 'agent_name' => $validated['agent_name'],
-                'vendor_mobile' => $validated['vendor_mobile'],
+                'vendor_mobile' => $cleanMobile,
                 'city' => $validated['city'],
                 'status' => $validated['status'],
                 'commission' => $validated['commission'],
@@ -134,7 +141,13 @@ class VendorController extends Controller
 
         $validated = $request->validate([
             'agent_name' => ['required', 'string', 'max:255'],
-            'vendor_mobile' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]{7,20}$/'],
+            'vendor_mobile' => [
+                'required',
+                'string',
+                'max:20',
+                'regex:/^[0-9+\-\s()]{7,20}$/',
+                Rule::unique('vendor', 'vendor_mobile')->ignore($id),
+            ],
             'city' => ['required', 'string', 'max:255'],
             'status' => ['required', Rule::in(['Active', 'Pending', 'Suspended'])],
             'commission' => ['required', 'numeric', 'min:0'],

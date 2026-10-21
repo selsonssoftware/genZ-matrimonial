@@ -52,38 +52,47 @@
         background-size: cover;
     }
 
-    .dt-buttons .dt-button.btn-data-table-excel {
+    /* DataTables Export Buttons (Excel & CSV) - Maroon Theme */
+    .dt-buttons .btn-data-table-excel,
+    .dt-buttons .btn-data-table-csv,
+    .dt-buttons .buttons-excel,
+    .dt-buttons .buttons-csv,
+    .dt-buttons .dt-button.btn-data-table-excel,
+    .dt-buttons .dt-button.btn-data-table-csv,
+    button.btn-data-table-excel,
+    button.btn-data-table-csv,
+    .btn-data-table-excel,
+    .btn-data-table-csv {
         background-color: #561325 !important;
         border-color: #561325 !important;
-        color: #fff !important;
+        color: #ffffff !important;
+        font-weight: 500 !important;
+        border-radius: 6px !important;
+        box-shadow: 0 1px 3px rgba(86, 19, 37, 0.2) !important;
     }
 
-    .dt-buttons .dt-button.btn-data-table-excel:hover,
-    .dt-buttons .dt-button.btn-data-table-excel:focus {
+    .dt-buttons .btn-data-table-excel:hover,
+    .dt-buttons .btn-data-table-excel:focus,
+    .dt-buttons .btn-data-table-excel:active,
+    .dt-buttons .btn-data-table-csv:hover,
+    .dt-buttons .btn-data-table-csv:focus,
+    .dt-buttons .btn-data-table-csv:active,
+    .dt-buttons .buttons-excel:hover,
+    .dt-buttons .buttons-csv:hover,
+    button.btn-data-table-excel:hover,
+    button.btn-data-table-csv:hover,
+    .btn-data-table-excel:hover,
+    .btn-data-table-csv:hover {
         background-color: #42101d !important;
         border-color: #42101d !important;
-        color: #fff !important;
+        color: #ffffff !important;
     }
 
-    .dt-buttons .dt-button.btn-data-table-excel:focus-visible {
-        box-shadow: 0 0 0 0.2rem rgba(86, 19, 37, 0.25);
-    }
-
-    .dt-buttons .dt-button.btn-data-table-csv {
-        background-color: #fcecee !important;
-        border-color: #e8c5cd !important;
-        color: #561325 !important;
-    }
-
-    .dt-buttons .dt-button.btn-data-table-csv:hover,
-    .dt-buttons .dt-button.btn-data-table-csv:focus {
-        background-color: #f5dde3 !important;
-        border-color: #ddafba !important;
-        color: #42101d !important;
-    }
-
-    .dt-buttons .dt-button.btn-data-table-csv:focus-visible {
-        box-shadow: 0 0 0 0.2rem rgba(86, 19, 37, 0.2);
+    .dt-buttons .btn-data-table-excel:focus-visible,
+    .dt-buttons .btn-data-table-csv:focus-visible,
+    .btn-data-table-excel:focus-visible,
+    .btn-data-table-csv:focus-visible {
+        box-shadow: 0 0 0 0.2rem rgba(86, 19, 37, 0.3) !important;
     }
 </style>
 
@@ -132,365 +141,6 @@
                         <i class="ti ti-search app-search-icon text-muted"></i>
                     </div>
 
-                    <div id="megamenu-columns" class="topbar-item d-none d-md-flex">
-                        <div class="dropdown">
-                            <button class="topbar-link btn fw-medium btn-link dropdown-toggle drop-arrow-none px-2"
-                                data-bs-toggle="dropdown" type="button" aria-haspopup="false" aria-expanded="false">
-                                Mega Menu
-                                <i class="ti ti-chevron-down ms-1"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-xxl p-0">
-                                <div class="h-100" style="max-height: 380px" data-simplebar="">
-                                    <div class="row g-0">
-                                        <!-- Dashboard & Analytics -->
-                                        <div class="col-md-4">
-                                            <div class="p-2">
-                                                <h5 class="mb-1 fw-semibold fs-sm dropdown-header">Dashboard &amp;
-                                                    Analytics</h5>
-                                                <ul class="list-unstyled megamenu-list">
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            Sales Dashboard
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            Marketing Dashboard
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            Finance Overview
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            User Analytics
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            Traffic Insights
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <!-- Project Management -->
-                                        <div class="col-md-4">
-                                            <div class="p-2">
-                                                <h5 class="mb-1 fw-semibold fs-sm dropdown-header">Project Management
-                                                </h5>
-                                                <ul class="list-unstyled megamenu-list">
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i class="ti ti-minus align-middle me-1 text-muted"></i>
-                                                            Kanban Workflow
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i class="ti ti-minus align-middle me-1 text-muted"></i>
-                                                            Project Timeline
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i class="ti ti-minus align-middle me-1 text-muted"></i>
-                                                            Task Management
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i class="ti ti-minus align-middle me-1 text-muted"></i>
-                                                            Team Members
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i class="ti ti-minus align-middle me-1 text-muted"></i>
-                                                            Assignments
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <!-- User Management -->
-                                        <div class="col-md-4">
-                                            <div class="p-2 bg-light bg-opacity-50">
-                                                <h5 class="mb-1 fw-semibold fs-sm dropdown-header">User Management</h5>
-                                                <ul class="list-unstyled megamenu-list">
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            User Profiles
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            Access Control
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            Security Settings
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            User Groups
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item">
-                                                            <i
-                                                                class="ti ti-chevron-right align-middle me-1 text-muted"></i>
-                                                            Authentication
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end .h-100-->
-                            </div>
-                            <!-- .dropdown-menu-->
-                        </div>
-                        <!-- .dropdown-->
-                    </div>
-
-                    <div id="megamenu-apps" class="topbar-item d-none d-md-flex">
-                        <div class="dropdown">
-                            <button class="topbar-link btn fw-medium btn-link dropdown-toggle drop-arrow-none px-2"
-                                data-bs-toggle="dropdown" type="button" aria-haspopup="false" aria-expanded="false">
-                                Apps
-                                <i class="ti ti-chevron-down ms-1"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-xxl p-0">
-                                <div class="h-100" style="max-height: 380px" data-simplebar="">
-                                    <div class="row g-0">
-                                        <div class="col-sm-8">
-                                            <div class="row g-0">
-                                                <div class="col-sm-6">
-                                                    <div class="p-2">
-                                                        <a href="#!" class="dropdown-item">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-primary border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-basket fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">User Management
-                                                                    </h5>
-                                                                    <span class="text-muted fs-12">Products, orders
-                                                                        &amp; etc.</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-
-                                                        <a href="#!" class="dropdown-item my-2">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-success border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-message fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">Chat</h5>
-                                                                    <span class="text-muted fs-12">Team
-                                                                        conversations</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-
-                                                        <a href="#!" class="dropdown-item my-2">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-danger border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-list-check fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">Task</h5>
-                                                                    <span class="text-muted fs-12">Plan and track
-                                                                        work</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-
-                                                        <a href="#!" class="dropdown-item mt-2">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-info border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-mailbox fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">Email</h5>
-                                                                    <span class="text-muted fs-12">Messages and
-                                                                        inbox</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-sm-6">
-                                                    <div class="p-2">
-                                                        <a href="#!" class="dropdown-item">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-secondary border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-building fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">Companies</h5>
-                                                                    <span class="text-muted fs-12">Business
-                                                                        profiles</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-
-                                                        <a href="#!" class="dropdown-item my-2">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-dark border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-id fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">Contacts Diary</h5>
-                                                                    <span class="text-muted fs-12">People and
-                                                                        connections</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-
-                                                        <a href="#!" class="dropdown-item my-2">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-warning border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-calendar fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">Calendar</h5>
-                                                                    <span class="text-muted fs-12">Events and
-                                                                        reminders</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-
-                                                        <a href="#!" class="dropdown-item mt-2">
-                                                            <span class="d-flex align-items-center">
-                                                                <span class="avatar-md me-2">
-                                                                    <span
-                                                                        class="avatar-title text-success border border-light bg-light bg-opacity-50 rounded">
-                                                                        <i class="ti ti-lifebuoy fs-22"></i>
-                                                                    </span>
-                                                                </span>
-                                                                <span>
-                                                                    <h5 class="fs-base mb-0 lh-base">Support</h5>
-                                                                    <span class="text-muted fs-12">Help and
-                                                                        assistance</span>
-                                                                </span>
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- end row-->
-
-                                            <div class="row g-0 border-top border-light border-dashed text-center">
-                                                <div class="col">
-                                                    <div class="p-3">
-                                                        <p class="fw-medium text-muted mb-2 fs-11 text-uppercase lh-1">
-                                                            -: &nbsp; Support &nbsp;:-</p>
-                                                        <h5 class="fs-15 mb-0">help@mydomain.com</h5>
-                                                    </div>
-                                                </div>
-                                                <!-- end col-->
-                                                <div class="col">
-                                                    <div class="p-3">
-                                                        <p class="fw-medium text-muted mb-2 fs-11 text-uppercase lh-1">
-                                                            -: &nbsp; Help: &nbsp;:-</p>
-                                                        <h5 class="fs-15 mb-0">+(12) 3456 7890</h5>
-                                                    </div>
-                                                </div>
-                                                <!-- end col-->
-                                            </div>
-                                            <!-- end row-->
-                                        </div>
-                                        <!-- end col-->
-
-                                        <div class="col-sm-4">
-                                            <div
-                                                class="stock-image h-100 position-relative rounded-end rounded-0 overflow-hidden">
-                                                <div
-                                                    class="p-3 card-img-overlay bg-gradient bg-secondary bg-opacity-90 d-flex align-items-center justify-content-center">
-                                                    <div class="text-center text-white">
-                                                        <i class="ti ti-atom fs-36"></i>
-
-                                                        <p class="text-white text-opacity-75 mb-3 text-uppercase">
-                                                            Limited Offer</p>
-
-                                                        <h3 class="fw-semibold text-white mb-2 fs-20">Unlock Exclusive
-                                                            Savings</h3>
-
-                                                        <h4 class="fw-medium fs-16 mb-1">
-                                                            <del class="text-white text-opacity-75">$49.00</del>
-                                                            /
-                                                            <span class="fw-bold text-white">$25 USD</span>
-                                                        </h4>
-
-                                                        <button type="button" class="btn btn-danger btn-sm mt-3">
-                                                            <i class="ti ti-shopping-cart me-1"></i>
-                                                            Grab Deal
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- end .bg-light-->
-                                        </div>
-                                        <!-- end col-->
-                                    </div>
-                                    <!-- end row-->
-                                </div>
-                                <!-- end .h-100-->
-                            </div>
-                            <!-- .dropdown-menu-->
-                        </div>
-                        <!-- .dropdown-->
-                    </div>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
@@ -523,132 +173,6 @@
                                 </label>
                             </div>
                             <!-- end dropdown-menu-->
-                        </div>
-                        <!-- end dropdown-->
-                    </div>
-
-                    <div id="apps-dropdown-grid" class="topbar-item d-none d-xl-flex">
-                        <div class="dropdown">
-                            <button class="topbar-link dropdown-toggle drop-arrow-none" data-bs-toggle="dropdown"
-                                type="button" data-bs-auto-close="outside" aria-haspopup="false" aria-expanded="false">
-                                <i class="ti ti-apps topbar-link-icon"></i>
-                            </button>
-
-                            <div class="dropdown-menu dropdown-menu-lg p-2 dropdown-menu-end">
-                                <div class="row align-items-center g-1">
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span class="avatar-title text-bg-light rounded-circle">
-                                                    <img src="{{ asset('dashboardassets/images/logos/google.svg') }}"
-                                                        alt="Google Logo" height="18" />
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Google</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span class="avatar-title text-bg-light rounded-circle">
-                                                    <img src="{{ asset('dashboardassets/images/logos/figma.svg') }}"
-                                                        alt="Figma Logo" height="18" />
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Figma</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span class="avatar-title text-bg-light rounded-circle">
-                                                    <img src="{{ asset('dashboardassets/images/logos/slack.svg') }}"
-                                                        alt="Slack Logo" height="18" />
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Slack</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span class="avatar-title text-bg-light rounded-circle">
-                                                    <img src="{{ asset('dashboardassets/images/logos/dropbox.svg') }}"
-                                                        alt="Dropbox Logo" height="18" />
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Dropbox</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4 text-center">
-                                        <a href="javascript:void(0);"
-                                            class="btn btn-sm rounded-circle btn-icon btn-danger">
-                                            <i class="ti ti-circle-dashed-plus fs-18"></i>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span
-                                                    class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                                    <i class="ti ti-calendar fs-18"></i>
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Calendar</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span
-                                                    class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                                    <i class="ti ti-message-circle fs-18"></i>
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Chat</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span
-                                                    class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                                    <i class="ti ti-folder fs-18"></i>
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Files</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <a href="javascript:void(0);"
-                                            class="dropdown-item border border-dashed rounded text-center py-2">
-                                            <span class="avatar-sm d-block mx-auto mb-1">
-                                                <span
-                                                    class="avatar-title bg-primary-subtle text-primary rounded-circle">
-                                                    <i class="ti ti-users fs-18"></i>
-                                                </span>
-                                            </span>
-                                            <span class="align-middle fw-medium">Team</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- End dropdown-menu -->
                         </div>
                         <!-- end dropdown-->
                     </div>

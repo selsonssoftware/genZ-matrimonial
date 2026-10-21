@@ -47,9 +47,12 @@ class AdminAuthController extends Controller
             ])->onlyInput('login');
         }
 
-        $admin = Admin::whereRaw('LOWER(mailid) = ?', [mb_strtolower($loginInput)])
-            ->orWhere('name', $loginInput)
-            ->first();
+        $normalizedLoginInput = mb_strtolower($loginInput);
+        $adminQuery = Admin::whereRaw('LOWER(mailid) = ?', [$normalizedLoginInput]);
+        if (Schema::hasColumn((new Admin)->getTable(), 'name')) {
+            $adminQuery->orWhereRaw('LOWER(name) = ?', [$normalizedLoginInput]);
+        }
+        $admin = $adminQuery->first();
 
         $submittedPassword = $request->input('password');
         $storedPassword = $admin ? (string) $admin->getAuthPassword() : '';
