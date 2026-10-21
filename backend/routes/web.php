@@ -16,6 +16,24 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\DashboardController;
 
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/matches-interests', [MatchesInterestsController::class, 'index'])->name('matches-interests');
+    Route::put('/matches-interests/{id}', [MatchesInterestsController::class, 'update'])->name('matches-interests.update');
+    Route::delete('/matches-interests/{id}', [MatchesInterestsController::class, 'destroy'])->name('matches-interests.destroy');
+});
+
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/vendors', [VendorController::class, 'index'])->name('vendors.index');
+    Route::post('/vendors', [VendorController::class, 'store'])->name('vendors.store');
+    Route::get('/vendors/{id}', [VendorController::class, 'show'])->name('vendors.show');
+    Route::put('/vendors/{id}', [VendorController::class, 'update'])->name('vendors.update');
+    Route::delete('/vendors/{id}', [VendorController::class, 'destroy'])->name('vendors.destroy');
+    Route::post('/vendors/{id}/assign', [VendorController::class, 'assignProfile'])->name('vendors.assign-profile');
+    Route::get('/vendor-assignments', [VendorController::class, 'assignments'])->name('vendors.assignments');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Guest / Auth Routes
@@ -67,11 +85,6 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
         Route::post('/profile/{id}/review', [ProfileVerificationController::class, 'review'])
             ->whereNumber('id')
             ->name('admin.profile-verification.review');
-
-        // Vendor Management
-        Route::get('/vendors', [VendorController::class, 'index'])->name('admin.vendors.index');
-        Route::post('/vendors', [VendorController::class, 'store'])->name('admin.vendors.store');
-        Route::post('/vendors/{vendor}/assign-profile', [VendorController::class, 'assignProfile'])->name('admin.vendors.assign-profile');
 
         Route::get('/matches-interests', [MatchesInterestsController::class, 'index'])
             ->name('admin.matches-interests');

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -9,7 +10,7 @@ use Illuminate\Validation\Rule;
 
 class VendorController extends Controller
 {
-    // Vendor list + search + status filter + KPI cards
+    // Vendor list + search + status filter + KPI cards + Pagination
     public function index(Request $request)
     {
         $search = trim($request->query('search', ''));
@@ -38,51 +39,36 @@ class VendorController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('v.agent_name', 'like', "%{$search}%")
-                  ->orWhere('v.city', 'like', "%{$search}%")
-                  ->orWhere('v.vendor_mobile', 'like', "%{$search}%")
-                  ->orWhere('vl.email', 'like', "%{$search}%")
-                  ->orWhere('v.id', 'like', "%{$search}%");
+                    ->orWhere('v.city', 'like', "%{$search}%")
+                    ->orWhere('v.vendor_mobile', 'like', "%{$search}%")
+                    ->orWhere('vl.email', 'like', "%{$search}%")
+                    ->orWhere('v.id', 'like', "%{$search}%");
             });
         }
 
-        
-if (in_array($status, ['Active', 'Pending', 'Suspended'], true)) {
-    $query->where('v.status', $status);
-}
+        if (in_array($status, ['Active', 'Pending', 'Suspended'], true)) {
+            $query->where('v.status', $status);
+        }
 
+        $vendors = $query->orderByDesc('v.id')->paginate(10)->appends($request->query());
 
-        $vendors = $query->orderByDesc('v.id')->get();
-
-        // KPIs use all database records, not just filtered records
+        // KPIs use all database records
         $totalVendors = DB::table('vendor')->count();
-
-        $activeVendors = DB::table('vendor')
-            ->where('status', 'Active')
-            ->count();
-
-            
-$pendingVendors = DB::table('vendor')
-    ->where('status', 'Pending')
-    ->count();
-
-$suspendedVendors = DB::table('vendor')
-    ->where('status', 'Suspended')
-    ->count();
-
+        $activeVendors = DB::table('vendor')->where('status', 'Active')->count();
+        $pendingVendors = DB::table('vendor')->where('status', 'Pending')->count();
+        $suspendedVendors = DB::table('vendor')->where('status', 'Suspended')->count();
         $totalCommission = DB::table('vendor')->sum('commission');
 
-        
-return view('admin.vendors', compact(
-    'vendors',
-    'search',
-    'status',
-    'totalVendors',
-    'activeVendors',
-    'pendingVendors',
-    'suspendedVendors',
-    'totalCommission'
-));
-
+        return view('admin.vendors', compact(
+            'vendors',
+            'search',
+            'status',
+            'totalVendors',
+            'activeVendors',
+            'pendingVendors',
+            'suspendedVendors',
+            'totalCommission'
+        ));
     }
 
     // Create vendor + separate login in one transaction
@@ -91,21 +77,21 @@ return view('admin.vendors', compact(
         $validated = $request->validate([
             'agent_name' => ['required', 'string', 'max:255'],
             'vendor_mobile' => [
-    'required',
-    'string',
-    'max:20',
-    'regex:/^[0-9+\-\s()]{7,20}$/',
-],
+                'required',
+                'string',
+                'max:20',
+                'regex:/^[0-9+\-\s()]{7,20}$/',
+            ],
             'city' => ['required', 'string', 'max:255'],
-            
-'status' => [
-    'required',
-    Rule::in(['Active', 'Pending', 'Suspended'])
-],
-
-            'commission' => ['required', 'integer', 'min:0'],
+            'status' => [
+                'required',
+                Rule::in(['Active', 'Pending', 'Suspended'])
+            ],
+            'commission' => ['required', 'numeric', 'min:0'],
             'email' => [
-                'required', 'email', 'max:191',
+                'required',
+                'email',
+                'max:191',
                 'unique:vendor_logins,email'
             ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -113,12 +99,7 @@ return view('admin.vendors', compact(
 
         DB::transaction(function () use ($validated) {
             $vendorId = DB::table('vendor')->insertGetId([
-                // Client profiles are stored in vendor_customer_assignments.
-                // Keep the old NOT NULL column empty until legacy use is confirmed.
                 'profile_id' => '',
-
-                // Temporary compatibility values for required legacy columns.
-                // Confirm vector_id/action meaning before production use.
                 'vector_id' => 0,
                 'agent_name' => $validated['agent_name'],
                 'vendor_mobile' => $validated['vendor_mobile'],
@@ -143,12 +124,82 @@ return view('admin.vendors', compact(
             ->with('success', 'Vendor created successfully.');
     }
 
+    // Update Vendor Details
+    public function update(Request $request, $id)
+    {
+        $vendor = DB::table('vendor')->where('id', $id)->first();
+        if (!$vendor) {
+            return redirect()->route('admin.vendors.index')->withErrors(['vendor' => 'Vendor not found.']);
+        }
+
+        $validated = $request->validate([
+            'agent_name' => ['required', 'string', 'max:255'],
+            'vendor_mobile' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]{7,20}$/'],
+            'city' => ['required', 'string', 'max:255'],
+            'status' => ['required', Rule::in(['Active', 'Pending', 'Suspended'])],
+            'commission' => ['required', 'numeric', 'min:0'],
+            'email' => [
+                'required',
+                'email',
+                'max:191',
+                Rule::unique('vendor_logins', 'email')->ignore($id, 'vendor_id')
+            ],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        DB::transaction(function () use ($validated, $id) {
+            DB::table('vendor')->where('id', $id)->update([
+                'agent_name' => $validated['agent_name'],
+                'vendor_mobile' => $validated['vendor_mobile'],
+                'city' => $validated['city'],
+                'status' => $validated['status'],
+                'commission' => $validated['commission'],
+            ]);
+
+            $loginData = [
+                'email' => $validated['email'],
+                'is_active' => $validated['status'] === 'Active' ? 1 : 0,
+                'updated_at' => now(),
+            ];
+
+            if (!empty($validated['password'])) {
+                $loginData['password'] = Hash::make($validated['password']);
+            }
+
+            DB::table('vendor_logins')->updateOrInsert(
+                ['vendor_id' => $id],
+                $loginData
+            );
+        });
+
+        return redirect()
+            ->route('admin.vendors.index')
+            ->with('success', 'Vendor updated successfully.');
+    }
+
+    // Delete Vendor
+    public function destroy($id)
+    {
+        $vendor = DB::table('vendor')->where('id', $id)->first();
+        if (!$vendor) {
+            return redirect()->route('admin.vendors.index')->withErrors(['vendor' => 'Vendor not found.']);
+        }
+
+        DB::transaction(function () use ($id) {
+            DB::table('vendor_logins')->where('vendor_id', $id)->delete();
+            DB::table('vendor_customer_assignments')->where('vendor_id', $id)->delete();
+            DB::table('vendor')->where('id', $id)->delete();
+        });
+
+        return redirect()
+            ->route('admin.vendors.index')
+            ->with('success', 'Vendor deleted successfully.');
+    }
+
     // Assign one existing member profile to a vendor
     public function assignProfile(Request $request, $vendorId)
     {
-        $vendorExists = DB::table('vendor')
-            ->where('id', $vendorId)
-            ->exists();
+        $vendorExists = DB::table('vendor')->where('id', $vendorId)->exists();
 
         if (!$vendorExists) {
             return redirect()
@@ -157,7 +208,6 @@ return view('admin.vendors', compact(
         }
 
         $validated = $request->validate([
-            // Assumes member profiles are stored in profiles.profile_id.
             'profile_id' => [
                 'required',
                 'string',
@@ -180,38 +230,34 @@ return view('admin.vendors', compact(
             ->with('success', 'Client profile assigned successfully.');
     }
 
+    // Admin: View all vendor-profile assignments
+    public function assignments()
+    {
+        $assignments = DB::table('vendor_customer_assignments as a')
+            ->join('vendor as v', 'v.id', '=', 'a.vendor_id')
+            ->leftJoin('profiles as p', function ($join) {
+                if (DB::connection()->getDriverName() === 'mysql') {
+                    $join->whereRaw(
+                        'p.profile_id COLLATE utf8mb4_general_ci = a.profile_id COLLATE utf8mb4_general_ci'
+                    );
+                } else {
+                    $join->on('p.profile_id', '=', 'a.profile_id');
+                }
+            })
+            ->select(
+                'a.id',
+                'a.vendor_id',
+                'a.profile_id',
+                'a.assigned_at',
+                'v.agent_name',
+                'v.city as vendor_city',
+                'p.gender',
+                'p.age',
+                'p.city as profile_city'
+            )
+            ->orderByDesc('a.assigned_at')
+            ->paginate(15);
 
-
-    
-// Admin: View all vendor-profile assignments
-public function assignments()
-{
-    $assignments = DB::table('vendor_customer_assignments as a')
-        ->join('vendor as v', 'v.id', '=', 'a.vendor_id')
-        ->leftJoin('profiles as p', function ($join) {
-            if (DB::connection()->getDriverName() === 'mysql') {
-                $join->whereRaw(
-                    'p.profile_id COLLATE utf8mb4_general_ci = a.profile_id COLLATE utf8mb4_general_ci'
-                );
-            } else {
-                $join->on('p.profile_id', '=', 'a.profile_id');
-            }
-        })
-        ->select(
-            'a.id',
-            'a.vendor_id',
-            'a.profile_id',
-            'a.assigned_at',
-            'v.agent_name',
-            'v.city as vendor_city',
-            'p.gender',
-            'p.age',
-            'p.city as profile_city'
-        )
-        ->orderByDesc('a.assigned_at')
-        ->paginate(15);
-
-    return view('admin.vendor-assignments', compact('assignments'));
-}
-
+        return view('admin.vendor-assignments', compact('assignments'));
+    }
 }
