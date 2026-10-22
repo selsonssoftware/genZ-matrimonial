@@ -481,8 +481,16 @@
                                                 <td><span class="status-pill status-{{ $profile->verification_status }}">{{ $statusLabel }}</span></td>
                                                 <td>{{ $profile->vendor_name ?: 'Direct' }}</td>
                                                 <td class="text-end pe-3">
-                                                    <a class="text-maroon fw-semibold text-decoration-none"
-                                                       href="{{ route('admin.profile-verification.index', ['status' => $profile->verification_status, 'id' => $profile->id]) }}">View</a>
+                                                   <a class="text-maroon fw-semibold text-decoration-none"
+   href="{{ route('admin.profile-verification.index', [
+       'type' => in_array(strtolower(trim($profile->gender ?? '')), ['bride', 'female'], true)
+           ? 'bride'
+           : 'groom',
+       'status' => 'all',
+       'id' => $profile->id
+   ]) }}">
+    View
+</a>
                                                 </td>
                                             </tr>
                                         @empty

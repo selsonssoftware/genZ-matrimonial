@@ -116,29 +116,30 @@ class ProfileVerificationController extends Controller
         $photos = collect();
 
         if ($request->filled('id')) {
-            $selectedProfile = $baseQuery()
-                ->select(
-                    'p.*',
-                    'u.name as user_name',
-                    'u.email as user_email',
-                    'u.phone as user_phone'
-                )
-                ->where('p.id', $request->query('id'))
-                ->first();
-        }
+    $selectedProfile = $baseQuery()
+        ->select(
+            'p.*',
+            'u.name as user_name',
+            'u.email as user_email',
+            'u.phone as user_phone'
+        )
+        ->where('p.id', (int) $request->query('id'))
+        ->first();
+}
 
-        if (!$selectedProfile && $profiles->isNotEmpty()) {
-            $firstItem = $profiles->items()[0];
-            $selectedProfile = $baseQuery()
-                ->select(
-                    'p.*',
-                    'u.name as user_name',
-                    'u.email as user_email',
-                    'u.phone as user_phone'
-                )
-                ->where('p.id', $firstItem->id)
-                ->first();
-        }
+       if (!$request->filled('id') && $profiles->isNotEmpty()) {
+    $firstItem = $profiles->items()[0];
+
+    $selectedProfile = $baseQuery()
+        ->select(
+            'p.*',
+            'u.name as user_name',
+            'u.email as user_email',
+            'u.phone as user_phone'
+        )
+        ->where('p.id', $firstItem->id)
+        ->first();
+}
 
         // Fetching full details for the selected profile safely (Fixed collation error here)
         if ($selectedProfile) {
