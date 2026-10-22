@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\MatrimonyMasterController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Services\NotificationService;
+use App\Http\Controllers\Admin\MailTestController;
+
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -148,3 +151,21 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
             ->name('cms.banner.update');
     });
 });
+
+Route::get('/test-email', function (NotificationService $notification) {
+    $sent = $notification->sendEmail(
+        'your-test-email@gmail.com',
+        'Laravel Email Test',
+        'Success! Laravel Gmail SMTP is working.'
+    );
+
+    return $sent
+        ? 'Email sent successfully. Check your inbox.'
+        : 'Email failed. Check storage/logs/laravel.log';
+});
+
+Route::get('/test-email', [MailTestController::class, 'index'])
+    ->name('mail-test.index');
+
+Route::post('/test-email', [MailTestController::class, 'send'])
+    ->name('mail-test.send');
