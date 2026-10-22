@@ -776,7 +776,9 @@
             </div>
 
             <div class="chart-container">
-                <canvas id="registrationChart"></canvas>
+                <canvas id="registrationChart"
+                    data-labels="{{ json_encode($registrationLabels, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"
+                    data-values="{{ json_encode($registrationValues, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"></canvas>
             </div>
         </article>
 
@@ -789,7 +791,9 @@
             </div>
 
             <div class="chart-container">
-                <canvas id="memberChart"></canvas>
+                <canvas id="memberChart"
+                    data-labels="{{ json_encode($profileDistribution->keys()->values(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"
+                    data-values="{{ json_encode($profileDistribution->pluck('count')->values(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"></canvas>
             </div>
         </article>
 
@@ -914,15 +918,15 @@
 function createRegistrationChart() {
     const ctx = document.getElementById("registrationChart");
 
-    registrationChart = new Chart(ctx, {
+    registrationChart = new window.Chart(ctx, {
         type: "bar",
 
         data: {
-            labels: @json($registrationLabels),
+            labels: JSON.parse(ctx.dataset.labels),
 
             datasets: [{
                 label: "Registrations",
-                data: @json($registrationValues),
+                data: JSON.parse(ctx.dataset.values),
                 backgroundColor: "#e8c5cd",
                 hoverBackgroundColor: "#561325",
                 borderRadius: 5,
@@ -985,14 +989,14 @@ function createRegistrationChart() {
 function createMemberChart() {
     const ctx = document.getElementById("memberChart");
 
-    memberChart = new Chart(ctx, {
+    memberChart = new window.Chart(ctx, {
         type: "doughnut",
 
         data: {
-            labels: @json($profileDistribution->keys()->values()),
+            labels: JSON.parse(ctx.dataset.labels),
 
             datasets: [{
-                data: @json($profileDistribution->pluck('count')->values()),
+                data: JSON.parse(ctx.dataset.values),
                 backgroundColor: [
                     "#561325",
                     "#d88fa1",
@@ -1002,6 +1006,7 @@ function createMemberChart() {
                 borderColor: "#ffffff",
                 hoverOffset: 6
             }]
+
         },
 
         options: {
