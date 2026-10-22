@@ -36,6 +36,7 @@ class MatchesInterestsController extends Controller
             ->leftJoin('profiles as receiver_profile', 'receiver.id', '=', 'receiver_profile.user_id')
             ->select(
                 'interests.id',
+                'interests.user_id',
                 'interests.profile_id',
                 'interests.sender_id',
                 'interests.receiver_id',

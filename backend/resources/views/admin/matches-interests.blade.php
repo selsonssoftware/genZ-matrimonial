@@ -208,7 +208,7 @@
                                                     {{ $item->sender_name ?? 'Unknown Member' }}
                                                 </div>
                                                 <div class="small text-muted mt-1">
-                                                    ID: {{ $item->sender_id ?? '-' }}
+                                                    ID: {{ $item->user_id ?? '-' }}
                                                 </div>
                                                 <div class="small text-muted mt-1">
                                                     Phone: {{ $item->sender_phone ?? '-' }}
@@ -237,7 +237,7 @@
                                                     {{ $item->receiver_name ?? 'Unknown Member' }}
                                                 </div>
                                                 <div class="small text-muted mt-1">
-                                                    ID: {{ $item->receiver_id ?? '-' }}
+                                                    ID: {{ $item->user_id ?? '-' }}
                                                 </div>
                                                 <div class="small text-muted mt-1">
                                                     Phone: {{ $item->receiver_phone ?? '-' }}
