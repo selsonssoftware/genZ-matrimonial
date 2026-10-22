@@ -249,7 +249,7 @@
                                 Complete Profile</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                 onclick="closeProfileModal()"></button>
-=======
+
             <!-- Assign Profile Modal -->
 <div class="modal fade" id="assignProfileModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -353,7 +353,7 @@
                                 </h6>
                                 <span class="text-muted fs-11">Primary Photo</span>
                             </div>
->>>>>>> 134cb8036f1618545045805ac0a9485b16cbf9d0
+
                         </div>
                         <div class="modal-body px-4 py-3">
                             @if(isset($modalProfile))
@@ -571,19 +571,4 @@
             }
         </script>
     @endif
-
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const assignModal = document.getElementById('assignProfileModal');
-
-    if (!assignModal) return;
-
-    assignModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const profileId = button?.getAttribute('data-profile-id');
-
-        document.getElementById('assign_profile_ids').value = profileId || '';
-    });
-});
-</script>
 @endsection
