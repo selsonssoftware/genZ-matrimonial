@@ -45,7 +45,7 @@
                                     <i class="ti ti-search fs-14"></i>
                                 </span>
                                 <input type="text" id="userSearchInput" class="form-control border-start-0 ps-1 fs-13"
-                                    placeholder="Search name, email, ID or city">
+                                    placeholder="Search name, email, ID, mobile or city">
                             </div>
                         </div>
 
@@ -103,7 +103,6 @@
 
             <!-- Metric / Stats Cards -->
             <div class="row g-3 mb-4">
-
                 <div class="col-xl-3 col-sm-6 col-12">
                     <div class="card border-0 shadow-sm rounded-4 h-100 bg-white"
                         style="border: 1px solid #F3E5E8 !important;">
@@ -159,81 +158,91 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- Members Table Section Card -->
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4"
                 style="border: 1px solid #F3E5E8 !important;">
-
                 <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
                     <h5 class="fw-bold mb-1" style="color: #561325;">All Members</h5>
                     <p class="text-muted fs-12 mb-0">Manage member profiles, membership and account status.</p>
                 </div>
 
                 <div class="table-responsive">
-                    <table id="usersTable" class="table align-middle mb-0 table-hover js-data-table" data-empty-table="No members found in database.">
+                    <table id="usersTable" class="table align-middle mb-0 table-hover">
                         <thead
                             style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <tr style="color: #561325;">
-                                <th class="ps-4 py-3">USER ID</th>
+                                <th class="ps-4 py-3">S.NO</th>
+                                <th class="py-3">PHOTO</th>
+                                <th class="py-3">USER ID</th>
                                 <th class="py-3">MEMBER</th>
-                                <th class="py-3">GENDER · AGE</th>
+                                <th class="py-3">MOBILE NUMBER</th>
                                 <th class="py-3">CITY</th>
                                 <th class="py-3">STATUS</th>
                                 <th class="py-3">PLAN</th>
-                                <th class="text-center pe-4 py-3">ACTION</th>
+                                <th class="text-center pe-4 py-3">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody" class="fs-13">
                             @if ($usersData->isEmpty())
                                 <tr>
-                                    <td colspan="7" class="py-4 text-center text-muted">
+                                    <td colspan="9" class="py-4 text-center text-muted">
                                         No members found in database.
                                     </td>
                                 </tr>
                             @else
-                                @foreach ($usersData as $member)
+                                @foreach ($usersData as $index => $member)
                                     <tr>
-                                        <td class="ps-4 fw-semibold text-dark">{{ $member['id'] }}</td>
+                                        <td class="ps-4 text-muted fw-semibold">{{ $index + 1 }}</td>
+                                        <td>
+                                            @if (!empty($member['profile_image']))
+                                                <img src="{{ Str::startsWith($member['profile_image'], 'http') ? $member['profile_image'] : asset('storage/' . $member['profile_image']) }}"
+                                                    alt="Avatar" class="rounded-circle border shadow-sm"
+                                                    style="width: 38px; height: 38px; object-fit: cover;" />
+                                            @else
+                                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold fs-12 shadow-sm"
+                                                    style="background-color: #561325; width: 38px; height: 38px;">
+                                                    {{ strtoupper(substr($member['name'], 0, 2)) }}
+                                                </div>
+                                            @endif
+                                        </td>
+                                        <td class="fw-semibold text-dark">{{ $member['id'] }}</td>
                                         <td class="text-dark fw-medium">
                                             {{ $member['name'] }}
                                             <small class="d-block text-muted fw-normal">{{ $member['email'] ?? '' }}</small>
                                         </td>
-                                        <td class="text-muted">
-                                            {{ $member['gender'] ?? '-' }} · {{ $member['age'] ?? '-' }}
-                                        </td>
+                                        <td class="text-muted">{{ $member['phone'] ?: 'N/A' }}</td>
                                         <td class="text-dark">{{ $member['city'] ?? '-' }}</td>
                                         <td>
-                                            <span class="fw-semibold {{ ['Active' => 'text-success', 'Suspended' => 'text-danger', 'Pending' => 'text-warning'][$member['status'] ?? ''] ?? 'text-muted' }}">
+                                            <span
+                                                class="fw-semibold {{ ['Active' => 'text-success', 'Suspended' => 'text-danger', 'Pending' => 'text-warning'][$member['status'] ?? ''] ?? 'text-muted' }}">
                                                 {{ $member['status'] ?? '-' }}
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="{{ ($member['plan'] ?? '') === 'Premium' ? 'fw-bold text-dark' : 'text-muted' }}">
+                                            <span
+                                                class="{{ ($member['plan'] ?? '') === 'Premium' ? 'fw-bold text-dark' : 'text-muted' }}">
                                                 {{ $member['plan'] ?? '-' }}
                                             </span>
                                         </td>
                                         <td class="text-center pe-4">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-light border-0 text-muted px-2 py-1"
-                                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    •••
+                                            <div class="d-inline-flex align-items-center gap-1">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-info px-2 py-1 fs-11 js-view-member"
+                                                    data-member-id="{{ $member['db_id'] }}" title="View Profile">
+                                                    <i class="ti ti-eye"></i> View
                                                 </button>
-                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 fs-13">
-                                                    <li>
-                                                        <a class="dropdown-item py-2 text-dark js-edit-member"
-                                                            href="javascript:void(0)" data-member-id="{{ $member['db_id'] }}">
-                                                            <i class="ti ti-edit me-2 text-primary"></i> Edit
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item py-2 text-danger js-delete-member"
-                                                            href="javascript:void(0)" data-member-id="{{ $member['db_id'] }}">
-                                                            <i class="ti ti-trash me-2"></i> Delete
-                                                        </a>
-                                                    </li>
-                                                </ul>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-primary px-2 py-1 fs-11 js-edit-member"
+                                                    data-member-id="{{ $member['db_id'] }}" title="Edit">
+                                                    <i class="ti ti-edit"></i> Edit
+                                                </button>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-danger px-2 py-1 fs-11 js-delete-member"
+                                                    data-member-id="{{ $member['db_id'] }}" title="Delete">
+                                                    <i class="ti ti-trash"></i> Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -245,11 +254,42 @@
 
                 <div
                     class="card-footer bg-white border-0 py-3 px-4 d-flex flex-wrap gap-2 justify-content-between align-items-center">
-                    <span class="text-muted fs-12" id="paginationLabel">Showing 0 members</span>
+                    <span class="text-muted fs-12" id="paginationLabel">Showing {{ count($usersData) }} members</span>
                 </div>
-
             </div>
 
+        </div>
+    </div>
+
+    <!-- View Profile Modal (Full Details Top to Bottom with Image) -->
+    <div class="modal fade" id="viewProfileModal" tabindex="-1" aria-labelledby="viewProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="viewProfileModalLabel" style="color: #561325;">Member Profile
+                        Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-3">
+                    <div id="profileLoading" class="text-center py-4">
+                        <div class="spinner-border text-danger" role="status"></div>
+                        <p class="text-muted fs-13 mt-2">Loading profile details...</p>
+                    </div>
+
+                    <!-- Profile Image Container -->
+                    <div id="profileImageContainer" class="text-center mb-4 d-none">
+                        <img id="profileImagePreview" src="" alt="Profile Image" class="rounded-circle shadow-sm border"
+                            style="width: 100px; height: 100px; object-fit: cover;" />
+                    </div>
+
+                    <div id="profileContent" class="row g-3 d-none">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 px-4 pb-4">
+                    <button type="button" class="btn btn-secondary fs-13" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -257,30 +297,29 @@
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
-
                 <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
                     <h5 class="modal-title fw-bold" id="addUserModalLabel" style="color: #561325;">Add New Member</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
                 <form id="addUserForm" method="POST" action="{{ route('users.store') }}">
                     @csrf
-
                     <div class="modal-body px-4">
                         <div id="addUserErrors" class="alert alert-danger d-none" role="alert"></div>
-
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Full Name</label>
                             <input type="text" name="name" class="form-control fs-13" id="newUserName"
                                 placeholder="e.g. Priyan S." required />
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Email</label>
                             <input type="email" name="email" class="form-control fs-13" id="newUserEmail"
                                 placeholder="e.g. priyan@example.com" maxlength="191" required />
                         </div>
-
+                        <div class="mb-3">
+                            <label class="form-label fs-13 fw-semibold">Mobile Number</label>
+                            <input type="text" name="phone" class="form-control fs-13" id="newUserPhone"
+                                placeholder="e.g. +919876543210" maxlength="20" />
+                        </div>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Gender</label>
@@ -295,13 +334,11 @@
                                     min="18" max="100" required />
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">City</label>
                             <input type="text" name="city" class="form-control fs-13" id="newUserCity"
                                 placeholder="e.g. Chennai" required />
                         </div>
-
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Status</label>
@@ -320,15 +357,12 @@
                                 </select>
                             </div>
                         </div>
-
                     </div>
-
                     <div class="modal-footer border-top-0 px-4 pb-4">
                         <button type="button" class="btn btn-light fs-13" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" id="saveUserBtn" class="btn fs-13 text-white fw-semibold"
                             style="background-color: #561325;">Create User</button>
                     </div>
-
                 </form>
             </div>
         </div>
@@ -338,30 +372,28 @@
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
-
                 <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
                     <h5 class="modal-title fw-bold" id="editUserModalLabel" style="color: #561325;">Edit Member Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
                 <form id="editUserForm">
                     @csrf
                     <input type="hidden" id="editDbId">
-
                     <div class="modal-body px-4">
                         <div id="editUserErrors" class="alert alert-danger d-none" role="alert"></div>
-
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Full Name</label>
                             <input type="text" name="name" class="form-control fs-13" id="editUserName" required />
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">Email</label>
-                            <input type="email" name="email" class="form-control fs-13" id="editUserEmail"
-                                maxlength="191" required />
+                            <input type="email" name="email" class="form-control fs-13" id="editUserEmail" maxlength="191"
+                                required />
                         </div>
-
+                        <div class="mb-3">
+                            <label class="form-label fs-13 fw-semibold">Mobile Number</label>
+                            <input type="text" name="phone" class="form-control fs-13" id="editUserPhone" maxlength="20" />
+                        </div>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Gender</label>
@@ -376,12 +408,10 @@
                                     max="100" required />
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label fs-13 fw-semibold">City</label>
                             <input type="text" name="city" class="form-control fs-13" id="editUserCity" required />
                         </div>
-
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Status</label>
@@ -400,15 +430,12 @@
                                 </select>
                             </div>
                         </div>
-
                     </div>
-
                     <div class="modal-footer border-top-0 px-4 pb-4">
                         <button type="button" class="btn btn-light fs-13" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" id="updateUserBtn" class="btn fs-13 text-white fw-semibold"
                             style="background-color: #561325;">Update Member</button>
                     </div>
-
                 </form>
             </div>
         </div>
@@ -416,9 +443,7 @@
 
     <script>
         function initializeManagementPage() {
-
             let membersData = JSON.parse(document.getElementById('managementPage').dataset.members);
-
             const statusColorMap = {
                 'Active': 'color: #28a745;',
                 'Pending': 'color: #d39e00;',
@@ -435,20 +460,12 @@
             const exportBtn = document.getElementById('exportBtn');
             const updateUrlTemplate = "{{ route('users.update', ['id' => '__USER_ID__']) }}";
             const deleteUrlTemplate = "{{ route('users.destroy', ['id' => '__USER_ID__']) }}";
+            const profileUrlTemplate = "{{ url('admin/management') }}/__USER_ID__/profile";
 
-            function safeText(value) {
-                return String(value ?? '');
-            }
-
+            function safeText(value) { return String(value ?? ''); }
             function escapeHtml(value) {
                 return safeText(value).replace(/[&<>"']/g, function (char) {
-                    return {
-                        '&': '&amp;',
-                        '<': '&lt;',
-                        '>': '&gt;',
-                        '"': '&quot;',
-                        "'": '&#039;'
-                    }[char];
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char];
                 });
             }
 
@@ -462,7 +479,6 @@
                 const container = document.getElementById(containerId);
                 const messages = Object.values(result.errors || {}).flat();
                 container.replaceChildren();
-
                 if (messages.length > 0) {
                     const list = document.createElement('ul');
                     list.className = 'mb-0 ps-3';
@@ -475,19 +491,12 @@
                 } else {
                     container.textContent = result.message || `Request failed (${status}). Please try again.`;
                 }
-
                 container.classList.remove('d-none');
             }
 
             function updateCounts(counts) {
                 if (!counts) return;
-
-                Object.entries({
-                    all: 'countAll',
-                    active: 'countActive',
-                    pending: 'countPending',
-                    suspended: 'countSuspended'
-                }).forEach(([key, elementId]) => {
+                Object.entries({ all: 'countAll', active: 'countActive', pending: 'countPending', suspended: 'countSuspended' }).forEach(([key, elementId]) => {
                     const element = document.getElementById(elementId);
                     if (element && counts[key] !== undefined) {
                         element.innerText = Number(counts[key]).toLocaleString();
@@ -496,105 +505,67 @@
             }
 
             async function responseJson(response) {
-                try {
-                    return await response.json();
-                } catch (error) {
-                    return {};
-                }
+                try { return await response.json(); } catch (error) { return {}; }
             }
 
             function renderRows(list) {
-                const dataTable = window.jQuery
-                    && jQuery.fn.DataTable
-                    && jQuery.fn.DataTable.isDataTable('#usersTable')
-                    ? jQuery('#usersTable').DataTable()
-                    : null;
-
-                if (dataTable) {
-                    dataTable.clear();
-                } else {
-                    tbody.innerHTML = '';
-                }
-
+                tbody.innerHTML = '';
                 if (!list || list.length === 0) {
-                    if (dataTable) {
-                        dataTable.draw();
-                    }
                     paginationLabel.innerText = 'Showing 0 members';
+                    tbody.innerHTML = '<tr><td colspan="9" class="py-4 text-center text-muted">No members found in database.</td></tr>';
                     return;
                 }
 
-                list.forEach(item => {
+                list.forEach((item, index) => {
+                    let avatarHtml = '';
+                    if (item.profile_image) {
+                        const imgSrc = item.profile_image.startsWith('http') ? item.profile_image : `{{ asset('storage') }}/${item.profile_image}`;
+                        avatarHtml = `<img src="${imgSrc}" alt="Avatar" class="rounded-circle border shadow-sm" style="width: 38px; height: 38px; object-fit: cover;" />`;
+                    } else {
+                        const initials = escapeHtml(item.name ? item.name.substring(0, 2).toUpperCase() : 'TM');
+                        avatarHtml = `<div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold fs-12 shadow-sm" style="background-color: #561325; width: 38px; height: 38px;">${initials}</div>`;
+                    }
+
                     const tr = document.createElement('tr');
-
                     tr.innerHTML = `
-                            <td class="ps-4 fw-semibold text-dark">
-                                ${escapeHtml(item.id)}
-                            </td>
-
+                            <td class="ps-4 text-muted fw-semibold">${index + 1}</td>
+                            <td>${avatarHtml}</td>
+                            <td class="fw-semibold text-dark">${escapeHtml(item.id)}</td>
                             <td class="text-dark fw-medium">
                                 ${escapeHtml(item.name)}
                                 <small class="d-block text-muted fw-normal">${escapeHtml(item.email || '')}</small>
                             </td>
-
-                            <td class="text-muted">
-                                ${escapeHtml(item.gender || '-')} · ${escapeHtml(item.age || '-')}
-                            </td>
-
-                            <td class="text-dark">
-                                ${escapeHtml(item.city || '-')}
-                            </td>
-
+                            <td class="text-muted">${escapeHtml(item.phone || 'N/A')}</td>
+                            <td class="text-dark">${escapeHtml(item.city || '-')}</td>
                             <td>
                                 <span class="fw-semibold" style="${statusColorMap[item.status] || ''}">
                                     ${escapeHtml(item.status || '-')}
                                 </span>
                             </td>
-
                             <td>
                                 <span class="${item.plan === 'Premium' ? 'fw-bold text-dark' : 'text-muted'}">
                                     ${escapeHtml(item.plan || '-')}
                                 </span>
                             </td>
-
                             <td class="text-center pe-4">
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-light border-0 text-muted px-2 py-1"
-                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        •••
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <button type="button" class="btn btn-sm btn-outline-info px-2 py-1 fs-11 js-view-member"
+                                        data-member-id="${Number(item.db_id)}" title="View Profile">
+                                        <i class="ti ti-eye"></i> View
                                     </button>
-
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 fs-13">
-                                        <li>
-                                            <a class="dropdown-item py-2 text-dark"
-                                                href="javascript:void(0)"
-                                                onclick="openEditModal(${Number(item.db_id)})">
-                                                <i class="ti ti-edit me-2 text-primary"></i> Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item py-2 text-danger"
-                                                href="javascript:void(0)"
-                                                onclick="deleteUser(${Number(item.db_id)})">
-                                                <i class="ti ti-trash me-2"></i> Delete
-                                            </a>
-                                        </li>
-                                    </ul>
+                                    <button type="button" class="btn btn-sm btn-outline-primary px-2 py-1 fs-11 js-edit-member"
+                                        data-member-id="${Number(item.db_id)}" title="Edit">
+                                        <i class="ti ti-edit"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger px-2 py-1 fs-11 js-delete-member"
+                                        data-member-id="${Number(item.db_id)}" title="Delete">
+                                        <i class="ti ti-trash"></i> Delete
+                                    </button>
                                 </div>
                             </td>
                         `;
-
-                    if (dataTable) {
-                        dataTable.row.add(tr);
-                    } else {
-                        tbody.appendChild(tr);
-                    }
+                    tbody.appendChild(tr);
                 });
-
-                if (dataTable) {
-                    dataTable.draw();
-                }
-
                 paginationLabel.innerText = `Showing ${list.length} member(s)`;
             }
 
@@ -605,16 +576,14 @@
                 const plan = filterPlan.value;
 
                 const filtered = membersData.filter(item => {
-                    const matchesQuery =
-                        safeText(item.name).toLowerCase().includes(query) ||
+                    const matchesQuery = safeText(item.name).toLowerCase().includes(query) ||
                         safeText(item.id).toLowerCase().includes(query) ||
                         safeText(item.email).toLowerCase().includes(query) ||
+                        safeText(item.phone).toLowerCase().includes(query) ||
                         safeText(item.city).toLowerCase().includes(query);
-
                     const matchesGender = !gender || item.gender === gender;
                     const matchesStatus = !status || item.status === status;
                     const matchesPlan = !plan || item.plan === plan;
-
                     return matchesQuery && matchesGender && matchesStatus && matchesPlan;
                 });
 
@@ -629,7 +598,6 @@
                     status: filterStatus.value,
                     plan: filterPlan.value
                 });
-
                 exportBtn.href = `{{ route('users.export') }}?${params.toString()}`;
             }
 
@@ -639,75 +607,108 @@
             filterPlan.addEventListener('change', filterList);
             filterList();
 
-            // Create User via AJAX
-            document.getElementById('addUserForm').addEventListener('submit', async function (e) {
-                e.preventDefault();
+            // Open View Profile Modal & Fetch Data via AJAX
+            window.openViewModal = async function (dbId) {
+                const loadingEl = document.getElementById('profileLoading');
+                const contentEl = document.getElementById('profileContent');
+                const imgContainer = document.getElementById('profileImageContainer');
+                const imgPreview = document.getElementById('profileImagePreview');
 
-                const saveBtn = document.getElementById('saveUserBtn');
-                clearErrors('addUserErrors');
-                saveBtn.disabled = true;
-                saveBtn.innerText = 'Saving...';
+                loadingEl.classList.remove('d-none');
+                contentEl.classList.add('d-none');
+                imgContainer.classList.add('d-none');
+                contentEl.innerHTML = '';
 
-                const formData = new FormData(this);
+                const viewModal = new bootstrap.Modal(document.getElementById('viewProfileModal'));
+                viewModal.show();
 
                 try {
-                    const response = await fetch("{{ route('users.store') }}", {
-                        method: 'POST',
+                    const response = await fetch(profileUrlTemplate.replace('__USER_ID__', encodeURIComponent(dbId)), {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: formData
+                            'Accept': 'application/json'
+                        }
                     });
 
                     const result = await responseJson(response);
 
                     if (response.ok && result.success) {
-                        const newMember = {
-                            db_id: result.data.db_id,
-                            id: result.data.member_id,
-                            name: result.data.name,
-                            email: result.data.email,
-                            gender: result.data.gender,
-                            age: result.data.age,
-                            city: result.data.city,
-                            status: result.data.status,
-                            plan: result.data.plan
+                        const user = result.user || {};
+                        const profile = result.profile || {};
+
+                        const profileImage = profile.profile_image || profile.photo || profile.image || profile.avatar || user.profile_image || user.photo || null;
+                        if (profileImage) {
+                            imgPreview.src = profileImage.startsWith('http') ? profileImage : `{{ asset('storage') }}/${profileImage}`;
+                            imgContainer.classList.remove('d-none');
+                        } else {
+                            imgPreview.src = "https://via.placeholder.com/100?text=No+Image";
+                            imgContainer.classList.remove('d-none');
+                        }
+
+                        const fields = {
+                            'ID': user.id,
+                            'User ID': user.user_id || user.member_id || 'N/A',
+                            'Profile ID': profile.profile_id || 'N/A',
+                            'Gender': user.gender || 'N/A',
+                            'DOB': profile.dob || 'N/A',
+                            'Age': user.age || 'N/A',
+                            'Mobile Number': user.phone || 'N/A',
+                            'Mother Name': profile.mother_name || profile["mother'name"] || 'N/A',
+                            'Father Name': profile.father_name || profile["father's name"] || 'N/A',
+                            'Mother Occupation': profile.mother_occupation || 'N/A',
+                            'Father Occupation': profile.father_occupation || 'N/A',
+                            'Siblings Count': profile.siblings_count || 'N/A',
+                            'Sibling Name': profile.sibling_name || 'N/A',
+                            'Siblings Status': profile.siblings_status || 'N/A',
+                            'Food Preference': profile.food || 'N/A',
+                            'Height': profile.height || 'N/A',
+                            'Weight': profile.weight || 'N/A',
+                            'Marital Status': profile.marital_status || 'N/A',
+                            'Religion': profile.religion || 'N/A',
+                            'Caste': profile.caste || 'N/A',
+                            'Community': profile.community || 'N/A',
+                            'Mother Tongue': profile.mother_tongue || 'N/A',
+                            'Country': profile.country || 'N/A',
+                            'State': profile.state || 'N/A',
+                            'City': user.city || 'N/A',
+                            'Address': profile.address || 'N/A',
+                            'About Me': profile.about_me || 'N/A'
                         };
 
-                        membersData.unshift(newMember);
-                        filterList();
-                        updateCounts(result.counts);
+                        let html = '';
+                        for (const [label, val] of Object.entries(fields)) {
+                            html += `
+                                    <div class="col-md-4 col-sm-6 col-12 border-bottom pb-2">
+                                        <span class="text-muted d-block fs-12 text-uppercase fw-semibold">${escapeHtml(label)}</span>
+                                        <span class="text-dark fw-medium fs-14">${escapeHtml(val)}</span>
+                                    </div>
+                                `;
+                        }
 
-                        const modalEl = document.getElementById('addUserModal');
-                        const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                        modal.hide();
-
-                        this.reset();
-                        clearErrors('addUserErrors');
+                        contentEl.innerHTML = html;
+                        loadingEl.classList.add('d-none');
+                        contentEl.classList.remove('d-none');
                     } else {
-                        showErrors('addUserErrors', result, response.status);
+                        contentEl.innerHTML = '<div class="col-12 text-danger text-center">Failed to load profile details.</div>';
+                        loadingEl.classList.add('d-none');
+                        contentEl.classList.remove('d-none');
                     }
-
                 } catch (error) {
-                    console.error('Save failed:', error);
-                    showErrors('addUserErrors', { message: 'Unable to save the member. Check your connection and try again.' }, 0);
-                } finally {
-                    saveBtn.disabled = false;
-                    saveBtn.innerText = 'Create User';
+                    loadingEl.classList.add('d-none');
+                    contentEl.innerHTML = '<div class="col-12 text-danger text-center">Error loading profile data.</div>';
+                    contentEl.classList.remove('d-none');
                 }
-            });
+            };
 
             // Open Edit Modal & Populate
             window.openEditModal = function (dbId) {
                 const user = membersData.find(u => u.db_id == dbId);
-
                 if (!user) return;
 
                 document.getElementById('editDbId').value = user.db_id;
                 document.getElementById('editUserName').value = user.name || '';
                 document.getElementById('editUserEmail').value = user.email || '';
+                document.getElementById('editUserPhone').value = user.phone || '';
                 document.getElementById('editUserGender').value = user.gender || 'Female';
                 document.getElementById('editUserAge').value = user.age || '';
                 document.getElementById('editUserCity').value = user.city || '';
@@ -722,7 +723,6 @@
             // Update User Form Submit
             document.getElementById('editUserForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
-
                 const updateBtn = document.getElementById('updateUserBtn');
                 const dbId = document.getElementById('editDbId').value;
 
@@ -748,10 +748,10 @@
 
                     if (response.ok && result.success) {
                         const idx = membersData.findIndex(u => u.db_id == dbId);
-
                         if (idx !== -1) {
                             membersData[idx].name = result.data.name;
                             membersData[idx].email = result.data.email;
+                            membersData[idx].phone = result.data.phone;
                             membersData[idx].gender = result.data.gender;
                             membersData[idx].age = result.data.age;
                             membersData[idx].city = result.data.city;
@@ -764,17 +764,12 @@
 
                         const editModalEl = document.getElementById('editUserModal');
                         const modal = bootstrap.Modal.getInstance(editModalEl);
-
-                        if (modal) {
-                            modal.hide();
-                        }
+                        if (modal) modal.hide();
                     } else {
                         showErrors('editUserErrors', result, response.status);
                     }
-
                 } catch (error) {
-                    console.error('Update error:', error);
-                    showErrors('editUserErrors', { message: 'Unable to update the member. Check your connection and try again.' }, 0);
+                    showErrors('editUserErrors', { message: 'Unable to update the member.' }, 0);
                 } finally {
                     updateBtn.disabled = false;
                     updateBtn.innerText = 'Update Member';
@@ -804,9 +799,7 @@
                     } else {
                         alert(result.message || 'Failed to delete user.');
                     }
-
                 } catch (error) {
-                    console.error('Delete error:', error);
                     alert('Error deleting user.');
                 }
             };
@@ -818,13 +811,14 @@
                 const dbId = Number(action.dataset.memberId);
                 if (!Number.isInteger(dbId) || dbId < 1) return;
 
-                if (action.classList.contains('js-edit-member')) {
+                if (action.classList.contains('js-view-member')) {
+                    window.openViewModal(dbId);
+                } else if (action.classList.contains('js-edit-member')) {
                     window.openEditModal(dbId);
                 } else if (action.classList.contains('js-delete-member')) {
                     window.deleteUser(dbId);
                 }
             });
-
         }
 
         if (document.readyState === 'loading') {

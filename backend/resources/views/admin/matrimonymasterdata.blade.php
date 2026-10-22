@@ -431,6 +431,7 @@
                                     <thead style="background:#fcf8f8;">
                                         <tr class="text-uppercase text-muted" style="font-size:10px; letter-spacing:.04em;">
                                             <th class="ps-3" style="width:36px;"></th>
+                                            <th style="width: 50px;">S.No</th>
                                             <th>Member</th>
                                             <th>Age / Height</th>
                                             <th>Religion / Community</th>
@@ -438,11 +439,10 @@
                                             <th>City</th>
                                             <th>Status</th>
                                             <th>Vendor</th>
-                                            <th class="text-end pe-3">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($profiles as $profile)
+                                        @forelse($profiles as $index => $profile)
                                             @php
                                                 $statusLabel = [
                                                     'approved' => 'Verified',
@@ -455,17 +455,22 @@
                                                 <td class="ps-3">
                                                     <input class="form-check-input profile-select" type="checkbox" name="ids[]" value="{{ $profile->id }}" aria-label="Select {{ $profile->member_name ?: $profile->profile_id }}">
                                                 </td>
+                                                <td class="text-muted fw-medium">{{ $index + 1 }}</td>
                                                 <td>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        @if($profile->profile_image)
-                                                            <img class="member-avatar" src="{{ asset('storage/' . ltrim($profile->profile_image, '/')) }}" alt="">
-                                                        @else
-                                                            <span class="member-avatar d-inline-flex align-items-center justify-content-center fw-bold">{{ strtoupper(substr($profile->member_name ?: 'M', 0, 1)) }}</span>
-                                                        @endif
-                                                        <div class="lh-sm">
-                                                            <div class="fw-semibold text-dark">{{ $profile->member_name ?: 'Member' }}</div>
-                                                            <small class="text-muted">{{ $profile->member_id ?: $profile->profile_id ?: ('#' . $profile->id) }}</small>
+                                                    <div class="d-flex align-items-center justify-content-between gap-2">
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            @if($profile->profile_image)
+                                                                <img class="member-avatar" src="{{ asset('storage/' . ltrim($profile->profile_image, '/')) }}" alt="">
+                                                            @else
+                                                                <span class="member-avatar d-inline-flex align-items-center justify-content-center fw-bold">{{ strtoupper(substr($profile->member_name ?: 'M', 0, 1)) }}</span>
+                                                            @endif
+                                                            <div class="lh-sm">
+                                                                <div class="fw-semibold text-dark">{{ $profile->member_name ?: 'Member' }}</div>
+                                                                <small class="text-muted">{{ $profile->member_id ?: $profile->profile_id ?: ('#' . $profile->id) }}</small>
+                                                            </div>
                                                         </div>
+                                                        <a class="text-maroon fw-semibold text-decoration-none small px-2 py-1 bg-light rounded"
+                                                           href="{{ route('admin.profile-verification.index', ['status' => $profile->verification_status, 'id' => $profile->id]) }}">View</a>
                                                     </div>
                                                 </td>
                                                 <td class="text-nowrap">
@@ -480,10 +485,6 @@
                                                 <td>{{ $profile->city ?: '—' }}</td>
                                                 <td><span class="status-pill status-{{ $profile->verification_status }}">{{ $statusLabel }}</span></td>
                                                 <td>{{ $profile->vendor_name ?: 'Direct' }}</td>
-                                                <td class="text-end pe-3">
-                                                    <a class="text-maroon fw-semibold text-decoration-none"
-                                                       href="{{ route('admin.profile-verification.index', ['status' => $profile->verification_status, 'id' => $profile->id]) }}">View</a>
-                                                </td>
                                             </tr>
                                         @empty
                                             <tr>

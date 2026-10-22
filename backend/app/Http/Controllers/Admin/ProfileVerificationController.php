@@ -110,67 +110,54 @@ class ProfileVerificationController extends Controller
 
         $profiles = $query->paginate(10)->appends($request->query());
 
-        $selectedProfile = null;
-        $educationList = collect();
-        $occupation = null;
-        $photos = collect();
+        $modalProfile = null;
+        $modalEducationList = collect();
+        $modalOccupation = null;
+        $modalPhotos = collect();
 
-        if ($request->filled('id')) {
-            $selectedProfile = $baseQuery()
+        // Modal open avvadaniki kavalsina details fetch cheyyadam
+        if ($request->filled('modal_id')) {
+            $modalProfile = $baseQuery()
                 ->select(
                     'p.*',
                     'u.name as user_name',
                     'u.email as user_email',
                     'u.phone as user_phone'
                 )
-                ->where('p.id', $request->query('id'))
-                ->first();
-        }
-
-        if (!$selectedProfile && $profiles->isNotEmpty()) {
-            $firstItem = $profiles->items()[0];
-            $selectedProfile = $baseQuery()
-                ->select(
-                    'p.*',
-                    'u.name as user_name',
-                    'u.email as user_email',
-                    'u.phone as user_phone'
-                )
-                ->where('p.id', $firstItem->id)
-                ->first();
-        }
-
-        // Fetching full details for the selected profile safely (Fixed collation error here)
-        if ($selectedProfile) {
-            $safeProfileId = addslashes($selectedProfile->profile_id);
-
-            $educationList = DB::table('education_details')
-                ->when($isMysql, function ($sub) use ($safeProfileId) {
-                    return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
-                }, function ($sub) use ($selectedProfile) {
-                    return $sub->where('profile_id', $selectedProfile->profile_id);
-                })
-                ->orderByDesc('id')
-                ->get();
-
-            $occupation = DB::table('occupation_details')
-                ->when($isMysql, function ($sub) use ($safeProfileId) {
-                    return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
-                }, function ($sub) use ($selectedProfile) {
-                    return $sub->where('profile_id', $selectedProfile->profile_id);
-                })
-                ->orderByDesc('id')
+                ->where('p.id', $request->query('modal_id'))
                 ->first();
 
-            $photos = DB::table('profile_photos')
-                ->when($isMysql, function ($sub) use ($safeProfileId) {
-                    return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
-                }, function ($sub) use ($selectedProfile) {
-                    return $sub->where('profile_id', $selectedProfile->profile_id);
-                })
-                ->orderByDesc('is_primary')
-                ->orderByDesc('id')
-                ->get();
+            if ($modalProfile) {
+                $safeProfileId = addslashes($modalProfile->profile_id);
+
+                $modalEducationList = DB::table('education_details')
+                    ->when($isMysql, function ($sub) use ($safeProfileId) {
+                        return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
+                    }, function ($sub) use ($modalProfile) {
+                        return $sub->where('profile_id', $modalProfile->profile_id);
+                    })
+                    ->orderByDesc('id')
+                    ->get();
+
+                $modalOccupation = DB::table('occupation_details')
+                    ->when($isMysql, function ($sub) use ($safeProfileId) {
+                        return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
+                    }, function ($sub) use ($modalProfile) {
+                        return $sub->where('profile_id', $modalProfile->profile_id);
+                    })
+                    ->orderByDesc('id')
+                    ->first();
+
+                $modalPhotos = DB::table('profile_photos')
+                    ->when($isMysql, function ($sub) use ($safeProfileId) {
+                        return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
+                    }, function ($sub) use ($modalProfile) {
+                        return $sub->where('profile_id', $modalProfile->profile_id);
+                    })
+                    ->orderByDesc('is_primary')
+                    ->orderByDesc('id')
+                    ->get();
+            }
         }
 
         $counts = [];
@@ -188,10 +175,10 @@ class ProfileVerificationController extends Controller
 
         return view('admin.profile', compact(
             'profiles',
-            'selectedProfile',
-            'educationList',
-            'occupation',
-            'photos',
+            'modalProfile',
+            'modalEducationList',
+            'modalOccupation',
+            'modalPhotos',
             'status',
             'search',
             'counts',
@@ -220,7 +207,6 @@ class ProfileVerificationController extends Controller
         return redirect()->route('admin.profile-verification.index', [
             'type' => $validated['type'],
             'status' => $validated['decision'],
-            'id' => $id,
         ])->with('success', 'Profile verification decision saved successfully.');
     }
 
@@ -245,7 +231,7 @@ class ProfileVerificationController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.profile-verification.index', ['type' => $validated['type'], 'status' => request('status', 'all'), 'id' => $id])
+            ->route('admin.profile-verification.index', ['type' => $validated['type'], 'status' => request('status', 'all')])
             ->with('success', 'Profile details updated successfully.');
     }
 

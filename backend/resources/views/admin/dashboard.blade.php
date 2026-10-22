@@ -50,7 +50,8 @@
                             @if($memberGrowth !== null)
                                 <span class="{{ $memberGrowth >= 0 ? 'text-success' : 'text-danger' }} fs-11 fw-semibold">
                                     <i class="ti {{ $memberGrowth >= 0 ? 'ti-trending-up' : 'ti-trending-down' }}"></i>
-                                    {{ $memberGrowth >= 0 ? '+' : '' }}{{ number_format($memberGrowth, 1) }}% new members vs last month
+                                    {{ $memberGrowth >= 0 ? '+' : '' }}{{ number_format($memberGrowth, 1) }}% new members vs
+                                    last month
                                 </span>
                             @else
                                 <span class="text-muted fs-11">No members registered last month</span>
@@ -108,7 +109,8 @@
                                         style="background-color: #FFF0F2; color: #AF384E;">+</span> Membership Revenue
                                 </span>
                             </div>
-                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">₹{{ number_format($membershipRevenue, 2) }}</h3>
+                            <h3 class="fw-bold mb-1" style="color: #6A1B29;">₹{{ number_format($membershipRevenue, 2) }}
+                            </h3>
                             @if($revenueGrowth !== null)
                                 <span class="{{ $revenueGrowth >= 0 ? 'text-success' : 'text-danger' }} fs-11 fw-semibold">
                                     <i class="ti {{ $revenueGrowth >= 0 ? 'ti-trending-up' : 'ti-trending-down' }}"></i>
@@ -138,7 +140,9 @@
                                     <i class="ti ti-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="{{ route('admin.report', ['period' => 'last_90_days']) }}">Open Reports</a></li>
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('admin.report', ['period' => 'last_90_days']) }}">Open
+                                            Reports</a></li>
                                     <li><a class="dropdown-item" href="{{ route('dashboard') }}">Refresh</a></li>
                                 </ul>
                             </div>
@@ -171,8 +175,8 @@
                                     <span class="fs-13 fw-medium text-dark">Photo verification</span>
                                 </div>
                                 <a href="{{ route('admin.profile-verification.index', ['status' => 'pending']) }}"
-                                class="badge px-3 py-2 rounded-pill fs-12 fw-bold text-decoration-none"
-                                style="background-color: #F8EBEF; color: #6A1B29;">{{ number_format($photoVerificationQueue) }}</a>
+                                    class="badge px-3 py-2 rounded-pill fs-12 fw-bold text-decoration-none"
+                                    style="background-color: #F8EBEF; color: #6A1B29;">{{ number_format($photoVerificationQueue) }}</a>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between p-3 rounded-2 mb-2"
@@ -228,6 +232,7 @@
                                     <thead
                                         style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase; color: #6A1B29;">
                                         <tr>
+                                            <th>S.NO</th>
                                             <th class="ps-4">User ID</th>
                                             <th>Name</th>
                                             <th>Profile</th>
@@ -237,41 +242,47 @@
                                     </thead>
                                     <tbody class="fs-13">
                                         @forelse($recentRegistrations as $profile)
-                                            @php
-                                                $verificationStatus = $profile->verification_status ?: 'pending';
-                                                $statusLabel = [
-                                                    'pending' => 'Pending',
-                                                    'approved' => 'Approved',
-                                                    'rejected' => 'Rejected',
-                                                    'update_requested' => 'Update requested',
-                                                ][$verificationStatus] ?? ucfirst(str_replace('_', ' ', $verificationStatus));
-                                                $statusClass = [
-                                                    'pending' => 'bg-warning-subtle text-warning border-warning-subtle',
-                                                    'approved' => 'bg-success-subtle text-success border-success-subtle',
-                                                    'rejected' => 'bg-danger-subtle text-danger border-danger-subtle',
-                                                    'update_requested' => 'bg-info-subtle text-info border-info-subtle',
-                                                ][$verificationStatus] ?? 'bg-secondary-subtle text-secondary border-secondary-subtle';
-                                            @endphp
-                                            <tr>
-                                                <td class="ps-4 fw-semibold" style="color: #6A1B29;">
-                                                    {{ $profile->member_id ?: ($profile->profile_id ?: ('#' . $profile->id)) }}
-                                                </td>
-                                                <td class="fw-medium text-dark">{{ $profile->member_name ?: 'Member' }}</td>
-                                                <td class="text-muted">
-                                                    {{ $profile->gender ?: 'Gender not set' }} · {{ $profile->city ?: 'Location not set' }}
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.profile-verification.index', [
-                                                        'status' => in_array($verificationStatus, ['pending', 'approved', 'rejected', 'update_requested'], true) ? $verificationStatus : 'pending',
-                                                        'id' => $profile->id,
-                                                    ]) }}" class="badge rounded-pill {{ $statusClass }} border px-2 py-1 fs-11 text-decoration-none">
-                                                        {{ $statusLabel }}
-                                                    </a>
-                                                </td>
-                                                <td class="pe-4 text-muted">
-                                                    {{ $profile->created_at ? \Carbon\Carbon::parse($profile->created_at)->format('d M Y') : 'N/A' }}
-                                                </td>
-                                            </tr>
+                                                                            @php
+                                                                                $verificationStatus = $profile->verification_status ?: 'pending';
+                                                                                $statusLabel = [
+                                                                                    'pending' => 'Pending',
+                                                                                    'approved' => 'Approved',
+                                                                                    'rejected' => 'Rejected',
+                                                                                    'update_requested' => 'Update requested',
+                                                                                ][$verificationStatus] ?? ucfirst(str_replace('_', ' ', $verificationStatus));
+                                                                                $statusClass = [
+                                                                                    'pending' => 'bg-warning-subtle text-warning border-warning-subtle',
+                                                                                    'approved' => 'bg-success-subtle text-success border-success-subtle',
+                                                                                    'rejected' => 'bg-danger-subtle text-danger border-danger-subtle',
+                                                                                    'update_requested' => 'bg-info-subtle text-info border-info-subtle',
+                                                                                ][$verificationStatus] ?? 'bg-secondary-subtle text-secondary border-secondary-subtle';
+                                                                            @endphp
+                                                                            <tr>
+                                                                                <td>
+                                                                                    {{ $loop->iteration }}
+                                                                                </td>
+
+                                                                                <td class="ps-4 fw-semibold" style="color: #6A1B29;">
+                                                                                    {{ $profile->member_id ?: ($profile->profile_id ?: ('#' . $profile->id)) }}
+                                                                                </td>
+                                                                                <td class="fw-medium text-dark">{{ $profile->member_name ?: 'Member' }}</td>
+                                                                                <td class="text-muted">
+                                                                                    {{ $profile->gender ?: 'Gender not set' }} ·
+                                                                                    {{ $profile->city ?: 'Location not set' }}
+                                                                                </td>
+                                                                                <td>
+                                                                                    <a href="{{ route('admin.profile-verification.index', [
+                                                'status' => in_array($verificationStatus, ['pending', 'approved', 'rejected', 'update_requested'], true) ? $verificationStatus : 'pending',
+                                                'id' => $profile->id,
+                                            ]) }}"
+                                                                                        class="badge rounded-pill {{ $statusClass }} border px-2 py-1 fs-11 text-decoration-none">
+                                                                                        {{ $statusLabel }}
+                                                                                    </a>
+                                                                                </td>
+                                                                                <td class="pe-4 text-muted">
+                                                                                    {{ $profile->created_at ? \Carbon\Carbon::parse($profile->created_at)->format('d M Y') : 'N/A' }}
+                                                                                </td>
+                                                                            </tr>
                                         @empty
                                             <tr>
                                                 <td colspan="5" class="text-center text-muted py-4">No profiles found.</td>
