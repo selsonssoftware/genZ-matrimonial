@@ -776,10 +776,10 @@
                             </form>
                         </div>
 
-                        <div class="chart-container">
-                            <canvas id="registrationChart"></canvas>
-                        </div>
-                    </article>
+            <div class="chart-container">
+                <canvas id="registrationChart"></canvas>
+            </div>
+        </article>
 
                     <article class="report-panel">
                         <div class="panel-header">
@@ -789,10 +789,10 @@
                             </div>
                         </div>
 
-                        <div class="chart-container">
-                            <canvas id="memberChart"></canvas>
-                        </div>
-                    </article>
+            <div class="chart-container">
+                <canvas id="memberChart"></canvas>
+            </div>
+        </article>
 
                 </section>
 
@@ -919,21 +919,21 @@
         function createRegistrationChart() {
             const ctx = document.getElementById("registrationChart");
 
-            registrationChart = new Chart(ctx, {
-                type: "bar",
+    registrationChart = new Chart(ctx, {
+        type: "bar",
 
-                data: {
-                    labels: @json($registrationLabels),
+        data: {
+            labels: @json($registrationLabels),
 
-                    datasets: [{
-                        label: "Registrations",
-                        data: @json($registrationValues),
-                        backgroundColor: "#e8c5cd",
-                        hoverBackgroundColor: "#561325",
-                        borderRadius: 5,
-                        maxBarThickness: 26
-                    }]
-                },
+            datasets: [{
+                label: "Registrations",
+                data: @json($registrationValues),
+                backgroundColor: "#e8c5cd",
+                hoverBackgroundColor: "#561325",
+                borderRadius: 5,
+                maxBarThickness: 26
+            }]
+        },
 
                 options: {
                     responsive: true,
@@ -990,24 +990,24 @@
         function createMemberChart() {
             const ctx = document.getElementById("memberChart");
 
-            memberChart = new Chart(ctx, {
-                type: "doughnut",
+    memberChart = new Chart(ctx, {
+        type: "doughnut",
 
-                data: {
-                    labels: @json($profileDistribution->keys()->values()),
+        data: {
+            labels: @json($profileDistribution->keys()->values()),
 
-                    datasets: [{
-                        data: @json($profileDistribution->pluck('count')->values()),
-                        backgroundColor: [
-                            "#561325",
-                            "#d88fa1",
-                            "#d5a044"
-                        ],
-                        borderWidth: 2,
-                        borderColor: "#ffffff",
-                        hoverOffset: 6
-                    }]
-                },
+            datasets: [{
+                data: @json($profileDistribution->pluck('count')->values()),
+                backgroundColor: [
+                    "#561325",
+                    "#d88fa1",
+                    "#d5a044"
+                ],
+                borderWidth: 2,
+                borderColor: "#ffffff",
+                hoverOffset: 6
+            }]
+        },
 
                 options: {
                     responsive: true,

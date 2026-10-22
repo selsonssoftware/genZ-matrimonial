@@ -40,59 +40,56 @@
                 <table class="table table-hover align-middle js-data-table" data-paging="false">
 
                     <thead class="table-light">
-                        <tr>
-                            <th>SNo.</th>
-                            <th>Vendor ID</th>
-                            <th>Vendor Name</th>
-                            <th>Vendor City</th>
-                            <th>Profile ID</th>
-                            <th>Gender</th>
-                            <th>Age</th>
-                            <th>Profile City</th>
-                            <th>Assigned Date</th>
-                        </tr>
-                    </thead>
+    <tr>
+        <th>S.No.</th>
+        <th>Vendor ID</th>
+        <th>Vendor Name</th>
+        <th>Vendor City</th>
+        <th>Profile ID</th>
+        <th>Profile Name</th>
+        <th>Profile Mobile Number</th>
+        <th>Gender</th>
+        <th>Age</th>
+        <th>Profile City</th>
+        <th>Assigned Date</th>
+    </tr>
+</thead>
 
                     <tbody>
                         @forelse($assignments as $assignment)
                             <tr>
-                                <td>{{ $assignments->firstItem() + $loop->index }}</td>
+    <td>{{ $assignments->firstItem() + $loop->index }}</td>
 
-<td class="fw-semibold text-dark">
-    VN-{{ str_pad($assignment->vendor_id, 5, '0', STR_PAD_LEFT) }}
-</td>
-                                <td>
-                                    {{ $assignment->agent_name }}
-                                </td>
+    <td class="fw-semibold text-dark">
+        VN-{{ str_pad($assignment->vendor_id, 5, '0', STR_PAD_LEFT) }}
+    </td>
 
-                                <td>
-                                    {{ $assignment->vendor_city ?? '-' }}
-                                </td>
+    <td>{{ $assignment->agent_name ?? '-' }}</td>
 
-                                <td>
-                                    <span class="fw-semibold">
-                                        {{ $assignment->profile_id }}
-                                    </span>
-                                </td>
+    <td>{{ $assignment->vendor_city ?? '-' }}</td>
 
-                                <td>
-                                    {{ $assignment->gender ?? '-' }}
-                                </td>
+    <td>
+        <span class="fw-semibold">
+            {{ $assignment->profile_id }}
+        </span>
+    </td>
 
-                                <td>
-                                    {{ $assignment->age ?? '-' }}
-                                </td>
+    <td>{{ $assignment->profile_name ?? '-' }}</td>
 
-                                <td>
-                                    {{ $assignment->profile_city ?? '-' }}
-                                </td>
+    <td>{{ $assignment->profile_mobile ?? '-' }}</td>
 
-                                <td>
-                                    {{ $assignment->assigned_at
-                                        ? \Carbon\Carbon::parse($assignment->assigned_at)->format('d-m-Y h:i A')
-                                        : '-' }}
-                                </td>
-                            </tr>
+    <td>{{ $assignment->gender ?? '-' }}</td>
+
+    <td>{{ $assignment->age ?? '-' }}</td>
+
+    <td>{{ $assignment->profile_city ?? '-' }}</td>
+
+    <td>
+        {{ $assignment->assigned_at
+            ? \Carbon\Carbon::parse($assignment->assigned_at)->format('d-m-Y h:i A')
+            : '-' }}
+    </td>
+</tr>
                         @empty
                             <tr>
                                 <td colspan="9" class="text-center py-5">

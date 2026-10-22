@@ -91,14 +91,14 @@ class ProfileVerificationController extends Controller
         }
 
         if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('p.profile_id', 'like', "%{$search}%")
-                    ->orWhere('u.name', 'like', "%{$search}%")
-                    ->orWhere('u.email', 'like', "%{$search}%")
-                    ->orWhere('u.phone', 'like', "%{$search}%");
-            });
-        }
-
+    $query->where(function ($q) use ($search) {
+        $q->where('p.profile_id', 'like', "%{$search}%")
+            ->orWhere('p.profile_name', 'like', "%{$search}%")
+            ->orWhere('u.name', 'like', "%{$search}%")
+            ->orWhere('u.email', 'like', "%{$search}%")
+            ->orWhere('u.phone', 'like', "%{$search}%");
+    });
+}
         $query
             ->orderByRaw("
                 CASE
@@ -115,29 +115,43 @@ class ProfileVerificationController extends Controller
         $modalOccupation = null;
         $modalPhotos = collect();
 
-        // Modal open avvadaniki kavalsina details fetch cheyyadam
-        if ($request->filled('modal_id')) {
-            $modalProfile = $baseQuery()
+        if ($request->filled('id')) {
+            $selectedProfile = $baseQuery()
                 ->select(
                     'p.*',
                     'u.name as user_name',
                     'u.email as user_email',
                     'u.phone as user_phone'
                 )
-                ->where('p.id', $request->query('modal_id'))
+                ->where('p.id', $request->query('id'))
                 ->first();
+        }
 
-            if ($modalProfile) {
-                $safeProfileId = addslashes($modalProfile->profile_id);
+        if (!$selectedProfile && $profiles->isNotEmpty()) {
+            $firstItem = $profiles->items()[0];
+            $selectedProfile = $baseQuery()
+                ->select(
+                    'p.*',
+                    'u.name as user_name',
+                    'u.email as user_email',
+                    'u.phone as user_phone'
+                )
+                ->where('p.id', $firstItem->id)
+                ->first();
+        }
 
-                $modalEducationList = DB::table('education_details')
-                    ->when($isMysql, function ($sub) use ($safeProfileId) {
-                        return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
-                    }, function ($sub) use ($modalProfile) {
-                        return $sub->where('profile_id', $modalProfile->profile_id);
-                    })
-                    ->orderByDesc('id')
-                    ->get();
+        // Fetching full details for the selected profile safely (Fixed collation error here)
+        if ($selectedProfile) {
+            $safeProfileId = addslashes($selectedProfile->profile_id);
+
+            $educationList = DB::table('education_details')
+                ->when($isMysql, function ($sub) use ($safeProfileId) {
+                    return $sub->whereRaw("profile_id COLLATE utf8mb4_general_ci = '{$safeProfileId}' COLLATE utf8mb4_general_ci");
+                }, function ($sub) use ($selectedProfile) {
+                    return $sub->where('profile_id', $selectedProfile->profile_id);
+                })
+                ->orderByDesc('id')
+                ->get();
 
                 $modalOccupation = DB::table('occupation_details')
                     ->when($isMysql, function ($sub) use ($safeProfileId) {
@@ -173,6 +187,11 @@ class ProfileVerificationController extends Controller
         }
         $counts['all'] = $baseQuery()->count();
 
+        $vendors = DB::table('vendor')
+    ->where('status', 'Active')
+    ->orderBy('agent_name')
+    ->get(['id', 'agent_name', 'vendor_mobile']);
+
         return view('admin.profile', compact(
             'profiles',
             'modalProfile',
@@ -182,7 +201,8 @@ class ProfileVerificationController extends Controller
             'status',
             'search',
             'counts',
-            'type'
+            'type',
+            'vendors'
         ));
     }
 
@@ -234,6 +254,83 @@ class ProfileVerificationController extends Controller
             ->route('admin.profile-verification.index', ['type' => $validated['type'], 'status' => request('status', 'all')])
             ->with('success', 'Profile details updated successfully.');
     }
+
+    public function assignVendor(Request $request)
+{
+    $validated = $request->validate([
+        'vendor_id'  => ['required', 'integer', 'exists:vendor,id'],
+        'profile_ids' => ['required', 'string', 'max:10000'],
+        'type' => ['required', Rule::in(['groom', 'bride'])],
+        'status' => ['nullable', Rule::in([
+            'all', 'pending', 'approved', 'rejected', 'update_requested'
+        ])],
+        'search' => ['nullable', 'string', 'max:255'],
+    ]);
+
+    $profileIds = preg_split(
+        '/[\s,;]+/',
+        trim($validated['profile_ids']),
+        -1,
+        PREG_SPLIT_NO_EMPTY
+    );
+
+    $profileIds = array_values(array_unique($profileIds));
+
+    if (empty($profileIds)) {
+        return back()->withInput()->with('error', 'Enter at least one Profile ID.');
+    }
+
+    // Verify that every submitted Profile ID exists.
+    $existingIds = DB::table('profiles')
+        ->whereIn('profile_id', $profileIds)
+        ->pluck('profile_id')
+        ->map(fn ($id) => (string) $id)
+        ->all();
+
+    $invalidIds = array_values(array_diff($profileIds, $existingIds));
+
+    if (!empty($invalidIds)) {
+        return back()->withInput()->with(
+            'error',
+            'Profile ID(s) not found: ' . implode(', ', $invalidIds)
+        );
+    }
+
+    // A profile already assigned to any vendor must not be assigned again.
+    $alreadyAssigned = DB::table('vendor_customer_assignments')
+        ->whereIn('profile_id', $profileIds)
+        ->pluck('profile_id')
+        ->map(fn ($id) => (string) $id)
+        ->all();
+
+    if (!empty($alreadyAssigned)) {
+        return back()->withInput()->with(
+            'error',
+            'Already assigned Profile ID(s): ' . implode(', ', $alreadyAssigned)
+        );
+    }
+
+    DB::transaction(function () use ($profileIds, $validated) {
+        foreach ($profileIds as $profileId) {
+            DB::table('vendor_customer_assignments')->insert([
+                'vendor_id'  => $validated['vendor_id'],
+                'profile_id' => $profileId,
+                'assigned_at' => now(),
+            ]);
+        }
+    });
+
+    return redirect()
+        ->route('admin.profile-verification.index', [
+            'type' => $validated['type'],
+            'status' => $validated['status'] ?? 'all',
+            'search' => $validated['search'] ?? '',
+        ])
+        ->with(
+            'success',
+            count($profileIds) . ' profile(s) assigned successfully.'
+        );
+}
 
     public function destroy($id)
     {

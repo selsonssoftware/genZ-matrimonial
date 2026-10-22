@@ -315,11 +315,7 @@
                             <input type="email" name="email" class="form-control fs-13" id="newUserEmail"
                                 placeholder="e.g. priyan@example.com" maxlength="191" required />
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fs-13 fw-semibold">Mobile Number</label>
-                            <input type="text" name="phone" class="form-control fs-13" id="newUserPhone"
-                                placeholder="e.g. +919876543210" maxlength="20" />
-                        </div>
+
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Gender</label>

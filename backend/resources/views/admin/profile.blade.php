@@ -10,7 +10,27 @@
                     {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                
             @endif
+            @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
             <!-- Header Section -->
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
@@ -174,6 +194,32 @@
                                                     <i class="ti ti-trash"></i> Delete
                                                 </button>
                                             </form>
+
+                                            <td class="text-center">
+    <div class="dropdown">
+        <button type="button"
+                class="btn btn-sm btn-light border rounded-circle"
+                style="width: 32px; height: 32px;"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                title="Assign Profile">
+            <i class="ti ti-dots-vertical"></i>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li>
+                <button type="button"
+        class="dropdown-item"
+        data-bs-toggle="modal"
+        data-bs-target="#assignProfileModal"
+        data-profile-id="{{ $profile->profile_id }}">
+    <i class="ti ti-user-plus me-2"></i>
+    Assign Profile
+</button>
+            </li>
+        </ul>
+    </div>
+</td>
                                         </div>
                                     </td>
                                 </tr>
@@ -203,6 +249,111 @@
                                 Complete Profile</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                 onclick="closeProfileModal()"></button>
+=======
+            <!-- Assign Profile Modal -->
+<div class="modal fade" id="assignProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" style="color: #561325;">
+                    Assign Profiles to Vendor
+                </h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="POST" action="{{ route('admin.profile-verification.assign-vendor') }}">
+                @csrf
+<input type="hidden" name="profile_ids" id="assign_profile_ids">
+
+                <input type="hidden" name="type" value="{{ $type }}">
+                <input type="hidden" name="status" value="{{ $status }}">
+                <input type="hidden" name="search" value="{{ $search }}">
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="assign_vendor_id" class="form-label fw-semibold">
+                            Vendor ID
+                        </label>
+
+                        <select name="vendor_id" id="assign_vendor_id"
+                                class="form-select" required>
+                            <option value="">Select Vendor</option>
+
+                            @foreach($vendors as $vendor)
+                                <option value="{{ $vendor->id }}"
+                                    @selected(old('vendor_id') == $vendor->id)>
+                                    VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}
+                                    — {{ $vendor->agent_name }}
+                                    ({{ $vendor->vendor_mobile }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- <div class="mb-3">
+                        <label for="assign_profile_ids" class="form-label fw-semibold">
+                            Profile IDs
+                        </label>
+
+                        <textarea name="profile_ids" id="assign_profile_ids"
+                                  class="form-control" rows="5"
+                                  placeholder="Example:&#10;PR10001&#10;PR10002&#10;PR10003"
+                                  required>{{ old('profile_ids') }}</textarea>
+
+                        <small class="text-muted">
+                            Multiple Profile IDs enter pannalaam. Comma, space, or new line use pannunga.
+                        </small>
+                    </div> -->
+
+                    <div class="alert alert-info py-2 small mb-0">
+                        Each Profile ID can be assigned to only one vendor.
+                        Already-assigned profiles cannot be assigned again.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border"
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn text-white"
+                            style="background-color: #561325;">
+                        Assign Profiles
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+            <!-- Selected Profile Full Details Card -->
+            @if($selectedProfile)
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white" style="border: 1px solid #F3E5E8 !important;">
+                    <div class="row g-4 align-items-start">
+                        <!-- Left Side: Profile Photo Box -->
+                        <div class="col-lg-4 col-md-5 text-center">
+                            <div class="rounded-4 p-4 d-flex flex-column align-items-center justify-content-center mx-auto"
+                                style="background-color: #FDF4F6; border: 1px solid #F5DDE3; max-width: 290px; min-height: 340px;">
+                                @if(isset($photos) && $photos->isNotEmpty() && !empty($photos[0]->image))
+                                    <img src="{{ asset('storage/' . ltrim($photos[0]->image, '/')) }}" alt="Profile photo"
+                                        class="rounded-circle mb-3 shadow-sm"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                @elseif(!empty($selectedProfile->profile_image))
+                                    <img src="{{ asset('storage/' . ltrim($selectedProfile->profile_image, '/')) }}"
+                                        alt="Profile photo" class="rounded-circle mb-3 shadow-sm"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                @else
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold fs-24 mb-3 shadow-sm"
+                                        style="width: 95px; height: 95px; background-color: #F3CAD3; color: #561325;">
+                                        {{ strtoupper(substr($selectedProfile->user_name ?? 'M', 0, 1)) }}
+                                    </div>
+                                @endif
+                                <h6 class="fw-bold mb-1 fs-12 text-uppercase tracking-wider" style="color: #561325;">
+                                    Profile Photo
+                                </h6>
+                                <span class="text-muted fs-11">Primary Photo</span>
+                            </div>
+>>>>>>> 134cb8036f1618545045805ac0a9485b16cbf9d0
                         </div>
                         <div class="modal-body px-4 py-3">
                             @if(isset($modalProfile))
@@ -420,4 +571,19 @@
             }
         </script>
     @endif
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const assignModal = document.getElementById('assignProfileModal');
+
+    if (!assignModal) return;
+
+    assignModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const profileId = button?.getAttribute('data-profile-id');
+
+        document.getElementById('assign_profile_ids').value = profileId || '';
+    });
+});
+</script>
 @endsection
