@@ -211,8 +211,8 @@
                                                     ID: {{ $item->sender_id ?? '-' }}
                                                 </div>
                                                 <div class="small text-muted mt-1">
-    Phone: {{ $item->sender_phone ?? '-' }}
-</div>
+                                                    Phone: {{ $item->sender_phone ?? '-' }}
+                                                </div>
                                                 <div class="small text-secondary mt-1">
                                                     Profile: {{ $item->sender_profile_id ?? 'Not linked' }}
                                                 </div>
@@ -323,173 +323,177 @@
         @endphp
 
         <!-- View Modal -->
-    <div class="modal fade" id="viewModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal fade" id="viewModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 rounded-4 shadow">
 
-            <!-- Modal Header -->
-            <div class="modal-header px-4 pt-4 pb-3"
-                 style="border-bottom: 1px solid #f0e3e7;">
-                <h5 class="modal-title fw-bold" style="color: #561325;">
-                    Interest Details: IN-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}
-                </h5>
+                    <!-- Modal Header -->
+                    <div class="modal-header px-4 pt-4 pb-3"
+                         style="border-bottom: 1px solid #f0e3e7;">
+                        <h5 class="modal-title fw-bold" style="color: #561325;">
+                            Interest Details: IN-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}
+                        </h5>
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                </button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body px-4 py-4">
-
-                <!-- Request ID and Status -->
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-                    <div>
-                        <strong>Request ID:</strong>
-                        IN-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
+                        </button>
                     </div>
 
-                    <div>
-                        <strong>Status:</strong>
-                        <span class="badge rounded-pill px-3 py-2"
-                              style="background: #f8e8ed; color: #561325;">
-                            {{ $displayStatus }}
-                        </span>
-                    </div>
-                </div>
+                    <!-- Modal Body -->
+                    <div class="modal-body px-4 py-4">
 
-                <!-- Sender and Receiver Columns -->
-                <div class="row g-3">
-
-                    <!-- SENDER COLUMN -->
-                    <div class="col-md-6">
-                        <div class="h-100 p-3 rounded-4"
-                             style="background: #fff7f9; border: 1px solid #f0e3e7;">
-
-                            <h6 class="fw-bold mb-3" style="color: #561325;">
-                                <i class="bi bi-person-fill me-1"></i>
-                                Sender Details
-                            </h6>
-
-                            <!-- Sender Image -->
-                            <div class="text-center mb-3">
-                                <img
-                                    src="{{ !empty($item->sender_image) ? asset($item->sender_image) : asset('assets/images/default_person.png') }}"
-                                    alt="Sender Image"
-                                    class="rounded-circle border shadow-sm"
-                                    style="width: 100px; height: 100px; object-fit: cover;"
-                                    data-fallback="{{ asset('assets/images/default_person.png') }}"
-                                    onerror="this.onerror=null; this.src=this.dataset.fallback;"
-                                >
+                        <!-- Request ID and Status -->
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                            <div>
+                                <strong>Request ID:</strong>
+                                IN-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}
                             </div>
 
-                            <div class="text-center mb-3">
-                                <h6 class="fw-bold mb-1">
-                                    {{ $item->sender_name ?? 'Unknown' }}
-                                </h6>
-                                <span class="badge rounded-pill"
-                                      style="background: #f0e3e7; color: #561325;">
-                                    Sender
+                            <div>
+                                <strong>Status:</strong>
+                                <span class="badge rounded-pill px-3 py-2"
+                                      style="background: #f8e8ed; color: #561325;">
+                                    {{ $displayStatus }}
                                 </span>
                             </div>
+                        </div>
 
-                            <hr style="border-color: #ead6dc;">
+                        <!-- Sender and Receiver Columns -->
+                        <div class="row g-3">
 
-                            <p class="mb-2">
-                                <strong>Member ID:</strong><br>
-                                {{ $item->sender_id ?? '-' }}
-                            </p>
+                            <!-- SENDER COLUMN -->
+                            <div class="col-md-6">
+                                <div class="h-100 p-3 rounded-4"
+                                     style="background: #fff7f9; border: 1px solid #f0e3e7;">
 
-                            <p class="mb-2">
-                                <strong>Profile ID:</strong><br>
-                                {{ $item->sender_profile_id ?? 'Not linked' }}
-                            </p>
+                                    <h6 class="fw-bold mb-3" style="color: #561325;">
+                                        <i class="bi bi-person-fill me-1"></i>
+                                        Sender Details
+                                    </h6>
 
-                            <p class="mb-0">
-                                <strong>Phone:</strong><br>
-                                {{ $item->sender_phone ?? '-' }}
-                            </p>
+                                    <!-- Sender Image -->
+                                    <div class="text-center mb-3">
+                                        <img
+                                            src="{{ !empty($item->sender_image) ? asset($item->sender_image) : asset('assets/images/default_person.png') }}"
+                                            alt="Sender Image"
+                                            class="rounded-circle border shadow-sm"
+                                            style="width: 100px; height: 100px; object-fit: cover;"
+                                            data-fallback="{{ asset('assets/images/default_person.png') }}"
+                                            onerror="this.onerror=null; this.src=this.dataset.fallback;"
+                                        >
+                                    </div>
+
+                                    <div class="text-center mb-3">
+                                        <h6 class="fw-bold mb-1">
+                                            {{ $item->sender_name ?? 'Unknown' }}
+                                        </h6>
+                                        <span class="badge rounded-pill"
+                                              style="background: #f0e3e7; color: #561325;">
+                                            Sender
+                                        </span>
+                                    </div>
+
+                                    <hr style="border-color: #ead6dc;">
+
+                                    <div class="member-info">
+                                        <p class="mb-2 d-flex align-items-start gap-1">
+                                            <strong class="info-label">Member ID :</strong>
+                                            <span>{{ $item->sender_id ?? '-' }}</span>
+                                        </p>
+
+                                        <p class="mb-2 d-flex align-items-start gap-1">
+                                            <strong class="info-label">Profile ID :</strong>
+                                            <span>{{ $item->sender_profile_id ?? 'Not linked' }}</span>
+                                        </p>
+
+                                        <p class="mb-0 d-flex align-items-start gap-1">
+                                            <strong class="info-label">Phone :</strong>
+                                            <span>{{ $item->sender_phone ?? '-' }}</span>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- RECEIVER COLUMN -->
+                            <div class="col-md-6">
+                                <div class="h-100 p-3 rounded-4"
+                                     style="background: #f7f9ff; border: 1px solid #e0e6f3;">
+
+                                    <h6 class="fw-bold mb-3" style="color: #263b70;">
+                                        <i class="bi bi-person-fill me-1"></i>
+                                        Receiver Details
+                                    </h6>
+
+                                    <!-- Receiver Image -->
+                                    <div class="text-center mb-3">
+                                        <img
+                                            src="{{ !empty($item->receiver_image) ? asset($item->receiver_image) : asset('assets/images/default_person.png') }}"
+                                            alt="Receiver Image"
+                                            class="rounded-circle border shadow-sm"
+                                            style="width: 100px; height: 100px; object-fit: cover;"
+                                            onerror="this.onerror=null; this.src=this.dataset.fallback"
+                                            data-fallback="{{ asset('assets/images/default_person.png') }}"
+                                        >
+                                    </div>
+
+                                    <div class="text-center mb-3">
+                                        <h6 class="fw-bold mb-1">
+                                            {{ $item->receiver_name ?? 'Unknown' }}
+                                        </h6>
+                                        <span class="badge rounded-pill"
+                                              style="background: #e5eafb; color: #263b70;">
+                                            Receiver
+                                        </span>
+                                    </div>
+
+                                    <hr style="border-color: #dce3f3;">
+
+                                    <div class="member-info">
+                                        <p class="mb-2 d-flex align-items-start gap-1">
+                                            <strong class="info-label">Member ID :</strong>
+                                            <span>{{ $item->receiver_id ?? '-' }}</span>
+                                        </p>
+
+                                        <p class="mb-2 d-flex align-items-start gap-1">
+                                            <strong class="info-label">Profile ID :</strong>
+                                            <span>{{ $item->receiver_profile_id ?? 'Not linked' }}</span>
+                                        </p>
+
+                                        <p class="mb-0 d-flex align-items-start gap-1">
+                                            <strong class="info-label">Phone :</strong>
+                                            <span>{{ $item->receiver_phone ?? '-' }}</span>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
 
                         </div>
+
+                        <!-- Date Submitted -->
+                        <div class="mt-4 p-3 rounded-3"
+                             style="background: #f8f8f8;">
+                            <strong>Date Submitted:</strong>
+                            {{ $item->created_at ?? '-' }}
+                        </div>
+
                     </div>
 
-                    <!-- RECEIVER COLUMN -->
-                    <div class="col-md-6">
-                        <div class="h-100 p-3 rounded-4"
-                             style="background: #f7f9ff; border: 1px solid #e0e6f3;">
-
-                            <h6 class="fw-bold mb-3" style="color: #263b70;">
-                                <i class="bi bi-person-fill me-1"></i>
-                                Receiver Details
-                            </h6>
-
-                            <!-- Receiver Image -->
-                            <div class="text-center mb-3">
-                                <img
-                                    src="{{ !empty($item->receiver_image) ? asset($item->receiver_image) : asset('assets/images/default_person.png') }}"
-                                    alt="Receiver Image"
-                                    class="rounded-circle border shadow-sm"
-                                    style="width: 100px; height: 100px; object-fit: cover;"
-                                    onerror="this.onerror=null; this.src=this.dataset.fallback"
-                                    data-fallback="{{ asset('assets/images/default_person.png') }}"
-                                >
-                            </div>
-
-                            <div class="text-center mb-3">
-                                <h6 class="fw-bold mb-1">
-                                    {{ $item->receiver_name ?? 'Unknown' }}
-                                </h6>
-                                <span class="badge rounded-pill"
-                                      style="background: #e5eafb; color: #263b70;">
-                                    Receiver
-                                </span>
-                            </div>
-
-                            <hr style="border-color: #dce3f3;">
-
-                            <p class="mb-2">
-                                <strong>Member ID:</strong><br>
-                                {{ $item->receiver_id ?? '-' }}
-                            </p>
-
-                            <p class="mb-2">
-                                <strong>Profile ID:</strong><br>
-                                {{ $item->receiver_profile_id ?? 'Not linked' }}
-                            </p>
-
-                            <p class="mb-0">
-                                <strong>Phone:</strong><br>
-                                {{ $item->receiver_phone ?? '-' }}
-                            </p>
-
-                        </div>
+                    <!-- Modal Footer -->
+                    <div class="modal-footer px-4 py-3">
+                        <button type="button"
+                                class="btn btn-secondary btn-sm px-4 rounded-3"
+                                data-bs-dismiss="modal">
+                            Close
+                        </button>
                     </div>
 
                 </div>
-
-                <!-- Date Submitted -->
-                <div class="mt-4 p-3 rounded-3"
-                     style="background: #f8f8f8;">
-                    <strong>Date Submitted:</strong>
-                    {{ $item->created_at ?? '-' }}
-                </div>
-
             </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer px-4 py-3">
-                <button type="button"
-                        class="btn btn-secondary btn-sm px-4 rounded-3"
-                        data-bs-dismiss="modal">
-                    Close
-                </button>
-            </div>
-
         </div>
-    </div>
-</div>
 
         <!-- Edit Modal -->
         <div class="modal fade" id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
