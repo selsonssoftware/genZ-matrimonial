@@ -91,14 +91,14 @@ class ProfileVerificationController extends Controller
         }
 
         if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('p.profile_id', 'like', "%{$search}%")
-                    ->orWhere('u.name', 'like', "%{$search}%")
-                    ->orWhere('u.email', 'like', "%{$search}%")
-                    ->orWhere('u.phone', 'like', "%{$search}%");
-            });
-        }
-
+    $query->where(function ($q) use ($search) {
+        $q->where('p.profile_id', 'like', "%{$search}%")
+            ->orWhere('p.profile_name', 'like', "%{$search}%")
+            ->orWhere('u.name', 'like', "%{$search}%")
+            ->orWhere('u.email', 'like', "%{$search}%")
+            ->orWhere('u.phone', 'like', "%{$search}%");
+    });
+}
         $query
             ->orderByRaw("
                 CASE
@@ -116,29 +116,30 @@ class ProfileVerificationController extends Controller
         $photos = collect();
 
         if ($request->filled('id')) {
-            $selectedProfile = $baseQuery()
-                ->select(
-                    'p.*',
-                    'u.name as user_name',
-                    'u.email as user_email',
-                    'u.phone as user_phone'
-                )
-                ->where('p.id', $request->query('id'))
-                ->first();
-        }
+    $selectedProfile = $baseQuery()
+        ->select(
+            'p.*',
+            'u.name as user_name',
+            'u.email as user_email',
+            'u.phone as user_phone'
+        )
+        ->where('p.id', (int) $request->query('id'))
+        ->first();
+}
 
-        if (!$selectedProfile && $profiles->isNotEmpty()) {
-            $firstItem = $profiles->items()[0];
-            $selectedProfile = $baseQuery()
-                ->select(
-                    'p.*',
-                    'u.name as user_name',
-                    'u.email as user_email',
-                    'u.phone as user_phone'
-                )
-                ->where('p.id', $firstItem->id)
-                ->first();
-        }
+       if (!$request->filled('id') && $profiles->isNotEmpty()) {
+    $firstItem = $profiles->items()[0];
+
+    $selectedProfile = $baseQuery()
+        ->select(
+            'p.*',
+            'u.name as user_name',
+            'u.email as user_email',
+            'u.phone as user_phone'
+        )
+        ->where('p.id', $firstItem->id)
+        ->first();
+}
 
         // Fetching full details for the selected profile safely (Fixed collation error here)
         if ($selectedProfile) {
