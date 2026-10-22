@@ -4,7 +4,7 @@
     <div class="content-page">
         <div class="container-fluid py-4 px-4" style="background-color: #FAF5F5; min-height: 100vh;">
 
-            {{-- Success & Error Messages --}}
+            {{-- Success Message --}}
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
@@ -79,7 +79,7 @@
                 <div class="card-body p-2">
                     <div class="d-flex flex-wrap gap-2 fs-12 fw-semibold">
                         @foreach($verificationTabs as $tabStatus => $tab)
-                            <a href="{{ route('admin.profile-verification.index', ['type' => $type, 'status' => $tabStatus, 'search' => $search]) }}"
+                            <a href="{{ route('admin.profile-verification.index', array_filter(['type' => $type, 'status' => $tabStatus, 'search' => $search])) }}"
                                 class="btn btn-sm px-3 py-2 rounded-3 {{ $currentStatus === $tabStatus ? 'text-white shadow-sm' : 'btn-light text-muted' }}"
                                 @if($currentStatus === $tabStatus) style="background-color: #561325; border-color: #561325;"
                                 @endif>
@@ -98,7 +98,8 @@
                 style="border: 1px solid #F3E5E8 !important; overflow: visible !important;">
                 <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
                     <h5 class="fw-bold mb-1" style="color: #561325;">Profiles List ({{ ucfirst($status) }})</h5>
-                    <p class="text-muted fs-12 mb-0">Select any member name/ID below to view their full details.</p>
+                    <p class="text-muted fs-12 mb-0">Click any Profile Image or Profile ID below to view their full details.
+                    </p>
                 </div>
                 <div class="table-responsive px-3 pb-3" style="overflow-x: visible !important;">
                     <table class="table align-middle table-hover mb-0">
@@ -119,28 +120,35 @@
                         </thead>
                         <tbody>
                             @forelse($profiles as $index => $profile)
-                                <tr
-                                    class="{{ $selectedProfile && (int) $selectedProfile->id === (int) $profile->id ? 'table-active' : '' }}">
+                                <tr>
                                     <td class="text-muted fw-semibold">{{ $profiles->firstItem() + $index }}</td>
+
+                                    <!-- Profile Image Clickable -->
                                     <td>
-                                        @if(!empty($profile->profile_image))
-                                            <img src="{{ asset('storage/' . ltrim($profile->profile_image, '/')) }}" alt="img"
-                                                class="rounded-circle shadow-sm"
-                                                style="width: 35px; height: 35px; object-fit: cover;">
-                                        @else
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white fs-11 shadow-sm"
-                                                style="width: 35px; height: 35px; background-color: #561325;">
-                                                {{ strtoupper(substr($profile->user_name ?? 'M', 0, 1)) }}
-                                            </div>
-                                        @endif
+                                        <a href="{{ route('admin.profile-verification.index', array_filter(['type' => $type, 'status' => $status, 'search' => $search, 'modal_id' => $profile->id])) }}"
+                                            class="text-decoration-none">
+                                            @if(!empty($profile->profile_image))
+                                                <img src="{{ asset('storage/' . ltrim($profile->profile_image, '/')) }}" alt="img"
+                                                    class="rounded-circle shadow-sm border"
+                                                    style="width: 35px; height: 35px; object-fit: cover;">
+                                            @else
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white fs-11 shadow-sm"
+                                                    style="width: 35px; height: 35px; background-color: #561325;">
+                                                    {{ strtoupper(substr($profile->user_name ?? 'M', 0, 1)) }}
+                                                </div>
+                                            @endif
+                                        </a>
                                     </td>
+
+                                    <!-- Profile ID Clickable -->
                                     <td>
                                         <a class="fw-semibold text-dark text-decoration-none"
-                                            href="{{ route('admin.profile-verification.index', array_filter(['type' => $type, 'status' => $status, 'search' => $search, 'id' => $profile->id])) }}">
+                                            href="{{ route('admin.profile-verification.index', array_filter(['type' => $type, 'status' => $status, 'search' => $search, 'modal_id' => $profile->id])) }}">
                                             {{ $profile->profile_id ?: ('#' . $profile->id) }}
                                             <div class="small text-muted">{{ $profile->user_name ?? 'Member' }}</div>
                                         </a>
                                     </td>
+
                                     <td>{{ $profile->user_phone ?? 'N/A' }}</td>
                                     <td>{{ $profile->city ?? 'N/A' }}</td>
                                     <td>
@@ -161,17 +169,20 @@
                                     <td>{{ $profile->created_at ? \Carbon\Carbon::parse($profile->created_at)->format('d M Y') : 'N/A' }}
                                     </td>
 
-                                    <!-- Action Column: Edit, Delete, & Dummy Three Dots -->
+                                    <!-- Action Column -->
                                     <td class="text-center">
                                         <div class="d-inline-flex align-items-center gap-1">
-                                            <!-- Edit Button triggers Modal -->
+                                            <a href="{{ route('admin.profile-verification.index', array_filter(['type' => $type, 'status' => $status, 'search' => $search, 'modal_id' => $profile->id])) }}"
+                                                class="btn btn-sm btn-outline-info px-2 py-1 fs-11" title="View Details">
+                                                <i class="ti ti-eye"></i> View
+                                            </a>
+
                                             <button type="button" class="btn btn-sm btn-outline-primary px-2 py-1 fs-11"
                                                 data-bs-toggle="modal" data-bs-target="#editModal{{ $profile->id }}"
                                                 title="Edit">
                                                 <i class="ti ti-edit"></i> Edit
                                             </button>
 
-                                            <!-- Delete Form -->
                                             <form action="{{ route('admin.profile-verification.destroy', $profile->id) }}"
                                                 method="POST"
                                                 onsubmit="return confirm('Are you sure you want to delete this profile?');"
@@ -227,6 +238,17 @@
                     @endif
                 </div>
             </div>
+
+            <!-- Full Details Modal Popup (Auto-opens when modal_id is present) -->
+            <div class="modal fade" id="fullProfileModal" tabindex="-1" aria-labelledby="fullProfileModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content border-0 rounded-4 shadow">
+                        <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                            <h5 class="modal-title fw-bold" id="fullProfileModalLabel" style="color: #561325;">Member
+                                Complete Profile</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                onclick="closeProfileModal()"></button>
 
             <!-- Assign Profile Modal -->
 <div class="modal fade" id="assignProfileModal" tabindex="-1" aria-hidden="true">
@@ -331,134 +353,152 @@
                                 </h6>
                                 <span class="text-muted fs-11">Primary Photo</span>
                             </div>
+
                         </div>
+                        <div class="modal-body px-4 py-3">
+                            @if(isset($modalProfile))
+                                <div class="row g-4 align-items-start">
+                                    <div class="col-lg-4 text-center">
+                                        <div class="rounded-4 p-3 d-flex flex-column align-items-center justify-content-center mx-auto"
+                                            style="background-color: #FDF4F6; border: 1px solid #F5DDE3; max-width: 220px;">
+                                            @if(isset($modalPhotos) && $modalPhotos->isNotEmpty() && !empty($modalPhotos[0]->image))
+                                                <img src="{{ asset('storage/' . ltrim($modalPhotos[0]->image, '/')) }}"
+                                                    alt="Profile photo" class="rounded-circle mb-2 shadow-sm"
+                                                    style="width: 100px; height: 100px; object-fit: cover;">
+                                            @elseif(!empty($modalProfile->profile_image))
+                                                <img src="{{ asset('storage/' . ltrim($modalProfile->profile_image, '/')) }}"
+                                                    alt="Profile photo" class="rounded-circle mb-2 shadow-sm"
+                                                    style="width: 100px; height: 100px; object-fit: cover;">
+                                            @else
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold fs-24 mb-2 shadow-sm text-white"
+                                                    style="width: 90px; height: 90px; background-color: #561325;">
+                                                    {{ strtoupper(substr($modalProfile->user_name ?? 'M', 0, 1)) }}
+                                                </div>
+                                            @endif
+                                            <h6 class="fw-bold mb-0 fs-12 text-uppercase" style="color: #561325;">
+                                                {{ $modalProfile->user_name ?? 'Member' }}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="row g-2 fs-13">
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Profile
+                                                    ID</span>
+                                                <span
+                                                    class="text-dark fw-medium fs-13">{{ $modalProfile->profile_id ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Age /
+                                                    Gender</span>
+                                                <span class="text-dark fw-medium fs-13">{{ $modalProfile->age ?? 'N/A' }} /
+                                                    {{ $modalProfile->gender ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span
+                                                    class="text-muted d-block fs-11 text-uppercase fw-semibold">Location</span>
+                                                <span class="text-dark fw-medium fs-13">{{ $modalProfile->city ?? 'N/A' }},
+                                                    {{ $modalProfile->state ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Marital
+                                                    Status</span>
+                                                <span
+                                                    class="text-dark fw-medium fs-13">{{ $modalProfile->marital_status ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Religion /
+                                                    Caste</span>
+                                                <span class="text-dark fw-medium fs-13">{{ $modalProfile->religion ?? 'N/A' }} /
+                                                    {{ $modalProfile->caste ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span
+                                                    class="text-muted d-block fs-11 text-uppercase fw-semibold">Education</span>
+                                                <span class="text-dark fw-medium fs-13">
+                                                    @forelse($modalEducationList ?? [] as $edu)
+                                                        {{ $edu->qualification ?? '' }}
+                                                    @empty
+                                                        Not provided
+                                                    @endforelse
+                                                </span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span
+                                                    class="text-muted d-block fs-11 text-uppercase fw-semibold">Occupation</span>
+                                                <span class="text-dark fw-medium fs-13">
+                                                    {{ $modalOccupation->occupation ?? 'Not provided' }}
+                                                </span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Mobile</span>
+                                                <span
+                                                    class="text-dark fw-medium fs-13">{{ $modalProfile->user_phone ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span class="text-muted d-block fs-11 text-uppercase fw-semibold">Email</span>
+                                                <span
+                                                    class="text-dark fw-medium fs-13">{{ $modalProfile->user_email ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="col-md-6 border-bottom pb-2">
+                                                <span
+                                                    class="text-muted d-block fs-11 text-uppercase fw-semibold">Verification</span>
+                                                <span
+                                                    class="text-dark fw-medium fs-13">{{ ucfirst($modalProfile->verification_status) }}</span>
+                                            </div>
+                                            <div class="col-12 border-bottom pb-2">
+                                                <span class="text-muted d-block fs-11 text-uppercase fw-semibold">About
+                                                    Me</span>
+                                                <span
+                                                    class="text-dark fw-medium fs-13">{{ $modalProfile->about_me ?? 'Not provided' }}</span>
+                                            </div>
+                                        </div>
 
-                        <!-- Right Side: Full Details & Review -->
-                        <div class="col-lg-8 col-md-7">
-                            <div class="border-bottom pb-3 mb-3">
-                                <h3 class="fw-bold text-dark mb-1">
-                                    {{ $selectedProfile->user_name ?? 'Member' }}
-                                </h3>
-                                <span class="text-muted fs-12">
-                                    Profile ID: <strong class="text-dark">{{ $selectedProfile->profile_id ?? 'N/A' }}</strong>
-                                    · Submitted
-                                    {{ !empty($selectedProfile->created_at) ? \Carbon\Carbon::parse($selectedProfile->created_at)->format('d M Y') : 'N/A' }}
-                                </span>
-                            </div>
-
-                            <div class="fs-13 mb-4">
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Age / Gender</div>
-                                    <div class="col-8 fw-semibold text-dark">
-                                        {{ $selectedProfile->age ?? 'N/A' }} · {{ $selectedProfile->gender ?? 'N/A' }}
-                                    </div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Location</div>
-                                    <div class="col-8 fw-semibold text-dark">
-                                        {{ $selectedProfile->city ?? 'N/A' }}, {{ $selectedProfile->state ?? 'N/A' }}
-                                    </div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Marital Status</div>
-                                    <div class="col-8 fw-semibold text-dark">
-                                        {{ $selectedProfile->marital_status ?? 'Not provided' }}</div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Religion / Caste</div>
-                                    <div class="col-8 fw-semibold text-dark">{{ $selectedProfile->religion ?? 'N/A' }} /
-                                        {{ $selectedProfile->caste ?? 'N/A' }}</div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Education</div>
-                                    <div class="col-8 fw-semibold text-dark">
-                                        @forelse($educationList ?? [] as $edu)
-                                            <div>{{ $edu->qualification ?? '' }} @if($edu->college_name) - {{ $edu->college_name }}
-                                            @endif</div>
-                                        @empty
-                                            Not provided
-                                        @endforelse
-                                    </div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Occupation</div>
-                                    <div class="col-8 fw-semibold text-dark">
-                                        {{ $occupation->occupation ?? 'Not provided' }}
-                                        @if($occupation && $occupation->company_name) ({{ $occupation->company_name }}) @endif
-                                    </div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Mobile</div>
-                                    <div class="col-8 fw-semibold text-dark">
-                                        {{ $selectedProfile->user_phone ?? 'Not provided' }}</div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Email</div>
-                                    <div class="col-8 fw-semibold text-dark">
-                                        {{ $selectedProfile->user_email ?? 'Not provided' }}</div>
-                                </div>
-                                <div class="row py-2 border-bottom">
-                                    <div class="col-4 text-muted">Verification</div>
-                                    <div class="col-8 fw-semibold">
-                                        @if($selectedProfile->verification_status === 'approved')
-                                            <span class="text-success">Approved</span>
-                                        @elseif($selectedProfile->verification_status === 'rejected')
-                                            <span class="text-danger">Rejected</span>
-                                        @elseif($selectedProfile->verification_status === 'update_requested')
-                                            <span class="text-warning">Update requested</span>
-                                        @else
-                                            <span class="text-warning">Pending review</span>
+                                        <!-- Review Section inside Modal -->
+                                        @if($modalProfile->verification_status === 'pending')
+                                            <div class="mt-4 pt-3 border-top">
+                                                <form method="POST"
+                                                    action="{{ route('admin.profile-verification.review', $modalProfile->id) }}">
+                                                    @csrf
+                                                    <input type="hidden" name="type" value="{{ $type }}">
+                                                    <div class="mb-3">
+                                                        <label class="form-label fs-12 fw-bold text-dark" for="review_notes">Admin
+                                                            review notes</label>
+                                                        <textarea name="review_notes" id="review_notes"
+                                                            class="form-control fs-12 py-2 rounded-3" rows="2" maxlength="5000"
+                                                            placeholder="Add a reason or note for your decision...">{{ old('review_notes', $modalProfile->review_notes) }}</textarea>
+                                                    </div>
+                                                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                                                        <button type="submit" name="decision" value="rejected"
+                                                            class="btn btn-sm btn-danger-subtle text-danger fw-semibold px-3 py-1 border rounded-3"
+                                                            onclick="return confirm('Reject this profile?');">
+                                                            Reject
+                                                        </button>
+                                                        <button type="submit" name="decision" value="update_requested"
+                                                            class="btn btn-sm btn-warning-subtle text-warning-emphasis fw-semibold px-3 py-1 border rounded-3"
+                                                            onclick="return confirm('Request update?');">
+                                                            Request Update
+                                                        </button>
+                                                        <button type="submit" name="decision" value="approved"
+                                                            class="btn btn-sm text-white fw-semibold px-3 py-1 rounded-3 shadow-sm"
+                                                            style="background-color: #561325;"
+                                                            onclick="return confirm('Approve this profile?');">
+                                                            Approve
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         @endif
                                     </div>
                                 </div>
-                                @if(!empty($selectedProfile->about_me))
-                                    <div class="row py-2 border-bottom">
-                                        <div class="col-4 text-muted">About Me</div>
-                                        <div class="col-8 text-dark">{{ $selectedProfile->about_me }}</div>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <!-- Admin Review Actions -->
-                            @if($selectedProfile->verification_status === 'pending')
-                                <form method="POST" action="{{ route('admin.profile-verification.review', $selectedProfile->id) }}">
-                                    @csrf
-                                    <input type="hidden" name="type" value="{{ $type }}">
-                                    <div class="mb-4">
-                                        <label class="form-label fs-12 fw-bold text-dark" for="review_notes">Admin review
-                                            notes</label>
-                                        <textarea name="review_notes" id="review_notes" class="form-control fs-12 py-2 rounded-3"
-                                            rows="3" maxlength="5000" placeholder="Add a reason or note for your decision..."
-                                            style="background-color: #FAF7F7; border: 1px solid #ECD9DF;">{{ old('review_notes', $selectedProfile->review_notes) }}</textarea>
-                                    </div>
-                                    <div class="d-flex flex-wrap justify-content-end gap-2 pt-2 border-top">
-                                        <button type="submit" name="decision" value="rejected"
-                                            class="btn btn-sm btn-danger-subtle text-danger fw-semibold px-3 py-2 border border-danger-subtle rounded-3"
-                                            onclick="return confirm('Reject this profile?');">
-                                            Reject with reason
-                                        </button>
-                                        <button type="submit" name="decision" value="update_requested"
-                                            class="btn btn-sm btn-warning-subtle text-warning-emphasis fw-semibold px-3 py-2 border border-warning-subtle rounded-3"
-                                            onclick="return confirm('Request an update for this profile?');">
-                                            Request update
-                                        </button>
-                                        <button type="submit" name="decision" value="approved"
-                                            class="btn btn-sm text-white fw-semibold px-4 py-2 rounded-3 shadow-sm"
-                                            style="background-color: #561325;" onclick="return confirm('Approve this profile?');">
-                                            Approve profile
-                                        </button>
-                                    </div>
-                                </form>
-                            @else
-                                <div class="alert alert-light border mb-0" role="status">
-                                    This profile is currently {{ str_replace('_', ' ', $selectedProfile->verification_status) }}.
-                                    Review actions are no longer available.
-                                </div>
                             @endif
+                        </div>
+                        <div class="modal-footer border-top-0 px-4 pb-4">
+                            <button type="button" class="btn btn-secondary fs-13" data-bs-dismiss="modal"
+                                onclick="closeProfileModal()">Close</button>
                         </div>
                     </div>
                 </div>
-            @endif
+            </div>
 
             <!-- Edit Modals Loop for each profile -->
             @foreach($profiles as $profile)
@@ -516,18 +556,19 @@
         </div>
     </div>
 
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const assignModal = document.getElementById('assignProfileModal');
+    <!-- Auto-open Modal Script if modal_id exists -->
+    @if(isset($modalProfile))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var myModal = new bootstrap.Modal(document.getElementById('fullProfileModal'));
+                myModal.show();
+            });
 
-    if (!assignModal) return;
-
-    assignModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const profileId = button?.getAttribute('data-profile-id');
-
-        document.getElementById('assign_profile_ids').value = profileId || '';
-    });
-});
-</script>
+            function closeProfileModal() {
+                const url = new URL(window.location.href);
+                url.searchParams.delete('modal_id');
+                window.location.href = url.toString();
+            }
+        </script>
+    @endif
 @endsection

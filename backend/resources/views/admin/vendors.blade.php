@@ -137,359 +137,368 @@
                 </div>
             </div>
 
-            
-<!-- Vendor Directory Table Card -->
-<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4"
-     style="border: 1px solid #F3E5E8 !important;">
 
-    <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
-        <h5 class="fw-bold mb-1" style="color: #561325;">Vendor Directory</h5>
-        <p class="text-muted fs-12 mb-0">
-            Each agent has a separate login and scoped customer access.
-        </p>
-    </div>
+            <!-- Vendor Directory Table Card -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4"
+                style="border: 1px solid #F3E5E8 !important;">
 
-    <div class="table-responsive">
-        <table id="vendorDirectoryTable"
-               class="table align-middle mb-0 table-hover js-data-table"
-               data-page-length="10"
-               data-empty-table="No vendors found.">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
+                    <h5 class="fw-bold mb-1" style="color: #561325;">Vendor Directory</h5>
+                    <p class="text-muted fs-12 mb-0">
+                        Each agent has a separate login and scoped customer access.
+                    </p>
+                </div>
 
-            <thead style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase;">
-                <tr style="color: #561325;">
-                    <th class="ps-4 py-3">VENDOR ID</th>
-                    <th class="py-3">AGENT NAME</th>
-                    <th class="py-3">MOBILE NUMBER</th>
-                    <th class="py-3">CITY</th>
-                    <th class="py-3">PROFILES</th>
-                    <th class="py-3">STATUS</th>
-                    <th class="py-3">COMMISSION</th>
-                    <th class="text-center pe-4 py-3">ACTIONS</th>
-                </tr>
-            </thead>
+                <div class="table-responsive">
+                    <table id="vendorDirectoryTable" class="table align-middle mb-0 table-hover js-data-table"
+                        data-page-length="10" data-empty-table="No vendors found.">
 
-            <tbody class="fs-13">
-                @forelse($vendors as $vendor)
-                    <tr>
-                        <td class="ps-4 fw-semibold text-dark">
-                            VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}
-                        </td>
+                        <thead style="background-color: #FCF7F8; font-size: 11px; text-transform: uppercase;">
+                            <tr style="color: #561325;">
+                                <th class="ps-4 py-3">S.No</th>
+                                <th class="ps-4 py-3">VENDOR ID</th>
+                                <th class="py-3">AGENT NAME</th>
+                                <th class="py-3">MOBILE NUMBER</th>
+                                <th class="py-3">CITY</th>
+                                <th class="py-3">PROFILES</th>
+                                <th class="py-3">STATUS</th>
+                                <th class="py-3">COMMISSION</th>
+                                <th class="text-center pe-4 py-3">ACTIONS</th>
+                            </tr>
+                        </thead>
 
-                        <td class="fw-medium text-dark">
-                            {{ $vendor->agent_name }}
-                        </td>
+                        <tbody class="fs-13">
+                            @forelse($vendors as $vendor)
+                                <tr>
+                                    <td class="ps-4 text-muted fw-semibold">
+                                        {{ method_exists($vendors, 'firstItem') ? $vendors->firstItem() + $index : $index + 1 }}
+                                    </td>
+                                    <td class="ps-4 fw-semibold text-dark">
+                                        VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}
+                                    </td>
 
-                        <td class="fw-medium text-dark">
-                            {{ $vendor->vendor_mobile }}
-                        </td>
+                                    <td class="fw-medium text-dark">
+                                        {{ $vendor->agent_name }}
+                                    </td>
 
-                        <td class="text-muted">
-                            {{ $vendor->city }}
-                        </td>
+                                    <td class="fw-medium text-dark">
+                                        {{ $vendor->vendor_mobile }}
+                                    </td>
 
-                        <td class="fw-medium text-dark">
-                            {{ $vendor->customers_count }}
-                        </td>
+                                    <td class="text-muted">
+                                        {{ $vendor->city }}
+                                    </td>
 
-                        <td>
-                            @php
-                                $statusClass = 'text-secondary';
+                                    <td class="fw-medium text-dark">
+                                        {{ $vendor->customers_count }}
+                                    </td>
 
-                                if ($vendor->status === 'Active') {
-                                    $statusClass = 'text-success';
-                                } elseif ($vendor->status === 'Pending') {
-                                    $statusClass = 'text-warning';
-                                } elseif ($vendor->status === 'Suspended') {
-                                    $statusClass = 'text-danger';
+                                    <td>
+                                        @php
+                                            $statusClass = 'text-secondary';
+
+                                            if ($vendor->status === 'Active') {
+                                                $statusClass = 'text-success';
+                                            } elseif ($vendor->status === 'Pending') {
+                                                $statusClass = 'text-warning';
+                                            } elseif ($vendor->status === 'Suspended') {
+                                                $statusClass = 'text-danger';
+                                            }
+                                        @endphp
+
+                                        <span class="fw-semibold {{ $statusClass }}">
+                                            {{ $vendor->status }}
+                                        </span>
+                                    </td>
+
+                                    <td class="fw-medium text-dark">
+                                        ₹{{ number_format((float) $vendor->commission, 2) }}
+                                    </td>
+
+                                    <td class="text-center pe-4">
+                                        <div class="d-inline-flex gap-1">
+
+                                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                                data-bs-target="#editVendorModal{{ $vendor->id }}">
+                                                <i class="ti ti-edit"></i> Edit
+                                            </button>
+
+                                            <form action="{{ route('admin.vendors.destroy', $vendor->id) }}" method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this vendor?');">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="ti ti-trash"></i> Delete
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-4 text-muted">
+                                        No vendors found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div class="p-3">
+                    {{ $vendors->links() }}
+                </div>
+            </div>
+
+
+            <!-- Add Vendor Modal -->
+            <div class="modal fade" id="addVendorModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 rounded-4 shadow">
+                        <div class="modal-header px-4 pt-4 pb-3" style="border-bottom: 1px solid #f0e3e7;">
+                            <h5 class="modal-title fw-bold" style="color: #561325;">Add New Vendor</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="POST" action="{{ route('admin.vendors.store') }}">
+                            @csrf
+                            <div class="modal-body px-4 py-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Agent Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="agent_name" class="form-control"
+                                            value="{{ old('agent_name') }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Mobile Number <span
+                                                class="text-danger">*</span></label>
+                                        <input type="tel" id="vendor_mobile" name="vendor_mobile"
+                                            class="form-control @error('vendor_mobile') is-invalid @enderror"
+                                            value="{{ old('vendor_mobile') }}" maxlength="20" pattern="^[0-9+\-\s()]{7,20}$"
+                                            required autocomplete="tel">
+                                        @error('vendor_mobile')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                        <div class="invalid-feedback" id="vendorMobileJsError" style="display: none;">
+                                            Enter a valid mobile number.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">City <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="city" class="form-control" value="{{ old('city') }}"
+                                            required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Email Address <span
+                                                class="text-danger">*</span></label>
+                                        <input type="email" name="email" class="form-control" value="{{ old('email') }}"
+                                            required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Vendor Status <span
+                                                class="text-danger">*</span></label>
+                                        <select name="status" class="form-select" required>
+                                            <option value="Active">Active</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Suspended">Suspended</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Commission <span
+                                                class="text-danger">*</span></label>
+                                        <input type="number" step="0.01" name="commission" class="form-control"
+                                            value="{{ old('commission') }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Password <span
+                                                class="text-danger">*</span></label>
+                                        <input type="password" name="password" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Confirm Password <span
+                                                class="text-danger">*</span></label>
+                                        <input type="password" name="password_confirmation" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer px-4 py-3">
+                                <button type="button" class="btn btn-light border rounded-3 px-4"
+                                    data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn text-white fw-semibold rounded-3 px-4"
+                                    style="background-color: #561325;">Add Vendor</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Edit Vendor Modals Loop -->
+            @foreach($vendors as $vendor)
+                <div class="modal fade" id="editVendorModal{{ $vendor->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0 rounded-4 shadow">
+                            <div class="modal-header px-4 pt-4 pb-3" style="border-bottom: 1px solid #f0e3e7;">
+                                <h5 class="modal-title fw-bold" style="color: #561325;">Edit Vendor:
+                                    VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="POST" action="{{ route('admin.vendors.update', $vendor->id) }}">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-body px-4 py-4">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Agent Name <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="agent_name" class="form-control"
+                                                value="{{ old('agent_name', $vendor->agent_name) }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Mobile Number <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="tel" name="vendor_mobile" class="form-control"
+                                                value="{{ old('vendor_mobile', $vendor->vendor_mobile) }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">City <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="city" class="form-control"
+                                                value="{{ old('city', $vendor->city) }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Email Address <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="email" name="email" class="form-control"
+                                                value="{{ old('email', $vendor->email) }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Vendor Status <span
+                                                    class="text-danger">*</span></label>
+                                            <select name="status" class="form-select" required>
+                                                <option value="Active" {{ $vendor->status === 'Active' ? 'selected' : '' }}>Active
+                                                </option>
+                                                <option value="Pending" {{ $vendor->status === 'Pending' ? 'selected' : '' }}>
+                                                    Pending
+                                                </option>
+                                                <option value="Suspended" {{ $vendor->status === 'Suspended' ? 'selected' : '' }}>
+                                                    Suspended</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Commission <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="number" step="0.01" name="commission" class="form-control"
+                                                value="{{ old('commission', $vendor->commission) }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Password <small class="text-muted">(Leave
+                                                    blank to
+                                                    keep current)</small></label>
+                                            <input type="password" name="password" class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Confirm Password</label>
+                                            <input type="password" name="password_confirmation" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer px-4 py-3">
+                                    <button type="button" class="btn btn-light border rounded-3 px-4"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn text-white fw-semibold rounded-3 px-4"
+                                        style="background-color: #561325;">Update Vendor</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+            <div id="vendorPageConfig" data-reopen-modal="{{ $errors->any() && old('_method') !== 'PUT' ? '1' : '0' }}">
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const mobileInput = document.getElementById('vendor_mobile');
+                    const mobileError = document.getElementById('vendorMobileJsError');
+                    const addVendorModalEl = document.getElementById('addVendorModal');
+                    const addVendorForm = addVendorModalEl
+                        ? addVendorModalEl.querySelector('form')
+                        : null;
+
+                    // Auto reopen modal if validation failed
+                    const vendorPageConfig = document.getElementById('vendorPageConfig');
+                    const reopenAddVendorModal =
+                        vendorPageConfig &&
+                        vendorPageConfig.dataset.reopenModal === '1';
+
+                    if (reopenAddVendorModal && addVendorModalEl) {
+                        const modalInstance = new bootstrap.Modal(addVendorModalEl);
+                        modalInstance.show();
+                    }
+
+                    if (mobileInput) {
+                        const mobileRegex = /^[0-9+\-\s()]{7,20}$/;
+
+                        // Restrict input characters to numbers, +, -, and spaces
+                        mobileInput.addEventListener('keypress', function (e) {
+                            const char = String.fromCharCode(e.which || e.keyCode);
+
+                            if (!/[\d+\-\s()]/.test(char)) {
+                                e.preventDefault();
+                            }
+                        });
+
+                        function validateMobile() {
+                            const rawVal = mobileInput.value.trim();
+
+                            if (!rawVal) {
+                                mobileInput.classList.remove('is-valid', 'is-invalid');
+
+                                if (mobileError) {
+                                    mobileError.style.display = 'none';
                                 }
-                            @endphp
 
-                            <span class="fw-semibold {{ $statusClass }}">
-                                {{ $vendor->status }}
-                            </span>
-                        </td>
+                                return false;
+                            }
 
-                        <td class="fw-medium text-dark">
-                            ₹{{ number_format((float) $vendor->commission, 2) }}
-                        </td>
+                            if (mobileRegex.test(rawVal)) {
+                                mobileInput.classList.remove('is-invalid');
+                                mobileInput.classList.add('is-valid');
 
-                        <td class="text-center pe-4">
-                            <div class="d-inline-flex gap-1">
+                                if (mobileError) {
+                                    mobileError.style.display = 'none';
+                                }
 
-                                <button type="button"
-                                        class="btn btn-sm btn-outline-primary"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editVendorModal{{ $vendor->id }}">
-                                    <i class="ti ti-edit"></i> Edit
-                                </button>
+                                return true;
+                            } else {
+                                mobileInput.classList.remove('is-valid');
+                                mobileInput.classList.add('is-invalid');
 
-                                <form action="{{ route('admin.vendors.destroy', $vendor->id) }}"
-                                      method="POST"
-                                      onsubmit="return confirm('Are you sure you want to delete this vendor?');">
-                                    @csrf
-                                    @method('DELETE')
+                                if (mobileError) {
+                                    mobileError.style.display = 'block';
+                                    mobileError.textContent =
+                                        'Enter a valid mobile number.';
+                                }
 
-                                    <button type="submit"
-                                            class="btn btn-sm btn-outline-danger">
-                                        <i class="ti ti-trash"></i> Delete
-                                    </button>
-                                </form>
+                                return false;
+                            }
+                        }
 
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">
-                            No vendors found.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
+                        mobileInput.addEventListener('input', validateMobile);
+                        mobileInput.addEventListener('blur', validateMobile);
 
-        </table>
-    </div>
-
-    <div class="p-3">
-        {{ $vendors->links() }}
-    </div>
-</div>
-
-
-    <!-- Add Vendor Modal -->
-    <div class="modal fade" id="addVendorModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0 rounded-4 shadow">
-                <div class="modal-header px-4 pt-4 pb-3" style="border-bottom: 1px solid #f0e3e7;">
-                    <h5 class="modal-title fw-bold" style="color: #561325;">Add New Vendor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST" action="{{ route('admin.vendors.store') }}">
-                    @csrf
-                    <div class="modal-body px-4 py-4">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Agent Name <span class="text-danger">*</span></label>
-                                <input type="text" name="agent_name" class="form-control" value="{{ old('agent_name') }}"
-                                    required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Mobile Number <span
-                                        class="text-danger">*</span></label>
-                                <input type="tel" id="vendor_mobile" name="vendor_mobile"
-                                    class="form-control @error('vendor_mobile') is-invalid @enderror"
-                                    value="{{ old('vendor_mobile') }}" maxlength="20"
-                                    pattern="^[0-9+\-\s()]{7,20}$" required autocomplete="tel">
-                                @error('vendor_mobile')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                                <div class="invalid-feedback" id="vendorMobileJsError" style="display: none;">
-                                    Enter a valid mobile number.
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">City <span class="text-danger">*</span></label>
-                                <input type="text" name="city" class="form-control" value="{{ old('city') }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Email Address <span
-                                        class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Vendor Status <span
-                                        class="text-danger">*</span></label>
-                                <select name="status" class="form-select" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="Suspended">Suspended</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Commission <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" name="commission" class="form-control"
-                                    value="{{ old('commission') }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
-                                <input type="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Confirm Password <span
-                                        class="text-danger">*</span></label>
-                                <input type="password" name="password_confirmation" class="form-control" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer px-4 py-3">
-                        <button type="button" class="btn btn-light border rounded-3 px-4"
-                            data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn text-white fw-semibold rounded-3 px-4"
-                            style="background-color: #561325;">Add Vendor</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- Edit Vendor Modals Loop -->
-    @foreach($vendors as $vendor)
-        <div class="modal fade" id="editVendorModal{{ $vendor->id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content border-0 rounded-4 shadow">
-                    <div class="modal-header px-4 pt-4 pb-3" style="border-bottom: 1px solid #f0e3e7;">
-                        <h5 class="modal-title fw-bold" style="color: #561325;">Edit Vendor:
-                            VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="POST" action="{{ route('admin.vendors.update', $vendor->id) }}">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body px-4 py-4">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Agent Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="agent_name" class="form-control"
-                                        value="{{ old('agent_name', $vendor->agent_name) }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Mobile Number <span
-                                            class="text-danger">*</span></label>
-                                    <input type="tel" name="vendor_mobile" class="form-control"
-                                        value="{{ old('vendor_mobile', $vendor->vendor_mobile) }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">City <span class="text-danger">*</span></label>
-                                    <input type="text" name="city" class="form-control" value="{{ old('city', $vendor->city) }}"
-                                        required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Email Address <span
-                                            class="text-danger">*</span></label>
-                                    <input type="email" name="email" class="form-control"
-                                        value="{{ old('email', $vendor->email) }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Vendor Status <span
-                                            class="text-danger">*</span></label>
-                                    <select name="status" class="form-select" required>
-                                        <option value="Active" {{ $vendor->status === 'Active' ? 'selected' : '' }}>Active
-                                        </option>
-                                        <option value="Pending" {{ $vendor->status === 'Pending' ? 'selected' : '' }}>Pending
-                                        </option>
-                                        <option value="Suspended" {{ $vendor->status === 'Suspended' ? 'selected' : '' }}>
-                                            Suspended</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Commission <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" name="commission" class="form-control"
-                                        value="{{ old('commission', $vendor->commission) }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Password <small class="text-muted">(Leave blank to
-                                            keep current)</small></label>
-                                    <input type="password" name="password" class="form-control">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Confirm Password</label>
-                                    <input type="password" name="password_confirmation" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer px-4 py-3">
-                            <button type="button" class="btn btn-light border rounded-3 px-4"
-                                data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn text-white fw-semibold rounded-3 px-4"
-                                style="background-color: #561325;">Update Vendor</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endforeach
-    <div id="vendorPageConfig"
-        data-reopen-modal="{{ $errors->any() && old('_method') !== 'PUT' ? '1' : '0' }}"></div>
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const mobileInput = document.getElementById('vendor_mobile');
-    const mobileError = document.getElementById('vendorMobileJsError');
-    const addVendorModalEl = document.getElementById('addVendorModal');
-    const addVendorForm = addVendorModalEl
-        ? addVendorModalEl.querySelector('form')
-        : null;
-
-    // Auto reopen modal if validation failed
-    const vendorPageConfig = document.getElementById('vendorPageConfig');
-    const reopenAddVendorModal =
-        vendorPageConfig &&
-        vendorPageConfig.dataset.reopenModal === '1';
-
-    if (reopenAddVendorModal && addVendorModalEl) {
-        const modalInstance = new bootstrap.Modal(addVendorModalEl);
-        modalInstance.show();
-    }
-
-    if (mobileInput) {
-        const mobileRegex = /^[0-9+\-\s()]{7,20}$/;
-
-        // Restrict input characters to numbers, +, -, and spaces
-        mobileInput.addEventListener('keypress', function (e) {
-            const char = String.fromCharCode(e.which || e.keyCode);
-
-            if (!/[\d+\-\s()]/.test(char)) {
-                e.preventDefault();
-            }
-        });
-
-        function validateMobile() {
-            const rawVal = mobileInput.value.trim();
-
-            if (!rawVal) {
-                mobileInput.classList.remove('is-valid', 'is-invalid');
-
-                if (mobileError) {
-                    mobileError.style.display = 'none';
-                }
-
-                return false;
-            }
-
-            if (mobileRegex.test(rawVal)) {
-                mobileInput.classList.remove('is-invalid');
-                mobileInput.classList.add('is-valid');
-
-                if (mobileError) {
-                    mobileError.style.display = 'none';
-                }
-
-                return true;
-            } else {
-                mobileInput.classList.remove('is-valid');
-                mobileInput.classList.add('is-invalid');
-
-                if (mobileError) {
-                    mobileError.style.display = 'block';
-                    mobileError.textContent =
-                        'Enter a valid mobile number.';
-                }
-
-                return false;
-            }
-        }
-
-        mobileInput.addEventListener('input', validateMobile);
-        mobileInput.addEventListener('blur', validateMobile);
-
-        if (addVendorForm) {
-            addVendorForm.addEventListener('submit', function (e) {
-                if (!validateMobile()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    mobileInput.focus();
-                }
-            });
-        }
-    }
-});
-    </script>
+                        if (addVendorForm) {
+                            addVendorForm.addEventListener('submit', function (e) {
+                                if (!validateMobile()) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    mobileInput.focus();
+                                }
+                            });
+                        }
+                    }
+                });
+            </script>
 @endsection

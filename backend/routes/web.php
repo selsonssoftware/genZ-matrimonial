@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\MatrimonyMasterController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Services\NotificationService;
+use App\Http\Controllers\Admin\MailTestController;
+
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -91,6 +94,9 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
         Route::delete('/management/delete/{id}', [UserController::class, 'userdestroy'])->name('users.destroy');
         Route::get('/management/export', [UserController::class, 'userexport'])->name('users.export');
 
+        // Corrected profile route (matches the /management prefix pattern)
+        Route::get('/management/{id}/profile', [UserController::class, 'userProfile'])->name('users.profile');
+
         // Profile Verification
         // Route::get('/profile', [ProfileVerificationController::class, 'index'])->name('admin.profile-verification.index');
         //Route::post('/profile/{id}/review', [ProfileVerificationController::class, 'review'])
@@ -148,3 +154,21 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
             ->name('cms.banner.update');
     });
 });
+
+Route::get('/test-email', function (NotificationService $notification) {
+    $sent = $notification->sendEmail(
+        'your-test-email@gmail.com',
+        'Laravel Email Test',
+        'Success! Laravel Gmail SMTP is working.'
+    );
+
+    return $sent
+        ? 'Email sent successfully. Check your inbox.'
+        : 'Email failed. Check storage/logs/laravel.log';
+});
+
+Route::get('/test-email', [MailTestController::class, 'index'])
+    ->name('mail-test.index');
+
+Route::post('/test-email', [MailTestController::class, 'send'])
+    ->name('mail-test.send');
