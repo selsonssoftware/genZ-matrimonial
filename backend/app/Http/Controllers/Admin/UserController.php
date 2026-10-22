@@ -43,12 +43,37 @@ class UserController extends Controller
             ->orderByDesc('created_at')
             ->orderByDesc('id')
             ->get()
-            ->map(fn (User $user) => $this->memberData($user))
+            ->map(fn(User $user) => $this->memberData($user))
             ->values();
 
         return view('admin.management', [
             'usersData' => $usersData,
             'counts' => $this->memberCounts(),
+        ]);
+    }
+
+    public function userProfile(int $id)
+    {
+        $user = $this->nonAdminUsers()->findOrFail($id);
+
+        $profile = null;
+        if (Schema::hasTable('profiles')) {
+            $profile = DB::table('profiles')
+                ->where('user_id', $user->id)
+                ->first();
+        }
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'user' => $user,
+                'profile' => $profile,
+            ]);
+        }
+
+        return view('admin.user_profile', [
+            'user' => $user,
+            'profile' => $profile,
         ]);
     }
 
@@ -58,15 +83,23 @@ class UserController extends Controller
         $validated = $request->validate($this->memberRules());
 
         $user = DB::transaction(function () use ($validated) {
-            do {
-                $memberId = 'TM-'.random_int(10000, 99999);
-            } while (User::where('member_id', $memberId)->exists());
+            // US0001, US0002 లాగా ఆటోమేటిక్‌గా జనరేట్ అవ్వడానికి లాజిక్
+            $latestUser = User::where('member_id', 'like', 'US%')->orderBy('id', 'desc')->first();
+
+            if ($latestUser && preg_match('/US(\d+)/', $latestUser->member_id, $matches)) {
+                $nextNumber = intval($matches[1]) + 1;
+            } else {
+                $nextNumber = 1;
+            }
+
+            $memberId = 'US' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
             return User::create([
                 'member_id' => $memberId,
                 'name' => trim($validated['name']),
                 'email' => mb_strtolower(trim($validated['email'])),
                 'gender' => $validated['gender'],
+                'phone' => $validated['phone'] ?? null,
                 'age' => $validated['age'],
                 'city' => trim($validated['city']),
                 'status' => self::STATUS_VALUES[$validated['status']],
@@ -95,6 +128,7 @@ class UserController extends Controller
             'email' => mb_strtolower(trim($validated['email'])),
             'gender' => $validated['gender'],
             'age' => $validated['age'],
+            'phone' => $validated['phone'] ?? null,
             'city' => trim($validated['city']),
             'status' => self::STATUS_VALUES[$validated['status']],
             'plan' => $validated['plan'],
@@ -141,7 +175,7 @@ class UserController extends Controller
         $query = $this->nonAdminUsers();
         $this->applyFilters($query, $validated);
 
-        $fileName = 'users_'.now()->format('Y-m-d_H-i-s').'.csv';
+        $fileName = 'users_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
         return new StreamedResponse(function () use ($query): void {
             $handle = fopen('php://output', 'w');
@@ -154,6 +188,7 @@ class UserController extends Controller
                 'Member ID',
                 'Name',
                 'Email',
+                'Phone',
                 'Gender',
                 'Age',
                 'City',
@@ -165,9 +200,10 @@ class UserController extends Controller
             $query->orderBy('id')->chunk(500, function ($users) use ($handle): void {
                 foreach ($users as $user) {
                     fputcsv($handle, [
-                        $this->safeCsvValue($user->member_id ?? ('TM-'.$user->id)),
+                        $this->safeCsvValue($user->member_id ?? ('US' . str_pad($user->id, 4, '0', STR_PAD_LEFT))),
                         $this->safeCsvValue($user->name),
                         $this->safeCsvValue($user->email),
+                        $this->safeCsvValue($user->phone ?? 'N/A'),
                         $this->safeCsvValue($user->gender ?? 'N/A'),
                         $this->safeCsvValue($user->age ?? 'N/A'),
                         $this->safeCsvValue($user->city ?? 'N/A'),
@@ -181,7 +217,7 @@ class UserController extends Controller
             fclose($handle);
         }, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$fileName.'"',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ]);
     }
 
@@ -194,12 +230,13 @@ class UserController extends Controller
                 'email',
                 'max:191',
                 $userId === null
-                    ? Rule::unique('users', 'email')
-                    : Rule::unique('users', 'email')->ignore($userId),
+                ? Rule::unique('users', 'email')
+                : Rule::unique('users', 'email')->ignore($userId),
             ],
             'gender' => ['required', Rule::in(['Male', 'Female'])],
             'age' => ['required', 'integer', 'min:18', 'max:100'],
             'city' => ['required', 'string', 'max:100'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'status' => ['required', Rule::in(array_keys(self::STATUS_VALUES))],
             'plan' => ['required', Rule::in(['Free', 'Premium'])],
         ];
@@ -222,7 +259,7 @@ class UserController extends Controller
             }
         }
 
-        if (! Schema::hasTable('interests')) {
+        if (!Schema::hasTable('interests')) {
             return false;
         }
 
@@ -245,21 +282,22 @@ class UserController extends Controller
 
     private function applyFilters($query, array $filters): void
     {
-        if (! empty($filters['search'])) {
+        if (!empty($filters['search'])) {
             $search = trim($filters['search']);
             $query->where(function ($builder) use ($search): void {
                 $builder->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('member_id', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
                     ->orWhere('city', 'like', "%{$search}%");
             });
         }
 
-        if (! empty($filters['gender'])) {
+        if (!empty($filters['gender'])) {
             $query->where('gender', $filters['gender']);
         }
 
-        if (! empty($filters['status'])) {
+        if (!empty($filters['status'])) {
             $status = self::STATUS_VALUES[$filters['status']];
             $query->where(function ($builder) use ($status, $filters): void {
                 $builder->where('status', $status)
@@ -267,17 +305,23 @@ class UserController extends Controller
             });
         }
 
-        if (! empty($filters['plan'])) {
+        if (!empty($filters['plan'])) {
             $query->where('plan', $filters['plan']);
         }
     }
 
     private function memberData(User $user): array
     {
+        $profile = null;
+        if (Schema::hasTable('profiles')) {
+            $profile = DB::table('profiles')->where('user_id', $user->id)->first();
+        }
+        $profileImage = $profile->profile_image ?? ($profile->photo ?? ($profile->image ?? ($profile->avatar ?? null)));
+
         return [
             'db_id' => $user->id,
-            'id' => $user->member_id ?: ('TM-'.$user->id),
-            'member_id' => $user->member_id ?: ('TM-'.$user->id),
+            'id' => $user->member_id ?: ('US' . str_pad($user->id, 4, '0', STR_PAD_LEFT)),
+            'member_id' => $user->member_id ?: ('US' . str_pad($user->id, 4, '0', STR_PAD_LEFT)),
             'name' => $user->name,
             'email' => $user->email,
             'gender' => $user->gender ?? '',
@@ -285,6 +329,8 @@ class UserController extends Controller
             'city' => $user->city ?? '',
             'status' => $this->statusLabel($user->status),
             'plan' => $user->plan ?? 'Free',
+            'phone' => $user->phone ?? '',
+            'profile_image' => $profileImage,
         ];
     }
 
@@ -328,7 +374,7 @@ class UserController extends Controller
         $value = (string) $value;
 
         return preg_match('/^[\s]*[=+\-@]/u', $value) === 1
-            ? "'".$value
+            ? "'" . $value
             : $value;
     }
 }

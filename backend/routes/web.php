@@ -94,6 +94,9 @@ Route::middleware(['auth:admin', 'admin.permissions'])->group(function () {
         Route::delete('/management/delete/{id}', [UserController::class, 'userdestroy'])->name('users.destroy');
         Route::get('/management/export', [UserController::class, 'userexport'])->name('users.export');
 
+        // Corrected profile route (matches the /management prefix pattern)
+        Route::get('/management/{id}/profile', [UserController::class, 'userProfile'])->name('users.profile');
+
         // Profile Verification
         // Route::get('/profile', [ProfileVerificationController::class, 'index'])->name('admin.profile-verification.index');
         //Route::post('/profile/{id}/review', [ProfileVerificationController::class, 'review'])
