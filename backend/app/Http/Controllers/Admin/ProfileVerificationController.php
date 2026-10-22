@@ -186,6 +186,11 @@ class ProfileVerificationController extends Controller
         }
         $counts['all'] = $baseQuery()->count();
 
+        $vendors = DB::table('vendor')
+    ->where('status', 'Active')
+    ->orderBy('agent_name')
+    ->get(['id', 'agent_name', 'vendor_mobile']);
+
         return view('admin.profile', compact(
             'profiles',
             'selectedProfile',
@@ -195,7 +200,8 @@ class ProfileVerificationController extends Controller
             'status',
             'search',
             'counts',
-            'type'
+            'type',
+            'vendors'
         ));
     }
 
@@ -248,6 +254,83 @@ class ProfileVerificationController extends Controller
             ->route('admin.profile-verification.index', ['type' => $validated['type'], 'status' => request('status', 'all'), 'id' => $id])
             ->with('success', 'Profile details updated successfully.');
     }
+
+    public function assignVendor(Request $request)
+{
+    $validated = $request->validate([
+        'vendor_id'  => ['required', 'integer', 'exists:vendor,id'],
+        'profile_ids' => ['required', 'string', 'max:10000'],
+        'type' => ['required', Rule::in(['groom', 'bride'])],
+        'status' => ['nullable', Rule::in([
+            'all', 'pending', 'approved', 'rejected', 'update_requested'
+        ])],
+        'search' => ['nullable', 'string', 'max:255'],
+    ]);
+
+    $profileIds = preg_split(
+        '/[\s,;]+/',
+        trim($validated['profile_ids']),
+        -1,
+        PREG_SPLIT_NO_EMPTY
+    );
+
+    $profileIds = array_values(array_unique($profileIds));
+
+    if (empty($profileIds)) {
+        return back()->withInput()->with('error', 'Enter at least one Profile ID.');
+    }
+
+    // Verify that every submitted Profile ID exists.
+    $existingIds = DB::table('profiles')
+        ->whereIn('profile_id', $profileIds)
+        ->pluck('profile_id')
+        ->map(fn ($id) => (string) $id)
+        ->all();
+
+    $invalidIds = array_values(array_diff($profileIds, $existingIds));
+
+    if (!empty($invalidIds)) {
+        return back()->withInput()->with(
+            'error',
+            'Profile ID(s) not found: ' . implode(', ', $invalidIds)
+        );
+    }
+
+    // A profile already assigned to any vendor must not be assigned again.
+    $alreadyAssigned = DB::table('vendor_customer_assignments')
+        ->whereIn('profile_id', $profileIds)
+        ->pluck('profile_id')
+        ->map(fn ($id) => (string) $id)
+        ->all();
+
+    if (!empty($alreadyAssigned)) {
+        return back()->withInput()->with(
+            'error',
+            'Already assigned Profile ID(s): ' . implode(', ', $alreadyAssigned)
+        );
+    }
+
+    DB::transaction(function () use ($profileIds, $validated) {
+        foreach ($profileIds as $profileId) {
+            DB::table('vendor_customer_assignments')->insert([
+                'vendor_id'  => $validated['vendor_id'],
+                'profile_id' => $profileId,
+                'assigned_at' => now(),
+            ]);
+        }
+    });
+
+    return redirect()
+        ->route('admin.profile-verification.index', [
+            'type' => $validated['type'],
+            'status' => $validated['status'] ?? 'all',
+            'search' => $validated['search'] ?? '',
+        ])
+        ->with(
+            'success',
+            count($profileIds) . ' profile(s) assigned successfully.'
+        );
+}
 
     public function destroy($id)
     {

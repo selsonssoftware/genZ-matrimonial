@@ -9,32 +9,35 @@ class VendorAssignmentReportController extends Controller
 {
     public function index()
     {
-        $assignments = DB::table('vendor_customer_assignments as assignments')
-            ->leftJoin(
-                'vendor as vendors',
-                'vendors.id',
-                '=',
-                'assignments.vendor_id'
-            )
-            ->leftJoin(
-                'profiles',
-                'profiles.profile_id',
-                '=',
-                'assignments.profile_id'
-            )
+        $isMysql = DB::connection()->getDriverName() === 'mysql';
+
+        $assignments = DB::table('vendor_customer_assignments as a')
+            ->leftJoin('vendor as v', 'v.id', '=', 'a.vendor_id')
+            ->leftJoin('profiles as p', function ($join) use ($isMysql) {
+                if ($isMysql) {
+                    $join->whereRaw(
+                        'p.profile_id COLLATE utf8mb4_general_ci = a.profile_id COLLATE utf8mb4_general_ci'
+                    );
+                } else {
+                    $join->on('p.profile_id', '=', 'a.profile_id');
+                }
+            })
+            ->leftJoin('users as u', 'u.id', '=', 'p.user_id')
             ->select([
-                'assignments.id',
-                'assignments.vendor_id',
-                'assignments.profile_id',
-                'assignments.assigned_at',
-                'vendors.agent_name',
-                'vendors.city as vendor_city',
-                'profiles.gender',
-                'profiles.age',
-                'profiles.city as profile_city',
+                'a.id',
+                'a.vendor_id',
+                'a.profile_id',
+                'a.assigned_at',
+                'v.agent_name',
+                'v.city as vendor_city',
+                'p.gender',
+                'p.age',
+                'p.city as profile_city',
+                'u.name as profile_name',
+                'u.phone as profile_mobile',
             ])
-            ->orderByDesc('assignments.assigned_at')
-            ->orderByDesc('assignments.id')
+            ->orderByDesc('a.assigned_at')
+            ->orderByDesc('a.id')
             ->paginate(10);
 
         return view('admin.vendor-assignments', compact('assignments'));

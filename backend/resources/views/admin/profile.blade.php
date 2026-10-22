@@ -10,7 +10,27 @@
                     {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                
             @endif
+            @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
             <!-- Header Section -->
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
@@ -164,12 +184,31 @@
                                                 </button>
                                             </form>
 
-                                            <!-- Dummy Three Dots -->
-                                            <button type="button" class="btn btn-sm btn-light border rounded-circle ms-1"
-                                                style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;"
-                                                title="More">
-                                                <i class="ti ti-dots-vertical fs-14 text-muted"></i>
-                                            </button>
+                                            <td class="text-center">
+    <div class="dropdown">
+        <button type="button"
+                class="btn btn-sm btn-light border rounded-circle"
+                style="width: 32px; height: 32px;"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                title="Assign Profile">
+            <i class="ti ti-dots-vertical"></i>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li>
+                <button type="button"
+        class="dropdown-item"
+        data-bs-toggle="modal"
+        data-bs-target="#assignProfileModal"
+        data-profile-id="{{ $profile->profile_id }}">
+    <i class="ti ti-user-plus me-2"></i>
+    Assign Profile
+</button>
+            </li>
+        </ul>
+    </div>
+</td>
                                         </div>
                                     </td>
                                 </tr>
@@ -188,6 +227,82 @@
                     @endif
                 </div>
             </div>
+
+            <!-- Assign Profile Modal -->
+<div class="modal fade" id="assignProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" style="color: #561325;">
+                    Assign Profiles to Vendor
+                </h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="POST" action="{{ route('admin.profile-verification.assign-vendor') }}">
+                @csrf
+<input type="hidden" name="profile_ids" id="assign_profile_ids">
+
+                <input type="hidden" name="type" value="{{ $type }}">
+                <input type="hidden" name="status" value="{{ $status }}">
+                <input type="hidden" name="search" value="{{ $search }}">
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="assign_vendor_id" class="form-label fw-semibold">
+                            Vendor ID
+                        </label>
+
+                        <select name="vendor_id" id="assign_vendor_id"
+                                class="form-select" required>
+                            <option value="">Select Vendor</option>
+
+                            @foreach($vendors as $vendor)
+                                <option value="{{ $vendor->id }}"
+                                    @selected(old('vendor_id') == $vendor->id)>
+                                    VN-{{ str_pad($vendor->id, 5, '0', STR_PAD_LEFT) }}
+                                    — {{ $vendor->agent_name }}
+                                    ({{ $vendor->vendor_mobile }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- <div class="mb-3">
+                        <label for="assign_profile_ids" class="form-label fw-semibold">
+                            Profile IDs
+                        </label>
+
+                        <textarea name="profile_ids" id="assign_profile_ids"
+                                  class="form-control" rows="5"
+                                  placeholder="Example:&#10;PR10001&#10;PR10002&#10;PR10003"
+                                  required>{{ old('profile_ids') }}</textarea>
+
+                        <small class="text-muted">
+                            Multiple Profile IDs enter pannalaam. Comma, space, or new line use pannunga.
+                        </small>
+                    </div> -->
+
+                    <div class="alert alert-info py-2 small mb-0">
+                        Each Profile ID can be assigned to only one vendor.
+                        Already-assigned profiles cannot be assigned again.
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border"
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn text-white"
+                            style="background-color: #561325;">
+                        Assign Profiles
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
             <!-- Selected Profile Full Details Card -->
             @if($selectedProfile)
@@ -400,4 +515,19 @@
 
         </div>
     </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const assignModal = document.getElementById('assignProfileModal');
+
+    if (!assignModal) return;
+
+    assignModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const profileId = button?.getAttribute('data-profile-id');
+
+        document.getElementById('assign_profile_ids').value = profileId || '';
+    });
+});
+</script>
 @endsection

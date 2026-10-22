@@ -209,39 +209,91 @@ class VendorController extends Controller
             ->with('success', 'Vendor deleted successfully.');
     }
 
-    // Assign one existing member profile to a vendor
-    public function assignProfile(Request $request, $vendorId)
-    {
-        $vendorExists = DB::table('vendor')->where('id', $vendorId)->exists();
+    // Assign multiple existing member profiles to one vendor
+public function assignProfile(Request $request, $vendorId)
+{
+    $vendor = DB::table('vendor')->where('id', $vendorId)->first();
 
-        if (!$vendorExists) {
-            return redirect()
-                ->route('admin.vendors.index')
-                ->withErrors(['vendor' => 'Vendor not found.']);
-        }
-
-        $validated = $request->validate([
-            'profile_id' => [
-                'required',
-                'string',
-                'max:255',
-                'exists:profiles,profile_id',
-                'unique:vendor_customer_assignments,profile_id',
-            ],
-        ]);
-
-        DB::table('vendor_customer_assignments')->insert([
-            'vendor_id' => $vendorId,
-            'profile_id' => $validated['profile_id'],
-            'assigned_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
+    if (!$vendor) {
         return redirect()
             ->route('admin.vendors.index')
-            ->with('success', 'Client profile assigned successfully.');
+            ->withErrors(['vendor' => 'Vendor not found.']);
     }
+
+    $validated = $request->validate([
+        'profile_ids' => ['required', 'string', 'max:10000'],
+    ]);
+
+    // Accept comma-separated or newline-separated profile IDs
+    $profileIds = preg_split(
+        '/[\s,;]+/',
+        trim($validated['profile_ids']),
+        -1,
+        PREG_SPLIT_NO_EMPTY
+    );
+
+    $profileIds = array_values(array_unique($profileIds));
+
+    if (empty($profileIds)) {
+        return back()->withErrors([
+            'profile_ids' => 'Please enter at least one Profile ID.'
+        ])->withInput();
+    }
+
+    // Check that every profile exists
+    $existingProfiles = DB::table('profiles')
+        ->whereIn('profile_id', $profileIds)
+        ->pluck('profile_id')
+        ->map(fn ($id) => (string) $id)
+        ->all();
+
+    $missingProfiles = array_diff($profileIds, $existingProfiles);
+
+    if (!empty($missingProfiles)) {
+        return back()->withErrors([
+            'profile_ids' => 'Invalid Profile ID(s): ' .
+                implode(', ', $missingProfiles)
+        ])->withInput();
+    }
+
+    // Do not assign a profile that is already assigned to a vendor
+    $alreadyAssigned = DB::table('vendor_customer_assignments')
+        ->whereIn('profile_id', $profileIds)
+        ->pluck('profile_id')
+        ->map(fn ($id) => (string) $id)
+        ->all();
+
+    if (!empty($alreadyAssigned)) {
+        return back()->withErrors([
+            'profile_ids' => 'Already assigned Profile ID(s): ' .
+                implode(', ', $alreadyAssigned)
+        ])->withInput();
+    }
+
+    DB::transaction(function () use ($vendorId, $profileIds) {
+        $now = now();
+
+        $rows = array_map(function ($profileId) use ($vendorId, $now) {
+            return [
+                'vendor_id' => $vendorId,
+                'profile_id' => $profileId,
+                'assigned_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }, $profileIds);
+
+        DB::table('vendor_customer_assignments')->insert($rows);
+    });
+
+    return redirect()
+        ->route('admin.vendors.index')
+        ->with(
+            'success',
+            count($profileIds) . ' profile(s) assigned to vendor VN-' .
+                str_pad($vendorId, 5, '0', STR_PAD_LEFT) . ' successfully.'
+        );
+}
 
     // Admin: View all vendor-profile assignments
     public function assignments()
