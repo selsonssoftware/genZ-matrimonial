@@ -281,6 +281,12 @@
                                 placeholder="e.g. priyan@example.com" maxlength="191" required />
                         </div>
 
+                         <div class="mb-3">
+                            <label class="form-label fs-13 fw-semibold">Phone</label>
+                            <input type="tel" name="phone" class="form-control fs-13" id="newUserPhone"
+                                placeholder="e.g. 9876543210" maxlength="10" required />
+                        </div>
+
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label fs-13 fw-semibold">Gender</label>

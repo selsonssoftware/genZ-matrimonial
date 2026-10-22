@@ -91,14 +91,14 @@ class ProfileVerificationController extends Controller
         }
 
         if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('p.profile_id', 'like', "%{$search}%")
-                    ->orWhere('u.name', 'like', "%{$search}%")
-                    ->orWhere('u.email', 'like', "%{$search}%")
-                    ->orWhere('u.phone', 'like', "%{$search}%");
-            });
-        }
-
+    $query->where(function ($q) use ($search) {
+        $q->where('p.profile_id', 'like', "%{$search}%")
+            ->orWhere('p.profile_name', 'like', "%{$search}%")
+            ->orWhere('u.name', 'like', "%{$search}%")
+            ->orWhere('u.email', 'like', "%{$search}%")
+            ->orWhere('u.phone', 'like', "%{$search}%");
+    });
+}
         $query
             ->orderByRaw("
                 CASE
